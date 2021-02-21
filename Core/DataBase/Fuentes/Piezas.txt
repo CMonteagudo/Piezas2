@@ -1,0 +1,593 @@
+21100;Calzo derecho del motor
+21200;Calzo izquierdo del motor
+22110;Arandelas de traslado
+22120;Metales de apoyo
+22130;Cigüeñal
+22140;Retén grande del cigüeñal
+22150;Sensor del cigüeñal
+22210;Casquillos de biela
+22220;Metales de biela
+22230;Tornillos de biela
+22240;Biela
+22310;Juego de segmentos
+22320;Kit de reparación del motor
+22330;Pistón
+22420;Tapa de culata
+22430;Tornillos de la tapa de culata
+22440;Junta de culata
+22443;Juego completo de juntas del motor
+22444;Juego parcial de juntas del motor
+22510;Válvula de admisión
+22520;Válvula de escape
+22530;Muelle de válvulas
+22540;Semicono de fijación de válvulas
+22550;Guía de válvulas
+22560;Retenes de válvulas
+23110;Kit de distribución
+23113;Kit de distribución con bomba de agua
+23210;Tapas de la distribución
+23220;Kit de montaje de la cadena de distribución
+23230;Cadena de distribución
+23240;Polea tensora de la correa dentada
+23250;Polea inversión de la correa dentada
+23260;Correa dentada
+23400;Tapa del Árbol de levas
+23410;Árbol de levas
+23420;Retén del árbol de levas
+23430;Balancines del árbol de levas
+23440;taques-hidraulicos
+23450;Tapa de los balancines
+23451;Junta de la tapa de balancines
+23452;Silicona para junta de la tapa de balancines
+23460;Piñón del árbol de levas
+23470;Ajustador árbol de levas
+23480;Sensor de árbol de levas
+24101;Múltiple de admisión
+24102;Junta del múltiple de admisión
+24103;Cuerpo de mariposa
+24104;Junta del cuerpo de mariposa
+24105;Sensor de presión del aire de admisión
+24106;Sensor de temperatura del aire de admisión
+24107;Sensor del pedal del acelerador
+24108;Filtro de aire
+24109;Sensor de detonación
+24110;Caudalímetro
+24211;Catalizador
+24220;Juego de montaje del catalizador
+24300;Sonda lambda
+24310;Sonda lambda anterior al catalizador
+24320;Sonda lambda posterior al catalizador
+24400;Escape
+24410;Múltiple de escape
+24420;Junta del múltiple de escape
+24430;Kit de montaje colector de escape
+24500;Tubos de escape
+24510;Kit de sujeción del tubo de escape
+24520;Tubo flexible de escape
+24530;Junta de tubo de escape
+24540;Abrazadera de tubo de escape
+24550;Cinta de goma de la línea de escape
+24560;Soporte de la línea de escape
+24600;Silenciador
+24610;Silenciador posterior
+24620;Silenciador intermedio
+24630;Juego de montaje del silenciador
+24640;Anillo de soporte del silenciador
+24710;Válvula EGR
+24720;Junta de la válvula EGR
+24730;Turbocompresor
+24731;Manguera del turbo
+24732;Sensor de presión del turbo
+25110;Filtro de aceite
+25120;Radiador de aceite
+25121;Junta del radiador de aceite
+25123;Kit de radiador de aceite con junta
+25125;Brida calefactora
+25130;Bomba de aceite
+25131;Junta de la bomba de aceite
+25132;Cadena de la bomba de aceite
+25133;Kit de bomba de aceite con junta, cadena y tensor de la cadena
+25134;Tensor de la cadena de la bomba de aceite
+25135;Retén de la bomba de aceite
+25150;Tapa del aceite
+25151;Junta de la tapa del aceite
+25160;Conmutador de presión de aceite
+25170;Varilla del aceite
+25180;Embudo del aceite
+25200;Cárter de aceite
+25210;Bandeja del cárter
+25220;Junta del cárter
+25230;Separador de partículas
+25240;Manguito del separador de partículas
+25250;Válvula de ventilación del carter
+25270;Tapon del cárter
+25280;Junta del tapón del cárter
+25300;Aceite de motor
+25400;Sensor del nivel de aceite
+26110;Radiador
+26111;Tapa del radiador
+26112;Tapón del radiador
+26120;Brida refrigerante
+26130;Manguitos del radiador
+26140;Soporte del radiador
+26150;Sensor de temperatura del radiador
+26200;Bomba de agua
+26205;Bomba de agua adicional
+26210;Junta de la bomba de agua
+26300;Depósito de expansión
+26301;Tapa del depósito de expansión
+26320;Líquido refrigerante
+26410;Ventilador de radiador
+26420;Paletas del ventilador de radiador
+26430;Bastidor del ventilador del radiador
+26440;Soporte del ventilador del radiador(Araña)
+26450;Caja de relés del ventilador del radiador
+26460;Embrague viscoso del ventilador del radiador
+26470;Motor del ventilador del radiador
+26210;Caja del termostato
+26220;Termostato
+26221;Junta del termostato
+26230;Sensor de temperatura del refrigerante
+26240;Juntas tóricas
+27100;Aforador
+27110;Bomba de combustible
+27120;Unidad de control de la bomba de combustible
+27125;Bomba de alta presión
+27130;Bomba de inyección
+27140;Filtro de combustible
+27150;Tubería de combustible
+27160;Manguera de combustible
+27170;Sensor del nivel de combustible
+27210;Inyector
+27220;Junta del inyector
+28100;Bobina de encendido
+28100;Juego de bobinas de encendido
+28300;Bujía
+28300;Juego de bujías
+28200;Juego de cables de bujías
+28300;Conector de la bujía de encendido
+29110;Alternador
+29111;Regulador del alternador
+29112;Piezas de alternador
+29113;Polea libre del alternador
+29121;Correa poly v con aire acondicionado
+29122;Correa poly v sin aire acondicionado
+29123;Kit de correa poly v con tensor
+29130;Polea de inversión-guía de la correa poli v
+29140;Tensor de la correa trapecial poli v
+29141;Rodilo del tensor de la correa trapecial poli v
+29200;Sensor de detonación
+29310;Motor de arranque
+29320;Rueda libre del arranque
+31100;Guardafangos
+31111;Guardafango delantero derecho
+31112;Guardafango delantero izquierdo
+31121;Guardafango trasero derecho
+31122;Guardafango trasero izquierdo
+31300;Capó
+31310;Tapa del capó
+31210;Muelle neumático del capó
+31400;Maletero
+31410;Tapa del maletero
+31410;Muelle neumático del maletero
+31500;Puertas
+31511;Puerta delantera derecha
+31512;Puerta delantera izquierda
+31521;Puerta trasera derecha
+31522;Puerta trasera izquierda
+32100;Compresión
+32110;Compresor
+32120;Válvula del compresor
+32130;Embrague del compresor del aire acondicionado
+32140;Válvula de expansión de aire acondicionado
+32150;Válvula reguladora del compresor
+32160;Manguera de alta presión
+32170;Manguera de baja presión
+32180;Presostato
+32200;Elementos del evaporador
+32210;Evaporador
+32220;Válvula de expansión
+32230;Evaporador con válvula de expansión
+32300;Climatización de la cabina
+32310;Ventilador del habitáculo
+32320;Resistencia del ventilador
+32330;Sensor de temperatura interior
+32340;Sensor de temperatura exterior
+32350;Filtro del habitáculo(Filtro de pólen)
+32400;Elementos del condensador
+32410;Condensador
+32420;Filtro secante
+32500;Radiador de la calefacción
+33110;Espejo retrovisor central
+33121;Espejo retrovisor derecho
+33122;Espejo retrovisor izquierdo
+33130;Conmutador de los retrovisores
+34100;Bastidores elevalunas
+34111;Elevalunas sin bastidor chofer
+34112;Elevalunas sin bastidor copiloto
+34121;Elevalunas sin bastidor detrás chofer
+34122;Elevalunas sin bastidor detrás copiloto
+34131;Elevalunas con bastidor chofer
+34132;Elevalunas con bastidor copiloto
+34141;Elevalunas con bastidor detrás chofer
+34142;Elevalunas con bastidor detrás copiloto
+34200;Conmutadores de elevalunas
+34230;Conmutador de elevalunas chofer
+34231;Conmutador de elevalunas copiloto
+34232;Conmutador de elevalunas trasero
+34233;Conmutador de elevalunas copiloto y trasero
+34300;Motor del elevalunas eléctrico
+35110;Escobillas de limpiaparabrisas delantero
+35112;Escobillas de limpiaparabrisas trasero
+35113;Juego de escobillas de limpiaparabrisas delantero
+35120;Brazo de limpiaparabrisas delantero
+35121;Brazo de limpiaparabrisas delantero derecho
+35122;Brazo de limpiaparabrisas delantero izquierdo
+35123;Brazo de limpiaparabrisas trasero
+35124;Juego de Brazo con escobillas del limpiaparabrisas trasero
+35130;Motor del limpiaparabrisas
+35131;Motor del limpiaparabrisas delantero
+35132;Motor del limpiaparabrisas trasero
+35133;Varillaje de limpiaparabrisas
+35140;Bomba de limpiaparabrisas
+35141;Bomba de limpiaparabrisas sólo delantero
+35142;Bomba de limpiaparabrisas delantero y trasero
+35143;Líquido de limpiaparabrisas
+35144;Deposito de agua de limpiaparabrisas
+35145;Sensor del nivel agua de limpiaparabrisas
+35146;Boquillas de limpiaparabrisas
+35147;Bomba del sistema lavafaros
+35148;Manguito de limpiaparabrisas
+35149;Conector de manguito de limpiaparabrisas
+36100;Faros
+36110;Faros delanteros
+36111;Faro delantero derecho
+36112;Faro delantero izquierdo
+36113;Juego de faros delanteros
+36115;Motor regulador de faros
+36120;Faros traseros
+36121;Faro trasero derecho
+36122;Faro trasero izquierdo
+36123;Juego de faros traseros
+36130;Luz de freno adicional
+36140;Interruptor de luz de freno
+36150;Interruptor de marcha atrás
+36200;Faros antiniebla
+36211;Faro antiniebla derecho
+36212;Faro antiniebla izquierdo
+36213;Juego de faros antiniebla
+36300;Intermitentes
+36330;Intermitentes laterales
+36331;Intermitente lateral derecho
+36332;Intermitente lateral izquierdo
+36333;Juego de intermitentes laterales
+36340;Luz de matrícula
+36343;Luz de matrícula
+36350;Juego de cables
+36360;Iluminación del panel de instrumentos
+36370;Iluminación del maletero
+36380;Iluminación de las puertas
+36390;Conmutador de luces
+36395;Interruptor de los intermitentes de emergencia
+36410;Lámpara de faros delanteros
+36420;Lámpara de luz de ciudad
+36420;Lámpara de luz de carretera
+36430;Lámpara de faros de luz antiniebla
+36440;Lámpara de luces intermitentes
+36450;Lámpara de luces de frenos
+36460;Lámpara de luz de posición
+36470;Lámpara de luz de marcha atrás
+36480;Lámpara de faro trasero
+36490;Lámpara de intermitente lateral
+36510;Lámpara de luz de matrícula
+36520;Lámpara de luz diurna
+36530;Lámpara de luz habitáculo
+36540;Lámpara de luz del panel de instrumentos
+36550;Lámpara de luz de las puertas
+36560;Lámpara de luz del maletero
+36570;Juego de lámparas del coche
+37100;Rejillas del parachoques
+37110;Rejilla central
+37111;Rejilla derecha
+37112;Rejilla izquierda
+37200;Rejillas del panal del radiador
+37210;Panal del radiador
+37211;Panal del radiador derecho
+37212;Panal del radiador izquierdo
+37213;Juego de rejillas del panal del radiador
+37300;Parachoques delantero
+37310;Parachoques delantero sin rejillas ni molduras
+37320;Parachoques delantero sin rejillas con molduras
+37330;Parachoques delantero completo con rejillas estandares
+37340;Parachoques delantero completo con rejillas deportivas
+37400;Parachoques trasero
+37410;Parachoques trasero sin molduras
+37420;Parachoques trasero con molduras
+37500;Molduras del parachoques
+37510;Moldura delantera central
+37511;Moldura delantera derecha
+37512;Moldura delantera izquierda
+37520;Moldura trasera central
+37521;Moldura trasera derecha
+37522;Moldura trasera izquierda
+37600;Logotipo
+38100;Cierre centralizado
+38200;Cerradura de puerta
+38211;Cerradura de puerta delantera derecha
+38212;Cerradura de puerta delantera izquierda
+38221;Cerradura de puerta trasera derecha
+38222;Cerradura de puerta trasera izquierda
+38300;Pomo de puerta
+38400;Bombín de la cerradura
+38500;Cerradura del portón trasero
+39100;Paso de rueda
+39111;Paso de rueda delantero derecho
+39112;Paso de rueda delantero izquierdo
+39221;Paso de rueda trasero derecho
+39122;Paso de rueda trasero izquierdo
+39200;Cubierta del paso de rueda
+39210;Cubierta del motor
+39220;Cubierta inferior del motor
+39230;Insonarización del motor
+39240;Umbral de las puertas
+39250;Molduras de puerta
+39260;Pedales y cubre pedales
+41110;Disco de freno delantero
+41113;Juego de discos de freno delanteros
+41114;Juego de discos de freno delanteros con pastillas y kit de sujeción de pastiillas
+41220;Disco de freno trasero ambos lados
+41223;Juego de discos de freno traseros
+41224;Juego de discos traseros con pastillas y kit de sujeción de pastillas
+41300;Chapas protectoras de disco de freno
+41310;Chapas protectoras de disco delantero de freno
+41311;Chapa protectora de disco delantero derecho
+41312;Chapa protectora de disco delantero izquierdo
+41320;Chapas protectoras de disco trasero
+41321;Chapa protectora de disco trasero derecho
+41322;Chapa protectora de disco trasero izquierdo
+42100;Pastillas de freno
+42110;Pastillas delanteras
+42220;Pastillas traseras
+42310;Kit de sujeción de pastillas delanteras
+42420;Kit de sujeción de pastillas traseras
+43100;Manguera de freno
+43110;Manguera delantera ambos lados
+43111;Manguera delantera derecha
+43112;Manguera delantera izquierda
+43113;Juego de mangueras de freno delanteras
+43120;Mangueras traseras ambos lados
+43121;Manguera trasera derecha
+43122;Manguera trasera izquierda
+43123;Juego de mangueras de freno traseras
+43130;Soporte de mangueras de freno
+43133;Juego de soporte de mangueras de freno
+44100;Sensor de ABS
+44110;Sensor de ABS delantero ambos lados
+44111;Sensor de ABS delantero derecho
+44112;Sensor de ABS delantero izquierdo
+44120;Sensor de ABS trasero ambos lados
+44121;Sensor de ABS trasero derecho
+44122;Sensor de ABS trasero izquierdo
+44222;Bomba de ABS
+45100;Tambor de freno
+45120;Tambor de freno trasero ambos lados
+45220;Juego de zapatas de freno trasero ambos lados
+45320;Juego de reparación de zapatas de freno trasero ambos lados
+45420;Regulador del freno de tambor
+45430;Cilindro de freno
+45431;Cilindro de freno derecho
+45432;Cilindro de freno izquierdo
+45433;Juego de cilindros de freno
+46100;Cable de freno de mano
+46120;Cable de freno de mano trasero ambos lados
+46121;Cable de freno de mano derecha
+46122;Cable de freno de mano izquierda
+46123;Juego de cables de freno de mano traseros
+46124;Mando del freno de mano eléctrico
+47100;Pinza de freno
+47110;Pinza de freno delantera
+47111;Pinza de freno delantera derecha
+47112;Pinza de freno delantera izquierda
+47113;Juego de pinzas de freno delanteras
+47114;Kit de reparación de pinza de frenos delantera
+47115;Juego de casquillos guías de pinza de freno delantera
+47116;Soporte de pinzas de freno delanteras
+47117;Pistón de la pinza de freno delantera
+47118;tornillo del disco de freno delantero
+47120;Pinza de freno trasera
+47121;Pinza de freno trasera derecha
+47122;Pinza de freno trasera izquierda
+47123;Juego de pinzas de freno traseras
+47124;Kit de reparación de pinza de frenos trasera
+47125;Juego de casquillos guías de pinza de freno trasera
+47126;Soporte de pinzas de freno traseras
+47127;Pistón de la pinza de freno trasera
+47128;Tornillo del disco de freno trasero
+48100;Cilindro principal de freno
+48200;Kit de reparación del cilindro principal de freno
+48300;Líquido de freno
+48400;Depósito de líquido de freno
+48600;Servofreno
+48700;Repartidor de freno
+51100;Amortiguador
+51110;Amortiguador delantero
+51111;Amortiguador delantero derecho
+51112;Amortiguador delantero izquierdo
+51113;Juego de amortiguadores delanteros
+51210;Amortiguador delantero completo
+51211;Amortiguador delantero derecho completo
+51212;Amortiguador delantero izquierdo completo
+51213;Juego de amortiguadores delanteros completo
+51320;Amortiguador trasero
+51321;Amortiguador trasero derecho
+51322;Amortiguador trasero izquierdo
+51323;Juego de amortiguadores traseros
+51420;Amortiguador trasero completo
+51421;Amortiguador trasero derecho con protector y almohadilla
+51422;Amortiguador trasero izquierdo con protector y almohadilla
+51423;Juego de amortiguadores traseros completos
+52100;Almohadilla
+52110;Almohadilla delantera ambos lados
+52111;Almohadilla delantera derecha
+52112;Almohadilla delantera izquierda
+52113;Juego de almohadilla con rodamiento axial un lado
+52114;Juego de almohadilla con rodamiento axial ambos lados
+52115;Rodamiento axial
+52116;Juego de rodamientos axiales
+53100;Topes y protectores
+53110;Tope del amortiguador delantero ambos lados
+53210;Protector del amortiguador delantero ambos lados
+53310;Juego de topes con protectores del amortiguador delantero ambos lados
+54100;Muelle de suspensión
+54110;Muelle delantero de suspensión
+54113;Juego de muelles delanteros
+54220;Muelle trasero de suspensión
+54223;Juego de muelles traseros
+54321;Soporte inferior del muelle trasero
+54322;Soporte superior del muelle trasero
+54323;Juego de soportes del muelle trasero
+55100;Barra estabilizadora
+55110;Barra estabilizadora delantera
+55120;Barra estabilizadora trasera
+55210;Buje de la barra estabilizadora delantera
+55220;Buje de la barra estabilizadora trasera
+55203;Juego de bujes de la barra estabilizadora delantera
+55203;Juego de bujes de la barra estabilizadora trasera
+55310;Bieleta de suspensión delantera
+55311;Bieleta de suspensión delantera derecha
+55312;Bieleta de suspensión delantera izquierda
+55313;Juego de bieletas de suspensión delantera
+55320;Bieleta de suspensión trasera
+55321;Bieleta de suspensión trasera derecha
+55322;Bieleta de suspensión trasera izquierda
+55323;Juego de bieletas de suspensión trasera
+55310;Soporte de la barra estabilizadora delantera
+55320;Soporte de la barra estabilizadora trasera
+56100;Brazo de suspensión
+56110;Brazo de suspensión delantero
+56120;Brazo de suspensión trasero
+56130;Juego de reparación del brazo de la suspensión
+56131;Juego de reparación del brazo de la suspensión delantero
+56132;Juego de reparación del brazo de la suspensión trasero
+56140;Buje del brazo de suspensión
+56141;Buje del brazo de suspensión delantero
+56142;Buje del brazo de suspensión trasero
+56143;Juego de bujes del brazo de suspensión
+56144;Juego de bujes del brazo de suspensión delantero
+56145;Juego de bujes del brazo de suspensión trasero
+57100;Parrilla de suspensión
+57110;Parrilla de suspensión derecha
+57120;Parrilla de suspensión izquierda
+57130;Juego de parrillas de suspensión
+57200;Parrilla de suspensión con esféricas y bujes
+57310;Parrilla de suspensión derecha con esféricas y bujes
+57220;Parrilla de suspensión izquierda con esféricas y bujes
+57230;Juego de parrillas de suspensión con esféricas y bujes
+57300;Rótula de suspensión
+57310;Rótula de suspensión derecha
+57310;Rótula de suspensión izquierda
+57410;Buje de parrilla
+57420;Buje chico de parrilla
+57430;Buje grande de parrilla
+57440;Parrilla trasera
+57441;Parrilla trasera derecha
+57442;Parrilla trasera izquierda
+57450;Buje trasero
+58100;Muñón
+58110;Muñón delantero
+58111;Muñón delantero derecho
+58112;Muñón delantero izquierdo
+58200;Muñón trasero
+58221;Muñón trasero derecho
+58222;Muñón trasero izquierdo
+58300;Tuerca del eje del muñón
+62100;Buje de la rueda delantera
+62200;Buje de la rueda trasera
+63100;Cojinete de rueda delantera
+63103;Juego de cojinetes de rueda delantera
+63200;Cojinete de rueda trasera
+63203;Juego de cojinetes de rueda trasera
+61000;Soporte de la caja de velocidad
+61100;Calzo de la caja
+61200;Calzo antipar
+64410;Cable del velocímetro
+64420;Sensor de velocidad
+64431;Retén del diferencial
+64432;Retén de la transmisión
+64433;Retén del árbol de transmisión
+64440;Cárter aceite de la transmisión automática
+64441;Junta del cárter aceite de la transmisión automática
+64642;Aceite para transmisión automática
+64450;Rodamiento de recepción de la caja de velocidad
+64451;Rodamiento de agujas de la caja de velocidad
+64452;Kit de reparación de la caja de velocidad
+64500;Radiador de aceite
+64520;Filtro de la caja de cambios automática
+64530;Kit piezas de cambio aceite de caja automática
+65110;Kit de embrague
+65111;Kit de embrague con volante
+65120;Cojinete de empuje
+65130;Disco de embrague
+65140;Plato de presión de embrague
+65150;Horquilla desembrague
+65200;Conmutador del pedal del embrague
+65310;Cilindro maestro de embrague
+65320;Cilindro receptor de embrague
+65321;Kit de reparación del cilindro receptor del embrague
+65410;Volante de inercia
+65420;Tornillo del volante de inercia
+66100;Homocinética completa
+66101;Homocinética completa derecha
+66102;Homocinética completa izquierda
+66110;Punta de la homocinética lado rueda
+66120;Punta de la homocinética lado caja
+66130;Árbol de la homocinética
+66140;Fuelle de la homocinética
+66150;Tornillo del árbol de transmisión
+67100;Palanca selectora de cambios
+67200;Reparación de la palanca selectora de cambios
+67300;Cable de la caja de velocidad
+67301;Punta del cable de la caja de velocidad
+67310;Cable derecho de la caja de velocidad
+67320;Cable izquierdo de la caja de velocidad
+67330;juego de cables de la caja de velocidad
+67340;Pivote de la caja de velocidad
+71000;Batería
+71100;Soporte de batería
+72100;Relé multifunción
+72200;Relé del aire acondicionado
+72300;Relé de la bomba de combustible
+72400;Relé del motor de arranque
+72500;Relé del ventilador del radiador
+72600;Relé de la bocina
+73100;Interruptor de encendido
+73200;Claxón
+73300;Sensor de detonación
+73400;Fusible
+73410;Fusible 19
+73420;Fusible 29
+73430;Fusible 10
+73440;Fusible de potencia
+73450;Fusible térmico
+80000;Aditamentos
+81500;Barras portaequipajes
+82100;Depósito de combustible
+82110;Tapa del depósito de combustible
+82200;Válvula de ventilación del depósito de combustible
+90100;Dirección
+95000;Cremallera de la dirección
+95010;Sensor ángulo giro de la cremallera
+95100;Brazos áxiales de la dirección
+95211;Rótulas de la dirección
+95211;Rótulas de la dirección derecha
+95212;Rótulas de la dirección izquierda
+95213;Juego de rótulas de la dirección
+95303;Juego de rótulas de la dirección con axiales
+95400;Fuelle de la dirección
+95403;Juego de fuelles de la dirección
+95500;Suspensión de la dirección
+96100;Bomba de la dirección
+96120;Aceite hidráulico de la dirección asistida
+96130;Depósito compensación de dirección asistida
+96140;Mangueras de la dirección
+96150;Filtro hidráulico de dirección

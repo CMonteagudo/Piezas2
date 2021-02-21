@@ -1,0 +1,53 @@
+20000 - Motor
+	21000 - Soporte
+	22000 - Culata del motor
+	23000 - Distribución
+	24100 - Admisión y escape
+	25000 - Lubricación
+	26000 - Refrigeración
+	27000 - Alimentación de combustible
+	28000 - Sistema de encendido
+	29100 - Alternador
+	29300 - Arranque
+30000 - Carrocería
+	31000 - Partes exteriores de la carrocería
+	32000 - Climatización
+	33000 - Espejos retrovisores
+	34000 - Elevalunas
+	35000 - Limpieza de cristales
+	36000 - Iluminación del coche
+	36400 - Lámparas
+	37000 - Parachoches
+	38000 - Seguridad de la cabina
+	39000 - plastiquería e insonorización de la carrocería
+40000 - Freno
+	41000 - Discos de freno
+	42000 - pastillas de freno
+	43000 - Mangueras de freno
+	44000 - Sistema de ABS
+	45000 - Freno de tambor
+	46000 - Freno de mano
+	47000 - pinzas-de-freno
+	48000 - Bomba de freno
+50000 - Suspensión
+	51000 - Amortiguadores
+	52000 - Almohadillas y rodamiento axial
+	53000 - Topes y protectores de los amortiguadores
+	54000 - Muelles de la suspensión
+	55000 - Barra estabilizadora
+	56000 - Brazos de suspensión
+	57000 - Parrillas de suspensión
+	58000 - Muñones
+60000 - Transmisión y Embrague
+	62000 - Buje de la rueda
+	63000 - Cojinete de rueda
+	64400 - Caja de velocidad
+	65000 - Embrague
+	66000 - Homocinéticas
+	67000 - Palanca selectora de velocidad
+70000 - Electricidad
+	71000 - Electricidad
+80000 - Aditamentos
+	81000 - Aditamentos
+90000 - Dirección
+	91000 - Dirección

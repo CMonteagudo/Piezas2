@@ -1,0 +1,440 @@
+﻿@model Piezas2.Models.FindRecambioModel
+@{
+  ViewData["Title"] = "Busqueda de recambios";
+}
+
+<div class="container main-frame">
+
+  <h3 style="text-align: center;"> Buscar recambios de coche </h3>
+
+  <ul class="nav nav-tabs">
+    <li role="presentation" class="active"><a class="tab-title" href="#">Información</a></li>
+    <li role="presentation"><a class="tab-title" href="#">Código</a></li>
+  </ul>
+
+  <div class="tab-frame" id="TabFrame">
+    <div class="btn-group" id="comboMarca">
+      <button type="button" class="btn btn-default">&emsp;</button>
+      <button type="button" class="btn dropdown-toggle btn-primary" data-toggle="dropdown" aria-expanded="false">
+        <span class="caret"></span><span class="sr-only">Toggle Dropdown</span>
+      </button>
+      <ul class="dropdown-menu" role="menu"></ul>
+    </div>
+
+    <div class="btn-group" id="comboModelo">
+      <button type="button" class="btn btn-default">&emsp;</button>
+      <button type="button" class="btn dropdown-toggle btn-primary" data-toggle="dropdown" aria-expanded="false">
+        <span class="caret"></span><span class="sr-only">Toggle Dropdown</span>
+      </button>
+      <ul class="dropdown-menu" role="menu"></ul>
+    </div>
+
+    <div class="btn-group" id="comboMotor">
+      <button type="button" class="btn btn-default">&emsp;</button>
+      <button type="button" class="btn dropdown-toggle btn-primary" data-toggle="dropdown" aria-expanded="false">
+        <span class="caret"></span><span class="sr-only">Toggle Dropdown</span>
+      </button>
+      <ul class="dropdown-menu" role="menu"></ul>
+    </div>
+
+    <div class="btn-group" id="comboCategoria">
+      <button type="button" class="btn btn-default">&emsp;</button>
+      <button type="button" class="btn dropdown-toggle btn-primary" data-toggle="dropdown" aria-expanded="false">
+        <span class="caret"></span><span class="sr-only">Toggle Dropdown</span>
+      </button>
+      <ul class="dropdown-menu" role="menu"></ul>
+    </div>
+
+    <div class="btn-group" id="comboFabricante">
+      <button type="button" class="btn btn-default">&emsp;</button>
+      <button type="button" class="btn dropdown-toggle btn-primary" data-toggle="dropdown" aria-expanded="false">
+        <span class="caret"></span><span class="sr-only">Toggle Dropdown</span>
+      </button>
+      <ul class="dropdown-menu" role="menu"></ul>
+    </div>
+
+    <div class="btn-group" id="FindRecambio">
+      <button type="button" class="btn btn-primary">Buscar</button>
+    </div>
+
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped" id="ItemsList">
+      <thead>
+        <tr>
+          <th id="Fd_0">ID</th>
+          <th id="Fd_4">Recambio</th>
+          <th id="Fd_2">Categoría</th>
+          <th id="Fd_3">Fabricante</th>
+          <th id="Fd_1">Código</th>
+          <th id="Fd_5">Precio</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+
+    <div class="alert alert-info hidden" role="alert" id="MsgNoFound" >
+      No se encontro ningún recambio que cumpla las condiciones dadas
+    </div>
+
+    <div class="btn-group hidden" id="FindMore">
+      <button type="button" class="btn btn-primary">Buscar más recambios</button>
+      <div id="nowRec"></div>
+    </div>
+
+  </div>
+
+</div>
+
+@section Scripts{
+  <script type="text/javascript">
+
+    // Combos para seleccionar los fitros para buscar recambios
+    var cbMarca, cbModelo, cbMotor, cbCategoria, cbFabricante;
+
+    // Datos para la selección de filtros mediante combos
+    var Marcas  = @Model.MarcasToJson();
+    var Modelos = @Model.ModelosToJson();
+    var Motores = @Model.MotoresToJson();
+    var Categor = @Model.CategoriasToJson();
+    var Fabric  = @Model.FabricantesToJson();
+
+    // Datos sobre los recambios obtenidos mediante las busquedas
+    var findUrl;        // Url de la ultima busqueda realizada con todos los parametros
+    var Items;          // Datos de todos los items que se muestran
+    var Filter;         // Datos de los filtros usados para obtener los datos
+    var nItems;         // Número de items totales para los filtros aplicados 
+    var lastItem;       // Número del último item que se ha mostrado
+    var Orden = 4;      // Indice del campo por donde hay que ordenar, 0 => No ordenar, Negativo => Orden desendiente
+
+    var NomecFab = new Map();     // Nomenclador para los fabricantes
+    var NomecCat = new Map();     // Nomenclador para las categorias
+
+    // Inicia manipuladores y variables, después de cargarse la página
+    $( function()
+      {
+      for( let item of Fabric  ) NomecFab.set( item.Id, item.Name );
+      for( let item of Categor ) NomecCat.set( item.Id, item.Name );
+
+      // Crea todos los objetos para manejar los comboboxs
+      CreateCbMarca();
+      CreateCbModelo();
+      CreateCbMotores();
+
+      CreateCbCategorias();
+      CreateCbFabricantes();
+
+      // Restaura el último valor usado para cada uno de los combos
+      cbMotor.SelectById ( localStorage[ "lastSelMotor"  ] || 0 );
+      cbModelo.SelectById( localStorage[ "lastSelModelo" ] || 0 );
+      cbMarca.SelectById ( localStorage[ "lastSelMarca"  ] || 0 );
+
+      cbCategoria.SelectById ( localStorage[ "lastSelCategor" ] || 0 );
+      cbFabricante.SelectById( localStorage[ "lastSelFabric"  ] || 0 );
+
+      // Atención del botón de buscar recambios
+      $("#FindRecambio").on( 'click', OnFindRecambio );   
+      $("#FindMore").on( 'click', OnFindMoreRecambio );  
+      $("#ItemsList thead tr th").on( 'click', OnOrdenar );
+      
+      ShowOrder();
+      } );
+
+    // Crea un objeto para manejar el combo con las marcas de los coches
+    function CreateCbMarca()
+      {
+      cbMarca = new ComboBox( "#comboMarca", ( id ) =>  {
+                                                        localStorage[ "lastSelMarca" ] = id;
+                                                        FillCbModelos();
+                                                        } );
+
+      cbMarca.AddItem( 0, "Todas las Marcas", 1 );
+
+      for( var i = 0; i < Marcas.length; ++i )
+        cbMarca.AddItem( Marcas[ i ].Id, Marcas[ i ].Name );
+      }
+
+    // Crea un objeto para manejar el combo con los modelos de los coches
+    function CreateCbModelo()
+      {
+      cbModelo = new ComboBox( "#comboModelo", ( id ) => {
+                                                         localStorage[ "lastSelModelo" ] = id;
+                                                         FillCbMotores();
+                                                         } );
+
+      FillCbModelos( true );
+      }
+
+    // Crea un objeto para manejar el combo con los Motores de los coches
+    function CreateCbMotores()
+      {
+      cbMotor = new ComboBox( "#comboMotor", (id) => {localStorage["lastSelMotor"]=id;}  );
+
+      FillCbMotores( true );
+      }
+
+    // Crea un objeto para manejar el combo con las categorias de los recambios
+    function CreateCbCategorias()
+      {
+      cbCategoria = new ComboBox( "#comboCategoria", ( id ) => { localStorage[ "lastSelCategor" ] = id; } );
+
+      cbCategoria.AddItem( 0, "Todas las Categorias", 1 );
+
+      for( var i = 0; i < Categor.length; ++i )
+        cbCategoria.AddItem( Categor[i].Id, Categor[i].Name );
+      }
+
+    // Crea un objeto para manejar el combo con los fabricantes de los recambios
+    function CreateCbFabricantes()
+      {
+      cbFabricante = new ComboBox( "#comboFabricante", ( id ) => { localStorage[ "lastSelFabric" ] = id; } );
+
+      cbFabricante.AddItem( 0, "Todas los Fabricantes", 1 );
+
+      for( var i = 0; i < Fabric.length; ++i )
+        cbFabricante.AddItem( Fabric[i].Id, Fabric[i].Name );
+      }
+
+    // Llena el combo modelos de acuerdo a la marca que este seleccionada
+    function FillCbModelos( noSel )
+      {
+      var lastName  = "";
+      var nowModelo = cbModelo.SelectedId();
+      var nowMarca  = cbMarca.SelectedId();
+
+      cbModelo.Clear();
+      cbModelo.AddItem( 0, "Todos los Modelos", 1 );
+
+      var nowSel = 0;
+      for( var i = 0; i < Modelos.length; ++i )
+        {
+        var mod = Modelos[i];
+        if( mod.Nombre != lastName && ( nowMarca==0 || nowMarca==mod.Marca)  )
+          {
+          cbModelo.AddItem( mod.Id, mod.Nombre );
+
+          if( mod.Id==nowModelo ) nowSel=mod.Id;
+          lastName = mod.Nombre;
+          }
+        }
+
+      if( !noSel ) cbModelo.SelectById( nowSel );
+      }
+
+    // Llena el combo motores de acuerdo a la marca y al modelo seleccionado
+    function FillCbMotores( noSel )
+      {
+      var lastName  = "";
+      var nowModelo = cbModelo.SelectedId();
+      var nowMarca  = cbMarca.SelectedId();
+      var nowMotor  = cbMotor.SelectedId();
+
+      cbMotor.Clear();
+      cbMotor.AddItem( 0, "Todos los Motores", 1 );
+
+      var nowSel = 0;
+      for( var i = 0; i < Motores.length; ++i )
+        {
+        var mot = Motores[ i ];
+        if( mot.Nombre != lastName && ( nowMarca == 0 || nowMarca == mot.Marca ) && ( nowModelo == 0 || nowModelo == mot.Modelo ) )
+          {
+          cbMotor.AddItem( mot.Id, mot.Nombre );
+
+          if( mot.Id == nowMotor ) nowSel = mot.Id;
+          lastName = mot.Nombre;
+          }
+        }
+
+      if( !noSel ) cbMotor.SelectById( nowSel );
+      }
+
+    // Se llama al oprimir el botón de buscar recambio
+    function OnFindRecambio()
+      {
+      $("#ItemsList").children().eq(1).empty();
+
+      var marca  = cbMarca.SelectedId();
+      var modelo = cbModelo.SelectedId();
+      var motor  = cbMotor.SelectedId();
+      var fabric = cbFabricante.SelectedId();
+      var categ  = cbCategoria.SelectedId();
+
+      findUrl = "/Api/Recambios/" + marca + "/" + modelo + "/" + motor + "/" + categ + "/" + fabric;
+
+      var Url = findUrl + "/Order-" + Orden;
+      ConnectServer( Url, (datos) => 
+        {
+        Items  = datos.items; 
+        Filter = datos.filters; 
+        nItems = datos.count; 
+        lastItem = Items.length;
+
+        FillItemsList();
+        });
+      }
+
+    // Carga mas recambio en pantallas si todavia no se han cargado todos
+    function OnFindMoreRecambio()
+      {
+      if( !findUrl ) return;
+
+      var Url = findUrl + "/Order-" + Orden + "/Rango-" + lastItem;
+
+      ConnectServer( Url, (datos) => 
+        {
+        Items = datos.items; 
+        lastItem += Items.length;
+
+        FillItemsList();
+        });
+      }
+
+    // Se llama para ordenar los resultados por una columna
+    function OnOrdenar()
+      {
+      var newOrden = $(this).attr("id")[3];
+      Orden = (newOrden==Orden || newOrden==-Orden)? -Orden : newOrden;
+
+      ShowOrder();
+
+      if( !findUrl ) return;
+
+      $("#ItemsList").children().eq(1).empty();
+
+      var Url = findUrl + "/Order-" + Orden;
+
+      ConnectServer( Url, (datos) => 
+        {
+        Items  = datos.items; 
+        Filter = datos.filters; 
+        nItems = datos.count; 
+        lastItem = Items.length;
+
+        FillItemsList();
+        });
+      }
+
+    // Llana la lista de Itmes con los recambios encontrados
+    function FillItemsList()
+      {
+      for( var i = 0; i < Items.length; ++i )
+        {
+        var item = Items[i]; 
+        var itemHml = "<tr>" +
+                        "<td>"+ item.id         +"</td>" +
+                        "<td>"+ item.nombre     +"</td>" +
+                        "<td>"+ NomecCat.get(item.categoria)  +"</td>" +
+                        "<td>"+ NomecFab.get(item.fabricante) +"</td>" +
+                        "<td>"+ item.codigo     +"</td>" +
+                        "<td>"+ (item.precio? item.precio : "") +"</td>" +
+                      "</tr>";
+
+        $("#ItemsList").append( itemHml );
+        }
+
+      ShowAtEnd();                    // Muestra/esconde información debajo de la tabla de items
+
+      $("#nowRec").text( lastItem + " de " + nItems );
+      }
+
+    // Pone un indicador en el encabezamiento de la tabla para indicar el orden aplicado
+    function ShowOrder()
+      {
+      HideOrder()
+      if( Orden==0 ) return;
+
+      var desend = (Orden<0);
+      var index  = (Orden<0)? -Orden : Orden;
+      
+      var elem = $( "#Fd_"+ index );
+      if( elem.length == 0 ) return;
+
+      if( desend )                   // Si es la columna por la que se ordena
+        elem.append( " <span class='glyphicon glyphicon-chevron-down'></span>" );     // Flechita para abajo
+      else
+        elem.append( " <span class='glyphicon glyphicon-chevron-up'></span>" );       // Flechota para arriba
+
+      elem.addClass("ColOrder");
+      }
+
+    // Pone un indicador en el encabezamiento de la tabla para indicar el orden aplicado
+    function HideOrder()
+      {
+      var elem = $("#ItemsList .glyphicon");
+      if( elem.length == 0 ) return;
+
+      elem.parent().removeClass("ColOrder");
+      elem.remove()
+      }
+
+
+    // Realiza una conexión con el servidor via Ajax y retorna el resultado en 'OnOkFun'
+    function ConnectServer( Url, OnOKfun )
+      {
+      var cur = new WaitCursor( "#TabFrame" );
+      $.ajax( {
+        url: Url,
+        complete: function( xhr )
+          {
+          cur.Hide();
+
+          var json = checkReturn( xhr );
+
+          if( json.Error == 0 ) OnOKfun( json );
+          else                  ShowError( json );
+          }
+        } );
+      }
+
+    // Muestra los errores producidos
+    function ShowError( json )
+      {
+      alert( "Error:" + json.Error + " ->" + json.sError );
+      }
+
+    // Chequea que el retorno desde Ajax es corecto
+    function checkReturn( xhr )
+      {
+      if( xhr.readyState === 4 )
+        {
+        if( xhr.status === 200 )                                      // La conexión termino OK
+          {
+          try 
+            { 
+            var jSon = JSON.parse( xhr.responseText );                // Valida si la respuesta es un JSON ok
+            jSon.Error = 0;                                           // Marca que no hay error
+            return jSon;
+            }             
+          catch( e )                                                  // La respuesta no se pudo convertir a JSON
+            { 
+            return { Error: 100, sError: e.message }; 
+            }   
+          }
+
+        var sErr;
+        switch( xhr.status )                                        // La conexión no termino
+          {
+          case 404: sErr = "La Url solicitada no fue encontrada"; break;
+          default: sErr = "La conexión retorno el código de estado " + xhr.status;
+          }
+
+        return { Error: 101, sError: sErr };
+        }
+      else return { Error: 102, sError: "No se puede conectar con el servidor" };       // La conexión no se realizo
+      }
+
+    // Muestra/esconde el botón de buscar más o el cartel de no hay registro de acuerdo a los datos actuales
+    function ShowAtEnd()        
+      {
+      var count = Items.length;
+      if( count == 0 ) $("#MsgNoFound").removeClass("hidden");
+      else             $("#MsgNoFound").addClass("hidden");
+
+      if( lastItem < nItems ) $("#FindMore").removeClass("hidden");
+      else                    $("#FindMore").addClass("hidden");
+      }
+
+  </script>
+}
