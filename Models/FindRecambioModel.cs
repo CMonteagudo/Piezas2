@@ -19,6 +19,8 @@ namespace Piezas2.Models
     public Categorias Categorias { set; get; }
     public Fabricantes Fabricantes{ set; get; }
 
+    //---------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary> Construye el objeto y obtiene los datos de la base de datos </summary>
     public FindRecambioModel( HttpContext HttpCtx )
       {
       Marcas  = new MarcaCoches( HttpCtx );

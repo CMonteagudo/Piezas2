@@ -1,0 +1,73 @@
+﻿@model Piezas2.Models.RecambioModel
+@{
+  ViewData["Title"] = "Datos del recambio de coche";
+}
+
+<div class="container main-frame">
+
+  <h3 style="text-align: center;"> Datos del recambio de coche </h3>
+
+  <div class="row">
+      <div class="col-md-4">
+        <picture> 
+          <img style="min-height: 200px" src="@Model.Foto" alt="Imagen de @Model.Nombre"> 
+        </picture>
+      </div>
+      <div class="col-md-8 table-responsive">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <td colspan="2" style="text-align: left"><h4>@Model.Nombre</h4></td>
+                </tr>
+                <tr>
+                    <td>Precio:</td><td style="width: 100%">@Model.Precio</td>
+                </tr>
+                <tr>
+                    <td>Fabricante:</td><td style="width: 100%">@Model.NameFab</td>
+                </tr>
+                <tr>
+                    <td>Categoria:</td><td>@Model.NameCat</td>
+                </tr>
+                <tr>
+                    <td>Codigo:</td><td>@Model.Codigo</td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="text-align: left">@Model.Descripcion</td>
+                </tr>
+                <tr>
+                  <td colspan="2" style="text-align: left">
+                   <h4>Coches donde se utiliza:</h4>
+                   @if( Model.Coches.Count > 0 )
+                     {
+                     <div class="coche-list">
+                     @foreach( var coche in Model.Coches )
+                      {
+                      <div class="coche-name">
+                        <a href="~/coche/@coche.Id">
+                          <strong>@coche.Marca</strong>
+                          <span> @coche.Modelo <strong>/</strong> @coche.Motor</span>
+                        </a>
+                      </div>
+                      }
+                     </div>
+                     }
+                   else
+                     {
+                     <span>No se usa en ningún Coche.</span>
+                     }
+                    <div class="center-block">
+                      <a href="~/admin/recambio-coche/@Model.Id">
+                        <div class="center-block coche-name" style="width:160px; background-color:ButtonFace; margin:10px auto; font-weight:600; text-align:center">
+                          Seleccionar Coches
+                        </div> 
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+            </tbody>
+        </table>
+      </div>
+  </div>
+  
+
+</div>

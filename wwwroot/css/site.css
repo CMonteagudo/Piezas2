@@ -11,61 +11,7 @@ for details on configuring this project to bundle and minify static web assets. 
   box-shadow: 5px 5px 30px #808080;
 }
 
-.well {
-  position: relative;
-  padding: 6px 6px 6px 6px;
-  margin-bottom: 10px;
-}
-
-  .well .title {
-    position: absolute;
-    top: -10px;
-    left: 11px;
-    font-weight: 600;
-    font-size: 12px;
-  }
-
-.monto {
-  font-weight: 600;
-  text-align: center;
-  margin: -8px 0px 0px;
-  font-size: 15px;
-  text-transform: uppercase;
-}
-
-.lbval {
-  display: inline-flex;
-  padding-left: 0;
-  margin: 2px;
-}
-
-  .lbval li {
-    position: relative;
-    display: block;
-    padding: 2px 2px;
-    margin-bottom: -1px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    font-size: 12px;
-  }
-
-    .lbval li:first-child {
-      border-top-left-radius: 6px;
-      border-bottom-left-radius: 6px;
-      min-width: 90px;
-      text-align: right;
-      background-color: #ddd;
-      font-weight: 500;
-    }
-
-    .lbval li:last-child {
-      border-top-right-radius: 6px;
-      border-bottom-right-radius: 6px;
-      text-align: left;
-      min-width: 75px;
-    }
-
-.main-frame table thead tr th {
+#ItemsList thead tr th {                        /* Celdas del encabezamiento de la tabla de items*/
   background-color: #eee;
   padding: 4px 6px;
   font-size: 13px;
@@ -73,186 +19,11 @@ for details on configuring this project to bundle and minify static web assets. 
   white-space: nowrap;
 }
 
-.desc, .asc {
-  background-color: #ddd !important;
-  color: #337ab7;
-}
-
-.main-frame .table-list .selrow {
-  background-color: #d9edf7;
-}
-
-.main-frame .table-list thead tr .desc::after {
-  content: " ⬆";
-}
-
-.main-frame .table-list thead tr .asc::after {
-  content: " ⬇";
-}
-
-.main-frame .table-list tbody tr td.pname {
-  width: 100%;
-  text-align: left;
-  overflow: hidden;
-}
-
-.main-frame table tbody tr td {
+#CochesList tbody tr td,
+#ItemsList tbody tr td {                        /* Celdas del cuerpo de la tabla de items*/
   padding: 4px 6px;
   font-size: 12px;
   white-space: nowrap;
-}
-
-.main-frame .table-list tbody tr:hover {
-  background-color: #C0F1F9;
-  cursor: pointer;
-}
-
-.main-frame .table-list tbody tr {
-  position: relative;
-}
-
-.main-frame .table {
-  margin-bottom: 0px;
-}
-
-.main-frame .table-totals {
-  background-color: #eee;
-  font-weight: bold;
-  max-width: none;
-  width: auto;
-  margin-bottom: 10px;
-}
-
-.main-frame .pagination {
-  margin-top: 0px;
-  display: flex;
-  justify-content: center
-}
-
-.main-frame .table-totals tbody td:nth-child(2) {
-  text-align: right;
-}
-
-.rojo {
-  color: red;
-  font-weight: bold;
-}
-
-.verde {
-  color: green;
-  font-weight: bold;
-}
-
-#mnu-btn {
-  display: none;
-}
-
-.toolbar {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  padding: 0px 8px;
-  border-left: 1px solid #ddd;
-  border-right: 1px solid #ddd;
-}
-
-  .toolbar label {
-    display: flex;
-    align-items: center;
-    font-weight: normal;
-    align-self: center;
-    margin: 6px 0px;
-  }
-
-  .toolbar .chk {
-    padding: 4px 0px;
-    width: 140px;
-  }
-
-  .toolbar input {
-    margin: 0 4px;
-  }
-
-  .toolbar .btn {
-    padding: 4px 9px;
-    height: 28px;
-    margin: 6px 2px;
-  }
-
-#filter {
-  width: 250px;
-}
-
-#mnu-vends {
-  margin: 0px
-}
-
-#row-mnu {
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  position: absolute;
-  background-color: #fff;
-  z-index: 2000;
-  left: 0px;
-  top: 1.5em;
-  height: 0px;
-  overflow-y: hidden;
-  box-shadow: 1px 1px 1px 1px #aaa;
-}
-
-  #row-mnu ul.nav {
-    bottom: 40px;
-    height: 40px;
-    position: relative;
-    font-size: 14px;
-  }
-
-  #row-mnu li {
-    display: inline-block;
-  }
-
-@media (max-width:767px) {
-  .table-responsive {
-    margin-bottom: 0px;
-  }
-}
-
-@media (max-width:578px) {
-  .nav > li > a {
-    padding: 10px 5px;
-    font-size: 12px;
-  }
-}
-
-@media (max-width:410px) {
-  .col-xs-6 {
-    width: 100%;
-  }
-
-  .dropdown-menu > li > a {
-    padding: 10px 20px;
-  }
-
-  #mnu-tab {
-    display: none;
-  }
-
-  #mnu-btn {
-    display: table;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 6px;
-  }
-}
-
-@media (max-width:470px) {
-  .monto {
-    margin: -8px 0px 8px 0px;
-  }
-
-  #pages .del {
-    display: none;
-  }
 }
 
 .tab-frame {                                    /* Define un frame asociado con el contenido de un tab*/
@@ -289,11 +60,13 @@ for details on configuring this project to bundle and minify static web assets. 
 .btn-group { margin-bottom: 8px; }              /* Hace que los combos se separen verticalmente*/
 
 #FindRecambio button {                          /* Separa el boton para buscar recambios*/
-  width: 70px;
+  _width: 70px;
   margin-left:50px;
   }
 
-.table-responsive { margin-bottom: 15px; }      /* Pone un margen debajo de lista de recambios*/
+.table-responsive {                             /* Deja un poco de margen al final de la tabla para el scroll*/
+  padding-bottom: 15px;
+}     
 
 .dropdown-menu {                                /* Hace que cuando sean muchos items en la lista permita scrollear*/
   max-height: 300px;
@@ -319,8 +92,74 @@ for details on configuring this project to bundle and minify static web assets. 
   background-color: lightgray;
 }
 
-#ItemsList thead tr th:hover {
+#ItemsList thead tr .desc,                      /* Para las columnas oredenadas se cambia el color del fondo y la letra*/
+#ItemsList thead tr .asc {
+  background-color: #ddd !important;
+  color: #337ab7;
+}
+
+#ItemsList thead tr .desc::after {              /* Inserta una flecha para las columnas ordenadas*/
+  content: " ⬆";
+}
+
+#ItemsList thead tr .asc::after {               /* Inserta una flecha para las columnas ordenadas*/
+  content: " ⬇";
+}
+
+#ItemsList thead tr th:hover {                  /* Resalta cuando se pasa por arriba del encabezamiento de las columnas */
   background-color: #C0F1F9;
   cursor: pointer;
 }
 
+.btn-close-msg {                                /* Boton los mensajes de alertas */
+  float: right;
+  width: 20px;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  padding-bottom: 2px;
+}
+
+.coche-name:hover,
+#ItemsList > tbody > tr:hover {                 /* Pone cursor cuando se pasa por arriba de las filas*/
+  background-color: #f0f0f0;
+  cursor: pointer;
+}
+
+.coche-list {                                   /* Pone los coches en una lista fluida */
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.coche-name {                                   /* Aspecto como se muestra un nombre de un coche */
+  border-radius: 8px;
+  margin: 3px;
+  padding: 1px 10px;
+  border: gray 1px solid;
+}
+
+.coche-name a,
+.coche-name a:hover,
+.coche-name a:focus {                           /* Controla la rayita y el color que sale en los links */
+  text-decoration: none;
+  color: darkslategray;
+}
+
+.columns-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-bottom: 15px;
+  grid-column-gap: 10px;
+}
+
+.column {
+  height: 650px;
+  background-color: #f4f4f4;
+  border: #999 1px solid;
+  overflow: auto;
+}
+
+#CochesList tbody tr td input {
+  vertical-align: text-bottom;
+}
+ 

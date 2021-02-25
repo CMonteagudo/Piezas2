@@ -1,0 +1,5 @@
+Comando para crear el modelo (Cambiar el path si es necesario, o el directorio donde se va a poner)
+dotnet ef dbcontext scaffold "Server=(LocalDB)\MSSQLLocalDB;Database=D:\01_Proyectos\_Web\Piezas2\Core\DataBase\Piezas.mdf;Trusted_Connection=True" Microsoft.EntityFrameWorkCore.SqlServer -o Core\Model
+
+Este el data source de la base de datos que esta en el poryecto
+Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=D:\01_Proyectos\_Web\Piezas2\DataBase\Piezas.mdf;Integrated Security=True;Connect Timeout=30
