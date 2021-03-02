@@ -18,6 +18,7 @@ namespace Piezas2.Core.Model
       }
 
     public virtual DbSet<Categorium> Categoria { get; set; }
+    public virtual DbSet<SubCategoria> SubCategoria { get; set; }
     public virtual DbSet<Coche> Coches { get; set; }
     public virtual DbSet<Fabricante> Fabricantes { get; set; }
     public virtual DbSet<Item> Items { get; set; }

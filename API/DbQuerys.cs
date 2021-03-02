@@ -65,9 +65,19 @@ namespace Piezas2
     //-----------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Obtiene el listado de todas las categorias usadas en el sistema </summary>
     [HttpGet( "/Api/Categorias" )]
-    public ActionResult<Categorias> GetCategorias()
+    public ActionResult<List<IdName>> GetCategorias()
       {
-      return new Categorias( HttpContext );
+      var cat = new Categorias( HttpContext );
+      return cat.getCategorias();
+      }
+
+    //-----------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary> Obtiene el listado de todas las sub-categorias usadas en el sistema </summary>
+    [HttpGet( "/Api/SubCategorias" )]
+    public ActionResult<List<IdName>> GetSubCategorias()
+      {
+      var cat = new Categorias( HttpContext );
+      return cat.getSubCategorias();
       }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------

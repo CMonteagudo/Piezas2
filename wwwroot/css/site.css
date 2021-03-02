@@ -46,7 +46,7 @@ for details on configuring this project to bundle and minify static web assets. 
 }
 
 .btn.btn-default {                              /* Hace que todos los combos tengan el mismo tamaño*/
-  width: 150px;
+  width: 160px;
   padding-left: 5px;
   text-align: left;
   padding-right: 5px;
@@ -121,6 +121,7 @@ for details on configuring this project to bundle and minify static web assets. 
 }
 
 .coche-name:hover,
+#CochesList > tbody > tr:hover,
 #ItemsList > tbody > tr:hover {                 /* Pone cursor cuando se pasa por arriba de las filas*/
   background-color: #f0f0f0;
   cursor: pointer;
@@ -152,14 +153,104 @@ for details on configuring this project to bundle and minify static web assets. 
   grid-column-gap: 10px;
 }
 
-.column {
+#colItems, #colCoches {
+  position: relative;
   height: 650px;
   background-color: #f4f4f4;
   border: #999 1px solid;
+}
+
+#colItems {
   overflow: auto;
+}
+
+#CochesHeard {
+  min-height: 50px;
+  padding: 12px 100px 8px 8px;
+}
+
+#CochesHeard h4{
+  margin: 0px;
+}
+
+#Update {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+
+#CochesBody {
+  overflow: auto;
+  height: 597px;
 }
 
 #CochesList tbody tr td input {
   vertical-align: text-bottom;
 }
- 
+
+.filters-btn {
+  margin-bottom: -3px;
+}
+
+.filters-btn > .btn:first-child {
+  background-color: transparent;
+ /* margin-right: -12px;*/
+  padding:0px;
+}
+
+.filters-popup {
+  padding: 10px;
+  width: 450px;
+  margin: -5px 10px;
+  overflow: inherit;
+}
+
+.filters-popup > .btn-group {
+    display: block;
+}
+
+#FindForName > input {
+  width: 185px;
+  padding-left: 5px;
+  height: 32px;
+}
+
+.filters-popup #FindRecambio button {
+  width: 70px;
+  margin: auto;
+  display: block;
+  float: none;
+}
+
+#CochesList label {
+  margin-bottom: 2px;
+  font-weight: normal;
+}
+
+.flex-grid {
+  display:flex; 
+  flex-direction:row; 
+  flex-wrap:wrap;
+}
+
+.flex-grid .item {
+  margin-left: 10px !important;
+ }
+
+.row-selected {
+  background-color:lightskyblue !important;
+}
+
+
+#FindCoche {
+  width: 185px;
+  margin-left: 10px;
+}
+
+#FindCoche button {
+  float: none;
+  width: 100px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}

@@ -21,4 +21,10 @@ namespace Piezas2.Core.Model
     [JsonIgnore]
     public virtual ICollection<Item> Items { get; set; }
     }
+
+  public partial class SubCategoria
+    {
+    public int Id { get; set; }
+    public string Nombre { get; set; }
+    }
   }

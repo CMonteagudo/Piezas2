@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Text.Json;
 using Microsoft.AspNetCore.Html;
+using Piezas2.Core.Model;
 
 namespace Piezas2.Models
   {
@@ -14,8 +15,16 @@ namespace Piezas2.Models
   public class RecambioUsoModel
     {
     public int Id { set; get; }
-    public Categorias Categorias { set; get; }
     public Fabricantes Fabricantes{ set; get; }
+    public List<IdName> Categorias { set; get; }
+    public List<IdName> SubCategorias { set; get; }
+
+    public MarcaCoches Marcas { set; get; }
+    public ModelosMarca Modelos { set; get; }
+    public Motores Motores { set; get; }
+
+    public List<CocheDesc> Coches { set; get; }
+    public List<Item> Items { set; get; }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Construye el objeto y obtiene los datos de la base de datos </summary>
@@ -23,12 +32,35 @@ namespace Piezas2.Models
       {
       this.Id = id;
 
-      Categorias  = new Categorias( HttpCtx );
       Fabricantes = new Fabricantes( HttpCtx );
+
+      var cat = new Categorias( HttpCtx );
+
+      Categorias = cat.getCategorias();
+      SubCategorias = cat.getSubCategorias();
+
+      Marcas = new MarcaCoches( HttpCtx );
+      Modelos = new ModelosMarca( null, HttpCtx );
+      Motores = new Motores( "en uso", null, HttpCtx );
+
+      var coches = new RecambioUsos( 0, HttpCtx );
+      Coches = coches.UsoInCoches( 0 ).Coches;
+
+      var rec = new Recambios( "0/0/0/0/0/Order-4/Range-0-10000", HttpCtx );
+      Items = rec.Items;
       }
 
-    public HtmlString CategoriasToJson()  => new HtmlString( JsonSerializer.Serialize( Categorias.Items ) );
     public HtmlString FabricantesToJson() => new HtmlString( JsonSerializer.Serialize( Fabricantes.Items ) );
+    public HtmlString CategoriasToJson() => new HtmlString( JsonSerializer.Serialize( Categorias ) );
+    public HtmlString SubCategoriasToJson() => new HtmlString( JsonSerializer.Serialize( SubCategorias ) );
+
+    public HtmlString MarcasToJson() => new HtmlString( JsonSerializer.Serialize( Marcas.Items ) );
+    public HtmlString ModelosToJson() => new HtmlString( JsonSerializer.Serialize( Modelos.Items ) );
+    public HtmlString MotoresToJson() => new HtmlString( JsonSerializer.Serialize( Motores.Items ) );
+
+    public HtmlString CochesToJson() => new HtmlString( JsonSerializer.Serialize( Coches ) );
+    public HtmlString ItemsToJson() => new HtmlString( JsonSerializer.Serialize( Items ) );
+
     }
   }
   

@@ -22,12 +22,12 @@
 	39000 - plastiquería e insonorización de la carrocería
 40000 - Freno
 	41000 - Discos de freno
-	42000 - pastillas de freno
+	42000 - Pastillas de freno
 	43000 - Mangueras de freno
 	44000 - Sistema de ABS
 	45000 - Freno de tambor
 	46000 - Freno de mano
-	47000 - pinzas-de-freno
+	47000 - Pinzas de freno
 	48000 - Bomba de freno
 50000 - Suspensión
 	51000 - Amortiguadores

@@ -56,10 +56,15 @@ namespace Piezas2.Core
       {
       var datos = new CochesInUso();
 
-      var Recamb = DbCtx.Items.Find( itemId );
-      if( Recamb == null ) return datos;
+      if( itemId != 0 )
+        { 
+        var Recamb = DbCtx.Items.Find( itemId );
+        if( Recamb == null ) return datos;
 
-      datos.Nombre = Recamb.Nombre;
+        datos.Nombre = Recamb.Nombre;
+        }
+      else
+        datos.Nombre = "Todos";
 
       var coches  = DbCtx.Coches.Include( c => c.MarcaNavigation )
                                 .Include( c => c.ModeloNavigation )

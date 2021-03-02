@@ -88,13 +88,22 @@ class ComboBox
     return true;
     }
 
-  // Obtiene el item seleccionado, de no haber ninguno retorna 0
+  // Obtiene el item el identificador del item seleccionado, de no haber ninguno retorna 0
   SelectedId()
     {
     var i = this.selItem;
     if( i <= 0 || i >= this.Items.length ) return 0;
 
     return this.Items[i].Id;
+    }
+
+  // Obtiene el item el nombre del item seleccionado, de no haber ninguno retorna ""
+  SelectedName()
+    {
+    var i = this.selItem;
+    if( i <= 0 || i >= this.Items.length ) return 0;
+
+    return this.Items[i].Name;
     }
 
 
@@ -142,24 +151,28 @@ class UIFilters
     this.Datos = Datos;
 
     this.FabNames = new Map();                                                          // Crea un nomenclador para fabricantes
-    for( let item of this.Datos.Fabric ) this.FabNames.set( item.Id, item.Name );
+    if( this.Datos.Fabric )
+      for( let item of this.Datos.Fabric ) this.FabNames.set( item.Id, item.Name );
 
     this.CatNames = new Map();                                                          // Crea un nomenclador para categorias
-    for( let item of this.Datos.Categor ) this.CatNames.set( item.Id, item.Name );
+    if( this.Datos.Categor )
+      for( let item of this.Datos.Categor ) this.CatNames.set( item.Id, item.Name );
 
     this.CreateCbMarca( IDs.Marca );                                                    // Crea todos los objetos para manejar los comboboxs
     this.CreateCbModelo( IDs.Modelo );
     this.CreateCbMotores( IDs.Motor );
 
     this.CreateCbCategorias( IDs.Categor );
+    this.CreateCbSubCategorias( IDs.SubCate );
     this.CreateCbFabricantes( IDs.Fabric );
 
     if( this.cbMotor  ) this.cbMotor.SelectById ( localStorage[ "lastSelMotor"  ] || 0 );                   // Restaura el último valor usado para cada uno de los combos
     if( this.cbModelo ) this.cbModelo.SelectById( localStorage[ "lastSelModelo" ] || 0 );
     if( this.cbMarca  ) this.cbMarca.SelectById ( localStorage[ "lastSelMarca"  ] || 0 );
 
-    this.cbCategoria.SelectById ( localStorage[ "lastSelCategor" ] || 0 );
-    this.cbFabricante.SelectById( localStorage[ "lastSelFabric"  ] || 0 );
+    if( this.cbSubCategoria ) this.cbSubCategoria.SelectById ( localStorage[ "lastSelSubCategor" ] || 0 );
+    if( this.cbCategoria    ) this.cbCategoria.SelectById ( localStorage[ "lastSelCategor"    ] || 0 );
+    if( this.cbFabricante   ) this.cbFabricante.SelectById( localStorage[ "lastSelFabric"  ] || 0 );
     }
 
   // Obtiene un nomenclador para los fabricantes
@@ -213,7 +226,11 @@ class UIFilters
   // Crea un objeto para manejar el combo con las categorias de los recambios
   CreateCbCategorias( ID )
     {
-    this.cbCategoria = new ComboBox( ID, (id) => { localStorage[ "lastSelCategor" ] = id; } );
+    if( !ID ) return;
+    this.cbCategoria = new ComboBox( ID, (id) => { 
+                                                 localStorage[ "lastSelCategor" ] = id; 
+                                                 if( this.cbSubCategoria ) this.FillCbSubCategoria();
+                                                 } );
 
     this.cbCategoria.AddItem( 0, "Todas las Categorias", 1 );
 
@@ -221,9 +238,42 @@ class UIFilters
       this.cbCategoria.AddItem( item.Id, item.Name );
     }
 
+  // Crea un objeto para manejar el combo con las sub-categorias de los recambios
+  CreateCbSubCategorias( ID )
+    {
+    if( !ID ) return;
+    this.cbSubCategoria = new ComboBox( ID, (id) => { localStorage[ "lastSelSubCategor" ] = id; } );
+
+    this.FillCbSubCategoria( true );
+    }
+
+  // Llena el combo de subcategorias de acuerdo a la categoria que este seleccionada
+  FillCbSubCategoria( noSel )
+    {
+    var nowCat    = this.cbCategoria.SelectedId();
+    var nowSubCat = this.cbSubCategoria.SelectedId();
+
+    this.cbSubCategoria.Clear();
+    this.cbSubCategoria.AddItem( 0, "Todas las Subcategorias", 1 );
+
+    var nowSel = 0;
+    for( let item of this.Datos.SubCate )
+      {
+      if( nowCat==0 || parseInt(nowCat/10000)==parseInt(item.Id/10000) )
+        {
+        this.cbSubCategoria.AddItem( item.Id, item.Name );
+  
+        if( item.Id==nowSubCat ) nowSel=item.Id;
+        }
+      }
+
+    if( !noSel ) this.cbSubCategoria.SelectById( nowSel );
+    }
+
   // Crea un objeto para manejar el combo con los fabricantes de los recambios
   CreateCbFabricantes( ID )
     {
+    if( !ID ) return;
     this.cbFabricante = new ComboBox( ID, (id) => { localStorage[ "lastSelFabric" ] = id; } );
 
     this.cbFabricante.AddItem( 0, "Todas los Fabricantes", 1 );
@@ -286,15 +336,26 @@ class UIFilters
   // Obtiene los segmentos de Url que representan los datos seleccionados
   GetUrlSegments()
     {
-    var marca  = this.cbMarca?  this.cbMarca.SelectedId() : "0";
-    var modelo = this.cbModelo? this.cbModelo.SelectedId() : "0";
-    var motor  = this.cbMotor?  this.cbMotor.SelectedId() : "0";
-    var fabric = this.cbFabricante.SelectedId();
-    var categ  = this.cbCategoria.SelectedId();
+    var marca  = this.GetSelMarca();
+    var modelo = this.GetSelModelo();
+    var motor  = this.GetSelMotor();
+    var fabric = this.GetSelFrabricante();
+    var categ  = this.GetSelCategoria();
 
     return marca + "/" + modelo + "/" + motor + "/" + categ + "/" + fabric;
     }
 
+  GetSelMarca()   { return this.cbMarca?  this.cbMarca.SelectedId()  : "0"};
+  GetSelModelo()  { return this.cbModelo? this.cbModelo.SelectedId() : "0"};
+  GetSelMotor()   { return this.cbMotor?  this.cbMotor.SelectedId()  : "0"};
+
+  GetSelMarcaName()   { return this.cbMarca?  this.cbMarca.SelectedName()  : ""};
+  GetSelModeloName()  { return this.cbModelo? this.cbModelo.SelectedName() : ""};
+  GetSelMotorName()   { return this.cbMotor?  this.cbMotor.SelectedName()  : ""};
+
+  GetSelFrabricante()  { return this.cbFabricante?   this.cbFabricante.SelectedId()   : "0"};
+  GetSelCategoria()    { return this.cbCategoria?    this.cbCategoria.SelectedId()    : "0"};
+  GetSelSubCategoria() { return this.cbSubCategoria? this.cbSubCategoria.SelectedId() : "0"};
   }
 
 // Muesta un mensaje con una alerta para el usuario dentro de la misma página web
@@ -354,12 +415,15 @@ class ServerConnection
       url: Url, body:this.body, method:this.metodo,
       complete: (xhr) =>
         {
-        if( cur ) cur.Hide();
+//        setTimeout( ()=>                        // Para emular una demora en la carga de los datos
+//          {
+          if( cur ) cur.Hide();
 
-        var json = this.checkReturn( xhr );
+          var json = this.checkReturn( xhr );
 
-        if( json.Error == 0 ) funResult( json );
-        else                  this.fError( json );
+          if( json.Error == 0 ) funResult( json );
+          else                  this.fError( json );
+//          }, 3000 );
         }
       } );
     }
@@ -371,16 +435,16 @@ class ServerConnection
       {
       if( xhr.status === 200 )                                      // La conexión termino OK
         {
-        try 
-          { 
-          var jSon = JSON.parse( xhr.responseText );                // Valida si la respuesta es un JSON ok
-          if( !jSon.Error ) jSon.Error = 0;                         // Marca que no hay error, si no venia ninguno del servidor
-          return jSon;
-          }             
-        catch( e )                                                  // La respuesta no se pudo convertir a JSON
-          { 
-          return { Error: -1, sError: "La respuesta del servidor fue erronea" }; 
-          }   
+          try 
+            { 
+            var jSon = JSON.parse( xhr.responseText );                // Valida si la respuesta es un JSON ok
+            if( !jSon.Error ) jSon.Error = 0;                         // Marca que no hay error, si no venia ninguno del servidor
+            return jSon;
+            }             
+          catch( e )                                                  // La respuesta no se pudo convertir a JSON
+            { 
+            return { Error: -1, sError: "La respuesta del servidor fue erronea" }; 
+            }   
         }
 
       var sErr;

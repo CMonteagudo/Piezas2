@@ -11,16 +11,33 @@ namespace Piezas2.Core
   /// <summary> Obtiene la lista de todas las categorias de recambio disponibles en la base de datos </summary>
   public class Categorias
     {
-    /// <summary> Lista de todas las categorias de recambios que hay en la base de datos </summary>
-    public List<IdName> Items { get; set; } = new List<IdName>();
-
+    private DbPiezasContext DbCtx;
     //---------------------------------------------------------------------------------------------------------------------------------------
-    /// <summary> Construye el objeto y obtiene las categorias de la base de datos </summary>
+    /// <summary> Construye el objeto obtener categorias y subcategorias de la base de datos </summary>
     public Categorias( HttpContext HttpCtx )
       {
-      var DbCtx = (DbPiezasContext) HttpCtx.RequestServices.GetService(typeof(DbPiezasContext));                                // Obtiene contexto a la BD
+      DbCtx = (DbPiezasContext) HttpCtx.RequestServices.GetService(typeof(DbPiezasContext));                        // Obtiene contexto a la BD
 
-      Items = DbCtx.Categoria.OrderBy(x=>x.Nombre).Select( x => new IdName( x.Id, x.Nombre ) ).ToList();
+      }
+
+    //---------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary> Obtiene el listado de todas las categorias que hay en la base de dataos </summary>
+    public List<IdName> getCategorias()
+      {
+      return DbCtx.Categoria.OrderBy( x => x.Nombre ).Select( x => new IdName( x.Id, x.Nombre ) ).ToList();
+      }
+
+    //---------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary> Obtiene el listado de todas las sub-categorias que hay en la base de dataos </summary>
+    public List<IdName> getSubCategorias()
+      {
+      var Items = new  List<IdName>();
+
+      foreach( var cat in DbCtx.SubCategoria )
+        if( cat.Id % 10000 != 0 )
+          Items.Add( new IdName( cat.Id, cat.Nombre )  );
+
+      return Items;
       }
 
     }

@@ -16,8 +16,9 @@ namespace Piezas2.Models
     public MarcaCoches Marcas { set; get; }
     public ModelosMarca Modelos { set; get; }
     public Motores Motores { set; get; }
-    public Categorias Categorias { set; get; }
     public Fabricantes Fabricantes{ set; get; }
+    public List<IdName> Categorias { set; get; }
+    public List<IdName> SubCategorias { set; get; }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Construye el objeto y obtiene los datos de la base de datos </summary>
@@ -27,15 +28,20 @@ namespace Piezas2.Models
       Modelos = new ModelosMarca( null, HttpCtx );
       Motores = new Motores( "en uso", null, HttpCtx );
 
-      Categorias  = new Categorias( HttpCtx );
       Fabricantes = new Fabricantes( HttpCtx );
+
+      var cat = new Categorias( HttpCtx );
+
+      Categorias    = cat.getCategorias();
+      SubCategorias = cat.getSubCategorias();
       }
 
-    public HtmlString MarcasToJson( )     => new HtmlString( JsonSerializer.Serialize( Marcas.Items) );
-    public HtmlString ModelosToJson()     => new HtmlString( JsonSerializer.Serialize( Modelos.Items ) );
-    public HtmlString MotoresToJson()     => new HtmlString( JsonSerializer.Serialize( Motores.Items ) );
-    public HtmlString CategoriasToJson()  => new HtmlString( JsonSerializer.Serialize( Categorias.Items ) );
-    public HtmlString FabricantesToJson() => new HtmlString( JsonSerializer.Serialize( Fabricantes.Items ) );
+    public HtmlString MarcasToJson( )       => new HtmlString( JsonSerializer.Serialize( Marcas.Items) );
+    public HtmlString ModelosToJson()       => new HtmlString( JsonSerializer.Serialize( Modelos.Items ) );
+    public HtmlString MotoresToJson()       => new HtmlString( JsonSerializer.Serialize( Motores.Items ) );
+    public HtmlString FabricantesToJson()   => new HtmlString( JsonSerializer.Serialize( Fabricantes.Items ) );
+    public HtmlString CategoriasToJson()    => new HtmlString( JsonSerializer.Serialize( Categorias ) );
+    public HtmlString SubCategoriasToJson() => new HtmlString( JsonSerializer.Serialize( SubCategorias ) );
     }
   }
   
