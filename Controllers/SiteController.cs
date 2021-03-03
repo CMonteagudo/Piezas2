@@ -33,11 +33,23 @@ namespace Piezas2.Controllers
       }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
-    ///<summary> Página principal del sitio </summary>
+    ///<summary> Página para mostrar los datos de un recambio, Nota: el nombre se ignora </summary>
     [Route( "/recambio/{id:int}/{name?}" )]
     public IActionResult Recambio( int id )
       {
       var model = new RecambioModel( id, HttpContext );
+      return View( model );
+      }
+
+    //---------------------------------------------------------------------------------------------------------------------------------------
+    ///<summary> Página para mostrar los datos de un recambio </summary>
+    [Route( "/buscar-recambio/{tipo?}" )]
+    public IActionResult Busqueda( string tipo="" )
+      {
+      ViewData["FindType"] = tipo;
+
+      var model = new FindRecambioModel( HttpContext );
+
       return View( model );
       }
 

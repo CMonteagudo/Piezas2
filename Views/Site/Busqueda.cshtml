@@ -1,0 +1,315 @@
+﻿@model Piezas2.Models.FindRecambioModel
+@{
+  ViewData["Title"] = "Busqueda de recambios";
+}
+
+<div class="main-frame">
+
+  <h3 style="text-align: center;"> Buscar recambios de coche </h3>
+
+  <ul class="nav nav-tabs">
+    <li class="nav-item active"><a class="tab-title nav-link" data-toggle="tab" href="#TabInfo">Información</a></li>
+    <li class="nav-item"><a class="tab-title nav-link" data-toggle="tab" href="#TabCode">Código</a></li>
+    <li class="nav-item"><a class="tab-title nav-link" data-toggle="tab" href="#TabName">Nombre</a></li>
+  </ul>
+
+  <div class="tab-content">
+    <div class="tab-frame tab-pane fade in active" id="TabInfo">
+      <div class="btn-group" id="comboMarca">
+        <button type="button" class="btn btn-default">&emsp;</button>
+        <button type="button" class="btn dropdown-toggle btn-primary" data-toggle="dropdown" aria-expanded="false">
+          <span class="caret"></span><span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <ul class="dropdown-menu" role="menu"></ul>
+      </div>
+
+      <div class="btn-group" id="comboModelo">
+        <button type="button" class="btn btn-default">&emsp;</button>
+        <button type="button" class="btn dropdown-toggle btn-primary" data-toggle="dropdown" aria-expanded="false">
+          <span class="caret"></span><span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <ul class="dropdown-menu" role="menu"></ul>
+      </div>
+
+      <div class="btn-group" id="comboMotor">
+        <button type="button" class="btn btn-default">&emsp;</button>
+        <button type="button" class="btn dropdown-toggle btn-primary" data-toggle="dropdown" aria-expanded="false">
+          <span class="caret"></span><span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <ul class="dropdown-menu" role="menu"></ul>
+      </div>
+
+      <div class="btn-group" id="comboCategoria">
+        <button type="button" class="btn btn-default">&emsp;</button>
+        <button type="button" class="btn dropdown-toggle btn-primary" data-toggle="dropdown" aria-expanded="false">
+          <span class="caret"></span><span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <ul class="dropdown-menu" role="menu"></ul>
+      </div>
+
+      <div class="btn-group" id="comboFabricante">
+        <button type="button" class="btn btn-default">&emsp;</button>
+        <button type="button" class="btn dropdown-toggle btn-primary" data-toggle="dropdown" aria-expanded="false">
+          <span class="caret"></span><span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <ul class="dropdown-menu" role="menu"></ul>
+      </div>
+
+      <div class="btn-group" id="FindByInfo">
+        <button type="button" class="btn btn-primary">Buscar</button>
+      </div>
+    </div>
+
+    <div class="tab-frame tab-pane fade" id="TabCode">
+        <div class="btn-group label-input">
+          <label id="labelCode" for="inputCode" class="control-label">Código:</label>
+          <input id="inputCode" class="form-control" placeholder="Código del recambio">
+          <button type="button" class="btn btn-primary" id="FindByCode" >Buscar</button>
+        </div>
+    </div>
+
+    <div class="tab-frame tab-pane fade" id="TabName">
+        <div class="btn-group label-input">
+          <label id="labelName" for="inputName" class="control-label">Nombre del Recambio:</label>
+          <input id="inputName" class="form-control" placeholder="Palabra o frase del nombre">
+          <button type="button" class="btn btn-primary" id="FindByName" >Buscar</button>
+        </div>
+    </div>
+
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped hidden" id="ItemsList">
+      <thead>
+        <tr>
+          <th id="Fd_0">ID</th>
+          <th id="Fd_4">Recambio</th>
+          <th id="Fd_2">Categoría</th>
+          <th id="Fd_3">Fabricante</th>
+          <th id="Fd_1">Código</th>
+          <th id="Fd_5">Precio</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+
+    <div id="MsgsForFind" ></div>
+
+    <div class="btn-group hidden" id="FindMore">
+      <button type="button" class="btn btn-primary">Buscar más recambios</button>
+      <div id="nowRec"></div>
+    </div>
+
+  </div>
+
+</div>
+
+@section Scripts{
+  <script type="text/javascript">
+
+    var FindType = "@ViewData["FindType"]";
+
+    // Datos para todos los combos de seleccion de recamios
+    var Datos = {
+                Marcas : @Model.MarcasToJson(),
+                Modelos: @Model.ModelosToJson(),
+                Motores: @Model.MotoresToJson(),
+                Categor: @Model.CategoriasToJson(),
+                Fabric : @Model.FabricantesToJson()
+                };
+
+    // Identificadores de los combos para la seleccion de recambios
+    var CbIDs = {
+                Marca  : "#comboMarca",
+                Modelo : "#comboModelo",
+                Motor  : "#comboMotor",
+                Categor: "#comboCategoria",
+                Fabric : "#comboFabricante"
+                };
+
+    // Datos sobre los recambios obtenidos mediante las busquedas
+    var findUrl = "";   // Url de la ultima busqueda realizada con todos los parametros
+    var Items = [];     // Datos de todos los items que se muestran
+    var Filter;         // Datos de los filtros usados para obtener los datos
+    var nItems = 0;     // Número de items totales para los filtros aplicados 
+    var lastItem = 0;   // Número del último item que se ha mostrado
+    var Orden = 0;      // Indice del campo por donde hay que ordenar, 0 => No ordenar, Negativo => Orden desendiente
+
+    var cbDats;         // Maneja la entrada de datos mediante combos
+    var Msg;            // Maneja recuadro para mostrar errores
+    var Conn;           // Objeto que maneja la conexion con el servidor
+
+    // Inicia manipuladores y variables, después de cargarse la página
+    $( function()
+      {
+      cbDats = new UIFilters( Datos, CbIDs );
+
+      // Atención cuando se oprimen diferentes elementos de la interface
+      $("#FindByInfo").on( 'click', OnFindRecambio );   
+      $("#FindMore").on( 'click', OnFindMoreRecambio );  
+      $("#ItemsList thead tr th").on( 'click', OnOrdenar );
+      
+      Msg = new MsgAlert( "#MsgsForFind" );
+      Conn = new ServerConnection( "GET", (s)=>ConnError(s) );
+
+      if( FindType=="info" )  OnFindRecambio();
+
+      } );
+
+    // Muestra los errores producidos durante la solicitud de datos via AJAX
+    function ConnError( json )
+      {
+      var sMsg = "";
+      if( json.Error>0 ) sMsg = "<b> Error:" + json.Error + "</b> ";
+
+      Msg.Show( sMsg + json.sError, "danger");
+      }
+
+    // Se llama al oprimir el botón de buscar recambio
+    function OnFindRecambio()
+      {
+      findUrl = "/Api/Recambios/" + cbDats.GetUrlSegments();
+
+      Conn.Send( findUrl + "/Order-"+Orden, (datos) => 
+        {
+        Items  = datos.items; 
+        Filter = datos.filters; 
+        nItems = datos.count; 
+        lastItem = Items.length;
+
+        FillItemsList();
+        }, "#TabInfo" );
+      }
+
+    // Carga mas recambio en pantallas si todavia no se han cargado todos
+    function OnFindMoreRecambio()
+      {
+      if( !findUrl ) return;
+
+      var Url = findUrl + "/Order-" + Orden + "/Rango-" + lastItem;
+
+      Conn.Send( Url, (datos) => 
+        {
+        Items = datos.items; 
+        lastItem += Items.length;
+
+        FillItemsList( true );
+        }, "#TabInfo" );
+      }
+
+    // Se llama para ordenar los resultados por una columna
+    function OnOrdenar()
+      {
+      var newOrden = $(this).attr("id")[3];
+      Orden = (newOrden==Orden || newOrden==-Orden)? -Orden : newOrden;
+
+      ShowOrder();
+
+      if( !findUrl ) return;
+
+      var Url = findUrl + "/Order-" + Orden;
+
+      Conn.Send( Url, (datos) => 
+        {
+        Items  = datos.items; 
+        Filter = datos.filters; 
+        nItems = datos.count; 
+        lastItem = Items.length;
+
+        FillItemsList();
+        }, "#TabInfo" );
+      }
+
+    // Llena la lista de Itmes con los recambios encontrados
+    function FillItemsList( add = false)
+      {
+      if( !add ) $("#ItemsList").children().eq(1).empty();
+
+      for( var i = 0; i < Items.length; ++i )
+        {
+        var item = Items[i]; 
+        var itemHml = "<tr data-id="+ item.id + ">" +
+                        "<td>"+ item.id         +"</td>" +
+                        "<td>"+ item.nombre     +"</td>" +
+                        "<td>"+ cbDats.CatName(item.categoria)  +"</td>" +
+                        "<td>"+ cbDats.FabName(item.fabricante) +"</td>" +
+                        "<td>"+ item.codigo     +"</td>" +
+                        "<td>"+ (item.precio? item.precio : "") +"</td>" +
+                      "</tr>";
+
+        $("#ItemsList").append( itemHml );
+        }
+
+      $("#ItemsList tbody tr").on( 'click', (e)=>
+        { 
+        var row = $(e.currentTarget);
+        var id  = row.children().eq(0).text();
+        var name  = row.children().eq(1).text();
+
+        window.location = "/recambio/" + id + "/" + name ;
+        } );
+
+
+      ShowInfo();                    // Muestra/esconde información debajo de la tabla de items
+
+      $("#nowRec").text( lastItem + " de " + nItems );
+      }
+
+    // Pone un indicador en el encabezamiento de la tabla para indicar el orden aplicado
+    function ShowOrder()
+      {
+      HideOrder()
+      if( Orden==0 ) return;
+
+      var desend = (Orden<0);
+      var index  = (Orden<0)? -Orden : Orden;
+      
+      var elem = $( "#Fd_"+ index );
+      if( elem.length == 0 ) return;
+
+      //if( desend )                   // Si es la columna por la que se ordena
+      //  elem.append( " <span class='glyphicon glyphicon-chevron-up'></span>" );       // Flechota para arriba
+      //else
+      //  elem.append( " <span class='glyphicon glyphicon-chevron-down'></span>" );     // Flechita para abajo
+
+      //elem.addClass("ColOrder");
+      var cls = desend? "desc" : "asc";                   // Si es la columna por la que se ordena
+      
+      elem.addClass( cls );
+      }
+
+    // Quita el indicador de ordenamiento de cualquier encabezado en la tabla
+    function HideOrder()
+      {
+      //var elem = $("#ItemsList .glyphicon");
+      //if( elem.length == 0 ) return;
+
+      //elem.parent().removeClass("ColOrder");
+      //elem.remove()
+      $("#ItemsList thead tr .desc").removeClass("desc");
+      $("#ItemsList thead tr .asc" ).removeClass("asc" );
+      }
+
+    // Decide la informacion que se debe mostrar y cual no, de acuerdo al resultado de la busqueda
+    function ShowInfo()        
+      {
+      var count = Items.length;
+
+      // Tabla con la lista de recambios encontrados
+      var tabla = $("#ItemsList");
+      if( count == 0 ) tabla.addClass("hidden"); 
+      else             tabla.removeClass("hidden"); 
+
+      // Botón para buscar mas recambios
+      var BtnMas = $("#FindMore");
+      if( lastItem < nItems ) BtnMas.removeClass("hidden");
+      else                    BtnMas.addClass("hidden");
+
+      // Cartel con información
+      if( count == 0 ) Msg.Show( "No se encontro ningún recambio que cumpla las condiciones dadas", "info" );
+      else             Msg.Hide();
+      }
+
+  </script>
+}
