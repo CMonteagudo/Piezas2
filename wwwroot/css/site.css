@@ -3,15 +3,117 @@ for details on configuring this project to bundle and minify static web assets. 
 
 .main-frame {
   max-width: 1080px;
-  margin-top: 5px;
   margin-bottom: 10px;
   padding-top: 8px;
+}
+
+.shadow-border {
   border: 2px solid #aaa;
   border-radius: 10px;
   box-shadow: 5px 5px 30px #808080;
 }
 
-#ItemsList thead tr th {                        /* Celdas del encabezamiento de la tabla de items*/
+body {
+  background-color: #fff;
+  margin: 0;
+  padding: 0;
+}
+
+body, pre,
+p {
+  color: #666;
+  font: 15px/20px 'Segoe UI',Arial;
+}
+
+h1, .title1 {
+  font: 36px/48px 'Segoe UI Light',Arial;
+  color: #333;
+}
+
+h2, .title2 {
+  font: 28px/36px 'Segoe UI Light',Arial;
+  color: #333;
+}
+
+h5, .title5 {
+  color: #333;
+  font: 18px/24px 'Segoe UI',Arial;
+}
+
+h1, h2, h3 {
+  margin-top: 5px;
+}
+
+.marcas {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-column-gap: 40px;
+  margin-top: 10px;
+}
+
+.marcas img {
+  width: 200px;
+  height: 200px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.marcas > div {
+  text-align: center;
+}
+
+.makers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-column-gap: 40px;
+  margin-top: 10px;
+}
+
+.maker {
+  display: flex;
+  flex-direction: row;
+  flex-flow: nowrap;
+  align-items: center;
+}
+
+.maker img {
+  width:59px;
+  height:95px;
+  margin-right: 15px;
+  vertical-align:middle;
+}
+
+a{
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  text-decoration: none !important;
+}
+
+.footer {
+  margin-top: 40px;
+  background-color: #f1f1f1;
+  padding:20px;
+}
+
+.footer-row {
+  display: flex;
+  flex-flow: nowrap;
+  margin-bottom: 20px;
+  justify-content: center;
+  gap: 12px;
+}
+
+.copyright {
+  float: right;
+  margin-top: -40px;
+  margin-right: 50px;
+  font-weight: bold;
+  color: darkslategrey;
+}
+
+#ItemsList thead tr th { /* Celdas del encabezamiento de la tabla de items*/
   background-color: #eee;
   padding: 4px 6px;
   font-size: 13px;
@@ -60,8 +162,7 @@ for details on configuring this project to bundle and minify static web assets. 
 .btn-group { margin-bottom: 8px; }              /* Hace que los combos se separen verticalmente*/
 
 #FindRecambio button {                          /* Separa el boton para buscar recambios*/
-  _width: 70px;
-  margin-left:50px;
+  margin-left:15px;
   }
 
 .table-responsive {                             /* Deja un poco de margen al final de la tabla para el scroll*/

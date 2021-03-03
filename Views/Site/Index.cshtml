@@ -4,12 +4,13 @@
 }
 
 <div class="container main-frame">
-
-  <h3 style="text-align: center;"> Buscar recambios de coche </h3>
+  <h1>Recambios de coche al alcance de tu bolsillo</h1>
+  <p>Esta tienda distribuye recambios para coche de las marcas JP Group, Ridex, TedGum, ET EngineTeam, Kolben Smitd etc. con excelente relación precio/calidad para un grupo de autos del Grupo VAG. Cada pieza de repuesto ha sido escogida en base a la experiencia de varios mecánicos en cuanto a durabilidad en las condiciones de estado de carreteras y calles, temperatura y humedad de diferentes países.</p>
+  <br />
 
   <ul class="nav nav-tabs">
     <li class="nav-item active"><a class="tab-title nav-link" data-toggle="tab" href="#TabInfo">Información</a></li>
-    <li class="nav-item"       ><a class="tab-title nav-link" data-toggle="tab" href="#TabCode">Código</a></li>
+    <li class="nav-item"><a class="tab-title nav-link" data-toggle="tab" href="#TabCode">Código</a></li>
   </ul>
 
   <div class="tab-content">
@@ -69,39 +70,154 @@
         <div class="btn-group">
           <button type="button" class="btn btn-primary">Buscar</button>
         </div>
-      </form>    
+      </form>
     </div>
   </div>
 
-  <div class="table-responsive">
-    <table class="table table-bordered table-striped hidden" id="ItemsList">
-      <thead>
-        <tr>
-          <th id="Fd_0">ID</th>
-          <th id="Fd_4">Recambio</th>
-          <th id="Fd_2">Categoría</th>
-          <th id="Fd_3">Fabricante</th>
-          <th id="Fd_1">Código</th>
-          <th id="Fd_5">Precio</th>
-        </tr>
-      </thead>
-      <tbody>
-      </tbody>
-    </table>
+  <h1>Distribuimos para estas marcas de coche</h1>
+   <div class="marcas">
+    <div>
+      <a title="Piezas de repuesto para AUDI" alt="Piezas de repuesto para AUDI" href="audi.aspx">
+        <img title="Piezas de repuesto para AUDI" src="~/images/LogoAudi.png" alt="" />
+      </a>
+      <h5><a title="Recambios coche para AUDI" class="title5" href="audi.aspx">AUDI</a></h5>
+      <p>Recambios para coches AUDI (modelos: A4, A6, etc.)</p>
+    </div>
+    <div>
+      <a title="Piezas de repuesto para SEAT" alt="Piezas de repuesto para SEAT" href="seat.aspx">
+        <img title="Piezas de repuesto para SEAT" src="~/images/LogoSeat.png" alt="" />
+      </a>
+      <h5><a title="Recambios de coche para SEAT" class="title5" href="seat.aspx">SEAT</a></h5>
+      <p>Recambios para coches SEAT (modelos: Altea, Córdoba, Ibiza, León, Toledo, etc.)</p>
+    </div>
+    <div>
+      <a title="Piezas de repuesto para Škoda" alt="Piezas de repuesto para Škoda" href="skoda.aspx">
+        <img title="Piezas de repuesto para Škoda" src="~/images/LogoSkoda.png" alt="" />
+      </a>
+      <h5><a title="Recambios de coche para Škoda" class="title5" href="skoda.aspx">ŠKODA</a></h5>
+      <p>Recambios para coches Škoda (modelos: Fabia, Octavia, Superb, etc.)</p>
+    </div>
+    <div>
+      <a title="Piezas de repuesto para VW" alt="Piezas de repuesto para VW" href="vw.aspx">
+        <img title="Piezas de repuesto para VW" src="~/images/LogoVW.png" alt="" />
+      </a>
+      <h5><a title="Recambios de coche para VW" class="title5" href="vw.aspx">VOLKSWAGEN</a></h5>
+      <p>Recambios para coches VW (modelos: Jetta, Passat, Polo, etc.)</p>
+    </div>
+  </div>
 
-    <div id="MsgsForFind" ></div>
+  <h1>Distribuimos estas marcas de recambios de coche</h1>
+  <p>Esta tienda distribuye recambios para coche de las marcas ET EngineTeam, JP Group, Kamoka, KolbenSchmidt, Pierburg, Ridex y TedGum para diferentes modelos de coches del Grupo VAG</p>
+  <div class="makers">
+    <div class="maker">
+      <div>
+        <a title="Piezas de repuesto de la marca ET EngineTeam" alttext="Piezas de repuesto de la marca ET EngineTeam" href="recambios-de-coche-et-engineteam.aspx">
+          <img title="Piezas de repuesto de la marca ET EngineTeam" src="Images/LogoEngineteam.png" alt="" />
+        </a>
+      </div>
+      <div>
+        <h3>
+          <a title="Recambios de coche de la marca ET EngineTeam" class="title5" href="recambios-de-coche-et-engineteam.aspx">ET EngineTeam</a>
+        </h3>
+        <p>Recambios para coches del Grupo VAG de la marca ET EngineTeam especializada en componentes del motor</p>
+      </div>
+    </div>
 
-    <div class="btn-group hidden" id="FindMore">
-      <button type="button" class="btn btn-primary">Buscar más recambios</button>
-      <div id="nowRec"></div>
+    <div class="maker">
+      <div>
+        <a title="Piezas de repuesto de la marca JP Group" alttext="Piezas de repuesto de la marca JP Group" href="recambios-de-coche-JP-Group.aspx">
+          <img title="Piezas de repuesto de la marca JP Group" src="Images/LogoJPGroup.png" alt="" />
+        </a>
+      </div>
+      <div>
+        <h3>
+          <a title="Recambios de coche de la marca JP Group" class="title5" href="recambios-de-coche-JP-Group.aspx">JP Group</a>
+        </h3>
+        <p>Recambios para coches del Grupo VAG de la marca JP Group especializada en suspensión, dirección, electricidad, transmisión, etc.</p>
+      </div>
+    </div>
+
+    <div class="maker">
+      <div>
+        <a title="Piezas de repuesto de la marca Kamoka" alttext="Piezas de repuesto de la marca Kamoka" href="recambios-de-coche-kamoka.aspx">
+          <img title="Piezas de repuesto de la marca Kamoka" src="Images/LogoKamoka.png" alt="" />
+        </a>
+      </div>
+      <div>
+        <h3>
+          <a title="Recambios de coche de la marca Kamoka" class="title5" href="recambios-de-coche-kamoka.aspx">Kamoka</a>
+        </h3>
+        <p>Recambios para coches del Grupo VAG de la marca Kamoka especializada en suspensión y transmisión</p>
+      </div>
+    </div>
+
+    <div class="maker">
+      <div>
+        <a title="Piezas de repuesto de la marca KOLBENSCHMIDT" alttext="Piezas de repuesto de la marca KOLBENSCHMIDT" href="recambios-de-coche-kolben-schmidt.aspx">
+          <img title="Piezas de repuesto de la marca KOLBENSCHMIDT" src="Images/LogoKolbenschmidt.png" alt="" />
+        </a>
+      </div>
+      <div>
+        <h3>
+          <a title="Recambios de coche de la marca KOLBENSCHMIDT" class="title5" href="recambios-de-coche-kolben-schmidt.aspx">KOLBENSCHMIDT</a>
+        </h3>
+        <p>Recambios para coches del Grupo VAG de la marca KOLBENSCHMIDT especializada en componentes del motor</p>
+      </div>
+    </div>
+
+    <div class="maker">
+      <div>
+        <a title="Piezas de repuesto de la marca Pierburg" alttext="Piezas de repuesto de la marca Pierburg" href="recambios-de-coche-pierburg.aspx">
+          <img title="Piezas de repuesto de la marca Pierburg" src="Images/LogoPierburg.png" alt="" />
+        </a>
+      </div>
+      <div>
+        <h3>
+          <a title="Recambios de coche de la marca Pierburg" class="title5" href="recambios-de-coche-pierburg.aspx">Pierburg</a>
+        </h3>
+        <p>Recambios para coches del Grupo VAG de la marca Pierburg especializada en componentes del motor</p>
+      </div>
+    </div>
+
+    <div class="maker">
+      <div>
+        <a title="Piezas de repuesto de la marca Ridex" alttext="Piezas de repuesto de la marca Ridex" href="recambios-de-coche-ridex.aspx">
+          <img title="Piezas de repuesto de la marca Ridex" src="Images/LogoRidex.png" alt="" />
+        </a>
+      </div>
+      <div>
+        <h3>
+          <a title="Recambios de coche de la marca Ridex" class="title5" href="recambios-de-coche-ridex.aspx">Ridex</a>
+        </h3>
+        <p>Recambios para coches del Grupo VAG de la marca Ridex  especializada en suspensión, dirección, electricidad, transmisión, etc.</p>
+      </div>
+    </div>
+
+    <div class="maker">
+      <div>
+        <a title="Piezas de repuesto de la marca TEDGUM" alttext="Piezas de repuesto de la marca TEDGUM" href="recambios-de-coche-tedgum.aspx">
+          <img title="Piezas de repuesto de la marca TEDGUM" src="Images/LogoTedGum.png" alt="" />
+        </a>
+      </div>
+      <div>
+        <h3>
+          <a title="Recambios de coche de la marca TEDGUM" class="title5" href="recambios-de-coche-tedgum.aspx">TEDGUM</a>
+        </h3>
+        <p>Recambios para coches del Grupo VAG de la marca TEDGUM especializada en componentes de la suspensión</p>
+      </div>
     </div>
 
   </div>
+
+
+
 
 </div>
 
-@section Scripts{
-  <script type="text/javascript">
+
+
+    @section Scripts{
+      <script type="text/javascript">
 
     // Datos para todos los combos de seleccion de recamios
     var Datos = {
@@ -125,7 +241,7 @@
     var findUrl = "";   // Url de la ultima busqueda realizada con todos los parametros
     var Items = [];     // Datos de todos los items que se muestran
     var Filter;         // Datos de los filtros usados para obtener los datos
-    var nItems = 0;     // Número de items totales para los filtros aplicados 
+    var nItems = 0;     // Número de items totales para los filtros aplicados
     var lastItem = 0;   // Número del último item que se ha mostrado
     var Orden = 0;      // Indice del campo por donde hay que ordenar, 0 => No ordenar, Negativo => Orden desendiente
 
@@ -139,10 +255,10 @@
       cbDats = new UIFilters( Datos, CbIDs );
 
       // Atención cuando se oprimen diferentes elementos de la interface
-      $("#FindRecambio").on( 'click', OnFindRecambio );   
-      $("#FindMore").on( 'click', OnFindMoreRecambio );  
+      $("#FindRecambio").on( 'click', OnFindRecambio );
+      $("#FindMore").on( 'click', OnFindMoreRecambio );
       $("#ItemsList thead tr th").on( 'click', OnOrdenar );
-      
+
       Msg = new MsgAlert( "#MsgsForFind" );
       Conn = new ServerConnection( "GET", (s)=>ConnError(s) );
       } );
@@ -161,11 +277,11 @@
       {
       findUrl = "/Api/Recambios/" + cbDats.GetUrlSegments();
 
-      Conn.Send( findUrl + "/Order-"+Orden, (datos) => 
+      Conn.Send( findUrl + "/Order-"+Orden, (datos) =>
         {
-        Items  = datos.items; 
-        Filter = datos.filters; 
-        nItems = datos.count; 
+        Items  = datos.items;
+        Filter = datos.filters;
+        nItems = datos.count;
         lastItem = Items.length;
 
         FillItemsList();
@@ -179,9 +295,9 @@
 
       var Url = findUrl + "/Order-" + Orden + "/Rango-" + lastItem;
 
-      Conn.Send( Url, (datos) => 
+      Conn.Send( Url, (datos) =>
         {
-        Items = datos.items; 
+        Items = datos.items;
         lastItem += Items.length;
 
         FillItemsList( true );
@@ -200,11 +316,11 @@
 
       var Url = findUrl + "/Order-" + Orden;
 
-      Conn.Send( Url, (datos) => 
+      Conn.Send( Url, (datos) =>
         {
-        Items  = datos.items; 
-        Filter = datos.filters; 
-        nItems = datos.count; 
+        Items  = datos.items;
+        Filter = datos.filters;
+        nItems = datos.count;
         lastItem = Items.length;
 
         FillItemsList();
@@ -218,7 +334,7 @@
 
       for( var i = 0; i < Items.length; ++i )
         {
-        var item = Items[i]; 
+        var item = Items[i];
         var itemHml = "<tr data-id="+ item.id + ">" +
                         "<td>"+ item.id         +"</td>" +
                         "<td>"+ item.nombre     +"</td>" +
@@ -232,7 +348,7 @@
         }
 
       $("#ItemsList tbody tr").on( 'click', (e)=>
-        { 
+        {
         var row = $(e.currentTarget);
         var id  = row.children().eq(0).text();
         var name  = row.children().eq(1).text();
@@ -254,7 +370,7 @@
 
       var desend = (Orden<0);
       var index  = (Orden<0)? -Orden : Orden;
-      
+
       var elem = $( "#Fd_"+ index );
       if( elem.length == 0 ) return;
 
@@ -265,7 +381,7 @@
 
       //elem.addClass("ColOrder");
       var cls = desend? "desc" : "asc";                   // Si es la columna por la que se ordena
-      
+
       elem.addClass( cls );
       }
 
@@ -282,14 +398,14 @@
       }
 
     // Decide la informacion que se debe mostrar y cual no, de acuerdo al resultado de la busqueda
-    function ShowInfo()        
+    function ShowInfo()
       {
       var count = Items.length;
 
       // Tabla con la lista de recambios encontrados
       var tabla = $("#ItemsList");
-      if( count == 0 ) tabla.addClass("hidden"); 
-      else             tabla.removeClass("hidden"); 
+      if( count == 0 ) tabla.addClass("hidden");
+      else             tabla.removeClass("hidden");
 
       // Botón para buscar mas recambios
       var BtnMas = $("#FindMore");
@@ -301,5 +417,5 @@
       else             Msg.Hide();
       }
 
-  </script>
-}
+      </script>
+    }
