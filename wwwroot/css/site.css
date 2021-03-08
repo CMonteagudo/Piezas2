@@ -1,7 +1,7 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 
-.main-frame {
+.main-frame {                                           /* Marco principal para las paginas del sitio */
   max-width: 1080px;
   margin-bottom: 10px;
   padding-top: 8px;
@@ -10,20 +10,16 @@ for details on configuring this project to bundle and minify static web assets. 
   margin-right: auto;
 }
 
-.shadow-border {
+.shadow-border {                                        /* Pone un borde resaltado con sombra */
   border: 2px solid #aaa;
   border-radius: 10px;
   box-shadow: 5px 5px 30px #808080;
 }
 
-body {
+body {                                                  /* Definiciones generales para el cuerpo de la página */
   background-color: #fff;
   margin: 0;
   padding: 0;
-}
-
-body, pre,
-p {
   color: #666;
   font: 15px/20px 'Segoe UI',Arial;
 }
@@ -47,14 +43,20 @@ h1, h2, h3 {
   margin-top: 5px;
 }
 
-.marcas {
+/* --------------------- Bloque donde se muestran las marcas de los coches -----------------------------------------------------------------*/
+.marcas {                                               /* Bloque donde se ponen todas las marcas */
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-column-gap: 40px;
   margin-top: 10px;
 }
 
-.marcas img {
+.marca {                                                /* Recuadro donde se muestra una marca de coche */
+  display: flex;
+  flex-direction: column;
+}
+
+.marcas img {                                           /* Imagen donde se pone el logo de la marca*/
   width: 200px;
   height: 200px;
   display: block;
@@ -62,41 +64,119 @@ h1, h2, h3 {
   margin-right: auto;
 }
 
-.marcas > div {
+.marcas > div {                                         /* Centra toda la información sobre el coche */
   text-align: center;
 }
 
-.marca {
-  display: flex;
-  flex-direction: column;
-}
-
-.makers {
+/* --------------------- Bloque donde se muestran los fabricantes de recambios -------------------------------------------------------------*/
+.makers {                                               /* Bloque donde se ponen los fabricantes de los coches */
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-column-gap: 40px;
   margin-top: 10px;
 }
 
-.maker {
+.maker {                                                /* Recuadro donde se pone cada fabricante */
   display: flex;
   flex-direction: row;
   flex-flow: nowrap;
   align-items: center;
 }
 
-.maker img {
-  width:59px;
+.maker img {                                            /* Imagen donde se pone el logo del fabricante */
+  width:95px;
   height:95px;
   margin-right: 15px;
   vertical-align:middle;
 }
 
-a{
+/* --------------------- Bloque donde se muestran los modelos de los coches -------------------------------------------------------------*/
+.coches {                                               /* Bloque que contiene los modelos de los coches*/
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  grid-column-gap: 30px;
+}
+
+.coche {                                                /* Recuadro donde se muestra un coche*/
+  display:flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.coche img {                                            /* Imagen donde se pone la foto de coche*/
+  width: 95px;
+  height: 95px;
+  margin-right: 15px;
+}
+
+/* --------------------- Bloque donde se muestran los Items -----------------------------------------------------------------------------*/
+.item-boxs-title {                                      /* Titulo para los bloques que muestran Items */  
+  padding-top: 3px;
+  color: darkgreen !important;
+}
+
+.item-boxs {                                            /* Bloque que contiene Items mostrados en forma de regilla*/
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-column-gap: 10px;
+  grid-row-gap: 10px;
+}
+
+.item-box {                                             /* Recuadro donde se muestra un Item */
+  display: flex;
+  flex-direction: row;
+  border: 1px #ddd solid;
+  border-radius: 10px;
+}
+
+.item-box-img img {                                     /* Imgen dentro del recuadro de un item*/
+  width: 95px;
+  height: 95px;
+  margin-right: 10px;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+.item-box-info {                                        /* Recuadro donde se muestra la información del Item */
+  position: relative;
+}
+
+.item-box-info h3 {                                     /* Zona donde se muestra el nombre del Item*/
+  margin-top: 0px;
+  padding-top: 0px;
+  max-height: 70px;
+  overflow: hidden;
+  font: 18px/22px 'Segoe UI',Arial;
+  margin-bottom: 8px;
+}
+
+.item-box-info span {                                   /* Zona donde se muestra el precio del item*/
+  position: absolute;
+  left: 0px;
+  bottom: 0px;
+  margin-bottom: 8px;
+}
+
+.item-boxs-more {                                       /* Zona debajo del bloque item*/
+  height: 25px;
+}
+
+.item-boxs-more a {                                     /* Link colocado en la zona debajo del bloque (ver mas...)*/
+  float: right;
+  color: darkgreen !important;
+  font-weight: bold;
+  margin-top: 4px;
+}
+
+/* --------------------------------------------------------------------------------------------------------------------------------------*/
+
+
+a {
   margin: 0;
   padding: 0;
   text-align: left;
   text-decoration: none !important;
+  color: #333 !important;
 }
 
 .footer {                                             /* Franja de abajo, ocupada por el footer*/
@@ -251,9 +331,10 @@ a{
   padding-bottom: 2px;
 }
 
+.show-tipo > .show-btn:hover,
 .coche-name:hover,
 #CochesList > tbody > tr:hover,
-#ItemsList > tbody > tr:hover {                       /* Pone cursor cuando se pasa por arriba de las filas*/
+#ItemsList > tbody > tr:hover { /* Pone cursor cuando se pasa por arriba de las filas*/
   background-color: #f0f0f0;
   cursor: pointer;
 }
@@ -275,6 +356,24 @@ a{
 .coche-name a:focus {                                 /* Controla la rayita y el color que sale en los links */
   text-decoration: none;
   color: darkslategray;
+}
+
+.show-tipo{
+  height: 33px;
+  }
+
+.show-tipo > .show-btn {
+  float: right;
+  height: 27px;
+  width: 27px;
+  border: 1px solid #aaa;
+  border-radius: 5px;
+  margin: 0px 5px 5px 5px;
+}
+
+.show-btn.btn-selected {
+  background-color: #eee;
+  border-color: #286090;
 }
 
 .columns-container {
@@ -359,9 +458,10 @@ a{
 }
 
 .flex-grid {
-  display:flex; 
-  flex-direction:row; 
-  flex-wrap:wrap;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  grid-row-gap: 8px;
 }
 
 .flex-grid .item {
@@ -385,70 +485,53 @@ a{
   display: block;
 }
 
-/* Momento en que el marco de la página empieza a no caber en area disponible */
+/*----------------------------------------------------- Media Querys --------------------------------------------------------------*/
 @media (max-width: 1100px) {
-  .main-frame {                         /* Fija unos bordes pequeños*/
-    margin-left: 5px;
-    margin-right: 5px;
-  }
+  .marcas { grid-template-columns: 1fr 1fr; }                     /* No caben las marcas en 4 columnas, las pone en 2 */
+  .marca { flex-direction: row; align-items: center;  }           /* Pone info horizontal */
+  .marca h5 {  display: none; }                                   /* Oculta el nombre de la marca, con el logo es sufiente */
+  .marcas > div { text-align: left; }
 
-  .tab-content .btn-group {             /* Pone separación vertical a los combos*/
-    margin-bottom: 6px;
-  }
+  .main-frame { margin-left: 5px; margin-right: 5px; }            /* Pone bordes fijos y pequeños al marco de las paginas*/
 
-  .copyright {                          /* Pone copyright centrado y abajo*/
+  .tab-content .btn-group { margin-bottom: 6px; }                 /* Pone separación vertical a los combos de selección de filtros*/
+
+  .copyright {                                                    /* Pone copyright centrado y abajo*/
     float: none;
     margin-top: 20px;
     text-align: center;
-  }
-}
+    }
 
-/* No caben las marcas en 4 columnas, las pone en 2 */
+  }
+
 @media (max-width: 1100px) {
-  .marcas { grid-template-columns: 1fr 1fr; }
-  .marca {
-    flex-direction: row;
-    align-items: center;
-  }
-    /* Pone info horizontal */
-    .marca h5 {
-      display: none;
-    }
-  /* Oculta el nombre de la marca */
-  .marcas > div {
-    text-align: left;
+  .item-boxs { grid-template-columns: 1fr 1fr; }                  /* No caben las 4 columnas de items, pasa a 2 */
+  #ItemsGrid.item-boxs { grid-template-columns: 1fr 1fr 1fr; }    /* Si esta en busqueda pasa a 3 */
   }
 
-  }
-
-/* No caben las marcas en 2 columnas, las pone en 1 */
 @media (max-width: 825px) {
-    /* Una sola columna*/
-    .marcas img {
-      width: 100px;
-      height: 100px;
-      margin-right: 15px;
-    }
-  /* Imagenes más pequeñas */
+  .coches {  grid-column-gap: 15px; }                             /* Pone separación entre comnas mas pequeña*/
+
+  #ItemsGrid.item-boxs { grid-template-columns: 1fr 1fr; }        /* Si esta en busqueda pasa a 2 columnas */
+
+  .marcas img {                                                   /* Pone los logos de las marcas más pequeños */
+    width: 100px;
+    height: 100px;
+    margin-right: 15px;
+  }
 }
 
-/* No caben las marcas en 2 columnas, las pone en 1 */
-@media (max-width: 570px) {
-  .marcas { grid-template-columns: 1fr; }                               /* Una sola columna*/
-}
-
-/* No caben los fabricantes en 2 columnas, los pone en 1 */
 @media (max-width: 700px) {
-  .makers { grid-template-columns: 1fr; } 
+  .coches, .makers { grid-template-columns: 1fr; }                /* No caben los fabricantes en 2 columnas, los pone en 1 */
 }
 
-/* No cabe buscar por nombre */
+@media (max-width: 570px) {
+  .marcas { grid-template-columns: 1fr;}                          /* No caben las marcas en 2 columnas, las pone en 1 */
+  .item-boxs { grid-template-columns: 1fr; }                      /* No caben las 2 columnas de items, pasa a 1 */
+  #ItemsGrid.item-boxs { grid-template-columns: 1fr; }            /* Si esta en busqueda pasa a 2 columnas */
+}
+
 @media (max-width: 490px) {
-  #labelName {
-    width: 100%;
-  }
-  /* Fuerza a que ocupe 2 lineas*/
-  #labelCode {
-    width: 100%;
-  }
+  #labelName {  width: 100%;  }                                   /* No cabe buscar por nombre, fuerza a dos lineas */
+  #labelCode {  width: 100%;  }
 }

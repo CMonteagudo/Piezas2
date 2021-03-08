@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Text.Json;
 using Microsoft.AspNetCore.Html;
 using Piezas2.Core.Model;
+using static Piezas2.Core.Coches;
 
 namespace Piezas2.Models
   {
@@ -43,10 +44,11 @@ namespace Piezas2.Models
       Modelos = new ModelosMarca( null, HttpCtx );
       Motores = new Motores( "en uso", null, HttpCtx );
 
-      var coches = new RecambioUsos( 0, HttpCtx );
-      Coches = coches.UsoInCoches( 0 ).Coches;
+      Coches = new RecambioUsos( 0, HttpCtx ).UsoInCoches().Coches;
 
-      var rec = new Recambios( "0/0/0/0/0/Order-4/Range-0-10000", HttpCtx );
+      var rec = new Recambios( HttpCtx );
+      rec.FindByDatos( "0/0/0/0/0/Order-4/Range-0-10000" );
+
       Items = rec.Items;
       }
 

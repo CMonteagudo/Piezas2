@@ -6,6 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
+using static Piezas2.Core.Coches;
 
 namespace Piezas2.Core
   {
@@ -13,46 +14,23 @@ namespace Piezas2.Core
   /// <summary> Obtiene los datos de un recammbio especifico desde la base de datos </summary>
   public class RecambioUsos
     {
-    //public string Nombre { get; set; }
-    //public List<CocheDesc> Coches { get; set; } = new List<CocheDesc>();
-
     DbPiezasContext DbCtx;
     int             itemId;
+    HttpContext     HttpCtx;
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Construye el objeto y obtiene los datos de la base de datos </summary>
-    public RecambioUsos( int id, HttpContext HttpCtx )
+    public RecambioUsos( int id, HttpContext httpCtx )
       {
-      itemId = id;
-      DbCtx = (DbPiezasContext)HttpCtx.RequestServices.GetService( typeof( DbPiezasContext ) );                                // Obtiene contexto a la BD
+      HttpCtx = httpCtx;
+      itemId  = id;
+      DbCtx = (DbPiezasContext) httpCtx.RequestServices.GetService( typeof( DbPiezasContext ) );                                // Obtiene contexto a la BD
       }
-
-    //public RecambioUso( int id, int InUso, HttpContext HttpCtx )
-    //  {
-    //  var DbCtx = (DbPiezasContext) HttpCtx.RequestServices.GetService(typeof(DbPiezasContext));                                // Obtiene contexto a la BD
-
-    //  var Recamb = DbCtx.Items.Find( id );
-    //  if( Recamb==null ) return;
-
-    //  Nombre = Recamb.Nombre;
-
-    //  //var sql = "SELECT c.* FROM Coche AS c INNER JOIN  ItemCoche AS ic ON c.Id = ic.IdCoche WHERE ic.IdItem = {0}";
-    //  //var coches  = DbCtx.Coches.FromSqlRaw(sql,id).Include( c => c.MarcaNavigation ).Include( c => c.ModeloNavigation ).Include( c => c.MotorNavigation ).ToList();
-
-    //  var coches  = DbCtx.Coches.Include( c => c.MarcaNavigation )
-    //                            .Include( c => c.ModeloNavigation )
-    //                            .Include( c => c.MotorNavigation )
-    //                            .Include( c => c.ItemCoches.Where( ic=> ic.IdItem==id ) ).ToList();
-
-    //  foreach( var coche in coches )
-    //    if( InUso==0 || coche.ItemCoches.Count>0  )
-    //      Coches.Add( new CocheDesc(coche) );
-    //  }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Obtiene todos los coches que usan el recambio, si 'InUso' es distinto de 0 se obtienen todos los coches y el dato 'UseItem'
     /// se coloca en 0 ó 1 si se usa o no, en otro caso se retornan solo los coches donde se usa el recambio</summary>
-    public CochesInUso UsoInCoches( int InUso )
+    public CochesInUso UsoInCoches()
       {
       var datos = new CochesInUso();
 
@@ -66,14 +44,7 @@ namespace Piezas2.Core
       else
         datos.Nombre = "Todos";
 
-      var coches  = DbCtx.Coches.Include( c => c.MarcaNavigation )
-                                .Include( c => c.ModeloNavigation )
-                                .Include( c => c.MotorNavigation )
-                                .Include( c => c.ItemCoches.Where( ic=> ic.IdItem==itemId ) ).ToList();
-
-      foreach( var coche in coches )
-        if( InUso==0 || coche.ItemCoches.Count > 0 )
-          datos.Coches.Add( new CocheDesc( coche ) );
+      datos.Coches = new Coches( HttpCtx ).ForItem( itemId );
 
       return datos;
       }
@@ -126,6 +97,8 @@ namespace Piezas2.Core
 
     } //=======================================================================================================================================
 
+  //=======================================================================================================================================
+  /// <summary> Matiene la información de los coches donde se usa un item determinado </summary>
   public class CochesInUso
     {
     public string Nombre { get; set; } = "";

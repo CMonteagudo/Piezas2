@@ -31,7 +31,7 @@ namespace Piezas2
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Quita el uso del item 'ItemId' por los coches dados en la lista 'CochesList' </summary>
-    [HttpGet( "/Api/DelRecambioUsos/{ItemId:int}/{CochesList}" )]
+    [HttpGet( "/api/del-recambio-usos/{ItemId:int}/{CochesList}" )]
     public ActionResult<string> DelRecambioUsos( int ItemId, string CochesList )
       {
       var uso    = new RecambioUsos( ItemId, HttpContext );
@@ -42,7 +42,7 @@ namespace Piezas2
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Adiciona el uso del item 'ItemId' por los coches dados en la lista 'CochesList' </summary>
-    [HttpGet( "/Api/AddRecambioUsos/{ItemId:int}/{CochesList}" )]
+    [HttpGet( "/api/add-recambio-usos/{ItemId:int}/{CochesList}" )]
     public ActionResult<string> AddRecambioUsos( int ItemId, string CochesList )
       {
       var uso = new RecambioUsos( ItemId, HttpContext );

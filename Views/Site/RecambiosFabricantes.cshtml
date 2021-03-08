@@ -1,0 +1,80 @@
+﻿@model Piezas2.Models.RecambiosFabricantesModel
+@{
+  ViewData["Title"] = "Fabricante de recambios para coches " + Model.Maker;
+}
+
+<div class="main-frame">
+
+  <h1> Recambios para coches fabricados por <strong> @Model.Maker </strong> al alcance de tu bolsillo.</h1>
+  <p>Esta tienda distribuye recambios para coche de diferentes fabricantes con excelente relación precio/calidad. Cada pieza de repuesto ha sido escogida en base a la experiencia de varios mecánicos en cuanto a durabilidad en las condiciones de estado de carreteras y calles, temperatura y humedad de diferentes países.</p>
+  <h2>Seleccione un recambio fabicado por @Model.Maker.</h2>
+
+  @foreach( var grp in Model.Grupos )
+    {
+    var Items = grp.Items;
+    <h3 class="item-boxs-title">Recambios para la categoria <strong>@grp.Nombre</strong>.</h3>
+    <div class="item-boxs">
+      @foreach( var item in Items )
+        {
+        <div class="item-box">
+          <div class="item-box-img" >
+            <a title   = "Recambio @item.Nombre" 
+               alttext = "Recambio @item.Nombre" 
+               href    = "/recambio/@item.Id/@item.Nombre">
+
+              @{var foto = item.Foto!=null? item.Foto : "NoImagen.png"; } 
+              <img title="Recambio @item.Nombre" src="/images/@foto" alt="" />
+            </a>
+          </div>
+          <div class="item-box-info">
+            <h3>
+              <a title="Recambio @item.Nombre"
+                 href="/recambio/@item.Id/@item.Nombre">
+
+                @item.Nombre
+              </a>
+            </h3>
+            <span>Precio: <strong> @item.Precio </strong></span>
+          </div>
+        </div>
+        }
+    </div>
+    <div class="item-boxs-more"> 
+      @if( Items.Count>=4 )
+        {
+        <a href="javascript:BuscarMas( @Model.MakerId, @grp.Id)"> Ver mas ... </a> 
+        }
+    </div>
+    }
+
+  @if( Model.Grupos.Count == 0  )
+    {
+    <div class="alert alert-info alert-dismissible" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      No de encontro ningún recambio para el fabricante <strong>@Model.Maker</strong>.
+    </div>    
+    }
+
+</div>
+
+
+@section Scripts{
+  <script type="text/javascript">
+
+    // Configura la busqueda de recambios para la opcion seleccionada y la manda a ejecutar
+    function BuscarMas( IdFab, IdCat )
+      {
+      localStorage[ "lastSelMotor"  ] = 0;        
+      localStorage[ "lastSelModelo" ] = 0;
+      localStorage[ "lastSelMarca"  ] = 0;
+
+      localStorage[ "lastSelCategor" ] = IdCat;
+      localStorage[ "lastSelFabric"  ] = IdFab;
+
+      window.location = "/buscar-recambio/info";
+      }
+
+
+  </script>
+}
+

@@ -1,0 +1,35 @@
+﻿@model Piezas2.Models.ModelosModel
+@using Piezas2.Core
+
+@{
+  ViewData["Title"] = "Modelos de coches de la marca " + Model.Marca;
+}
+
+<div class="main-frame">
+
+  <h1> Recambios para coches <strong> @Model.Marca </strong> al alcance de tu bolsillo.</h1>
+  <p>Esta tienda distribuye recambios para coche de diferentes marcas con excelente relación precio/calidad para diferentes modelos de Audi. Cada pieza de repuesto ha sido escogida en base a la experiencia de varios mecánicos en cuanto a durabilidad en las condiciones de estado de carreteras y calles, temperatura y humedad de diferentes países.</p>
+  <h2>Selecciona el modelo de tu @Model.Marca.</h2>
+
+  <div class="coches">
+    @foreach( var coche in Model.Coches )
+      {
+      <div class="coche">
+        <div>
+          <a title="Piezas de repuesto para @coche.Marca @coche.Modelo" alttext="Piezas de repuesto para @coche.Marca @coche.Modelo" href="/recambios-del-coche/@coche.Id/@coche.Marca @coche.Modelo">
+            <img title="Piezas de repuesto para @coche.Marca @coche.Modelo" src="/images/@coche.Foto" alt="" />
+          </a>
+        </div>
+        <div>
+          <h3>
+            <a title="Recambios de coche para @coche.Marca @coche.Modelo" class="title5" href="/recambios-del-coche/@coche.Id/@coche.Marca @coche.Modelo">@coche.Marca @coche.Modelo</a>
+          </h3>
+          <p>Recambios para coches @coche.Marca @coche.Modelo con carroceria @coche.Carroceria y motor de @coche.Combustible @coche.Motor con caja @coche.Caja</p>
+        </div>
+      </div>
+      }
+
+   </div>
+
+
+</div>

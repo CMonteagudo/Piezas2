@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Piezas2.Core;
 using System.Collections.Generic;
+using static Piezas2.Core.Coches;
 
 namespace Piezas2.Models
   {
@@ -24,10 +25,7 @@ namespace Piezas2.Models
     public string NameCat{ get { return Item.Categoria; } }
     public string Nombre { get { return Item.Nombre; } }
     public string Codigo { get { return Item.Codigo; } }
-    public string Foto { get { 
-                             var foto = Item.Foto.Length==0? "NoImagen.jpg" : Item.Foto;
-                             return $"/images/{foto}";
-                             } } 
+    public string Foto { get { return Item.Foto; } } 
     public string Precio { get { return Item.Precio; } }
     public string Descripcion { get { return Item.Descripcion; } }
     public List<CocheDesc> Coches { get { return Item.Coches; } }

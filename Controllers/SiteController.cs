@@ -13,13 +13,13 @@ namespace Piezas2.Controllers
   // Controlador que sirve como punto de entrada a todas las páginas del sitio
   public class SiteController : Controller
     {
-    private readonly ILogger<SiteController> _logger;
+    //private readonly ILogger<SiteController> _logger;
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     ///<summary> Crea el objeto antes de ejecutar cualquier acción </summary>
-    public SiteController( ILogger<SiteController> logger )
+    public SiteController( /*ILogger<SiteController> logger*/ )
       {
-      _logger = logger;
+      //_logger = logger;
       }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
@@ -53,6 +53,60 @@ namespace Piezas2.Controllers
       return View( model );
       }
 
+    //---------------------------------------------------------------------------------------------------------------------------------------
+    ///<summary> Página para mostrar los datos de un recambio </summary>
+    [Route( "/modelos-de-coches/{marca?}" )]
+    public IActionResult Modelos( string marca = "" )
+      {
+      var model = new ModelosModel( marca, HttpContext );
+
+      return View( model );
+      }
+
+    //---------------------------------------------------------------------------------------------------------------------------------------
+    ///<summary> Página para mostrar los datos de un recambio </summary>
+    [Route( "/fabricantes-de-recambios/{maker?}" )]
+    public IActionResult RecambiosFabricantes( string maker = "" )
+      {
+      var model = new RecambiosFabricantesModel( maker, HttpContext );
+
+      return View( model );
+      }
+
+    //---------------------------------------------------------------------------------------------------------------------------------------
+    ///<summary> Página para mostrar los datos de un recambio </summary>
+    [Route( "/recambios-del-coche/{cocheId}/{nombre?}" )]
+    public IActionResult RecambiosCoche( int cocheId )
+      {
+      var model = new RecambiosCocheModel( cocheId, HttpContext );
+
+      return View( model );
+      }
+
+    //---------------------------------------------------------------------------------------------------------------------------------------
+    ///<summary> Página para mostrar el mapa del sitio </summary>
+    [Route( "/mapa-del-sitio" )]
+    public IActionResult MapaDelSitio( )
+      {
+      return View();
+      }
+
+    //---------------------------------------------------------------------------------------------------------------------------------------
+    ///<summary> Página para mostrar la información de contacto </summary>
+    [Route( "/informacion-de-contacto" )]
+    public IActionResult ContactInfo( )
+      {
+      return View();
+      }
+
+    //---------------------------------------------------------------------------------------------------------------------------------------
+    ///<summary> Página para saber a cerca del sitio </summary>
+    [Route( "/acerca-de" )]
+    public IActionResult About( )
+      {
+      return View();
+      }
+                                                    
     //---------------------------------------------------------------------------------------------------------------------------------------
     ///<summary> Página que muestra los errores que se produzcan en el sitio </summary>
     [HttpGet( "/error/{code?}" )]

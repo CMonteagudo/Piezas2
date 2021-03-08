@@ -1,0 +1,180 @@
+﻿@{
+  ViewData["Title"] = "Documentación del API para manejar los datos";
+}
+
+<div class="main-frame">
+  <h1>API para manejar los datos del sitio</h1>
+  <br />
+  <p>Todos los datos del sitio son accedidos a traves de un API independiente que puede ser utilizado por cualquier interface que quiera mostrar esos datos ya sea Web, de Escritorio o Mobil. Todos los resultados son retornados en formato Json y pueden ser probados desde la linea de direcciones del navegador.</p>
+  <br />
+  <h3>Las funciones del API estan divididas en dos modulos.</h3>
+  <ul>
+    <li> Consultas (DbQuery.cs)
+    <p>Este módulo agrupa todas las consultas que se hacen a la base de datos y se pueden acceder libremente por cualquiera, porque en definitiva es la misma información que muestra el Sitio Web.</p>
+    </li>
+    <li> Acciones (DbAtions.cs)
+    <p>Este módulo agrupa los comandos que mofifican la base de datos, el uso de este módulo va a estar restringido y solo debe usarse en la parte de administración de la base de datos.</p>
+    </li>
+  </ul>
+
+  <h3>Comandos del módulo de consultas</h3>
+  <ul>
+    <li> Obtención de una lista de recambios con sus datos de acuerdo a los filtros especificados
+    <p><label>URL:</label> <strong>/api/recambios/{*datos}</strong></p>
+    <p><label>datos =></label> Cero o más segmentos que especifican los fitros que se le van a aplicar a la lista de recambios devueltos, para más detalles ver <strong>Filtros</strong></p>
+
+    <p><label>Ejemplo:</label><a href="/api/recambios/audi/A4 2004-2008"> /api/recambios/audi/A4 2004-2008</a></p>
+    </li>
+
+    <li> Obtención de una lista de coches con sus datos
+    <p><label>URL:</label> <strong>/api/coches/{*datos}</strong></p>
+    <p><label>datos =></label> Cero o más segmentos que especifican los fitros que se le van a aplicar a la lista de coches devueltos, para más detalles ver <strong>Filtros</strong></p>
+
+    <p><label>Ejemplo:</label><a href="/api/coches/seat/altea"> /api/coches/seat/altea</a></p>
+    </li>
+
+    <li> Obtención de una lista de recambios según el codigo
+    <p><label>URL:</label> <strong>/api/recambios-con-codigo/{code:int}/{*datos}</strong></p>
+    <p><label>code =></label> Código de los recambios que se quieren obtener (generalmente es uno solo, pero pueden ser mas)<br/>
+      <label>datos =></label> Cero o más segmentos que no son relevantes, se pueden usar para hacer más descritiva la solicitud</p>
+
+    <p><label>Ejemplo:</label><a href="/api/recambios-con-codigo/22330"> /api/recambios-con-codigo/22330</a></p>
+    </li>
+
+    <li> Obtención de una lista de recambios de acuerdo al nombre del recambio
+    <p><label>URL:</label> <strong>/api/recambios-con-nombre/{name}/{*datos}</strong></p>
+    <p><label>name =></label> Una palabra o frase que debe estar contenida en el nombre del recambio.<br/>
+       <label>datos =></label> Cero o más segmentos que especifican el rango de registros a obtener y/o el campo por donde se desea ordenar</p>
+
+    <p><label>Ejemplo:</label><a href="/api/recambios-con-nombre/kit/orden-nombre-"> /api/recambios-con-nombre/kit/orden-nombre-</a></p>
+    </li>
+
+    <li> Obtención de la lista de marcas de coches
+    <p><label>URL:</label> <strong>/api/marcas-de-coches</strong></p>
+
+    <p><label>Ejemplo:</label><a href="/api/marcas-de-coches"> /api/marcas-de-coches</a></p>
+    </li>
+
+    <li> Obtención una lista de modelos de coches
+    <p><label>URL:</label> <strong>/api/modelos-por-marca/{marca?}</strong></p>
+
+    <p><label>marca =></label> Especifica la marca de coche a la que pertenen los modelos devueltos</p>
+
+    <p>- Si no se especifica la marca se obtienen todos los modelos, sin considerar la marca <br/>
+       - La marca puede especificarse con el nombre o con el identificador.<br/>
+       - El valor de 0 para la marca significa todas las marcar, al igual la cadena 'todo'.</p>
+
+    <p><label>Ejemplo:</label><a href="/api/modelos-por-marca/skoda"> /api/modelos-por-marca/skoda</a></p>
+    </li>
+
+    <li> Obtención de una lista de motores de coches
+    <p> <label>URL:</label> <strong>/api/motores/{marca}/{modelo}</strong></p> 
+
+    <p><label>marca  =></label> Especifica la marca de coche a la que pertenen los motore devueltos.<br/>
+       <label>modelo =></label> Especifica el modelo de coche a la que pertenen los motore devueltos.</p>
+
+    <p>- Lo dos paramentos son opcionales, si no se especifica ninguno se obtienen todos los motores.<br/>
+       - La marca y el modelo pueden especificarse con el nombre o con el identificador.<br/>
+       - El valor de 0 o la cadena 'todo' para los 2 paramentros significa que no se tenga en cuenta.</p>
+    
+    <p><label>Ejemplo:</label><a href="/api/motores/volkswagen/todo"> /api/motores/volkswagen/todo</a></p>
+    </li>
+
+    <li> Obtención de una lista de todas las categorias de recambios
+    <p><label>URL:</label> <strong>/api/categorias</strong></p>
+    
+    <p><label>Ejemplo:</label><a href="/api/categorias"> /api/categorias</a></p>
+    </li>
+
+    <li> Obtención de una lista de todas las sub-categorias de recambios
+    <p><label>URL:</label> <strong>/api/sub-categorias</strong></p>
+    
+    <p><label>Ejemplo:</label><a href="/api/sub-categorias"> /api/sub-categorias</a></p>
+    </li>
+
+    <li> Obtención de una lista de todos los fabricantes de recambios
+    <p><label>URL:</label> <strong>/api/fabricantes</strong></p>
+    
+    <p><label>Ejemplo:</label><a href="/api/fabricantes"> /api/fabricantes</a></p>
+    </li>
+
+    <li> Obtención de los datos de un recambio
+    <p><label>URL:</label> <strong>/api/recambio/{Id:int}</strong></p>
+    <p><label>Id =></label> Identificador del recambio que se quieren obtener los datos</p>
+    
+    <p><label>Ejemplo:</label><a href="/api/recambio/100"> /api/recambio/100</a></p>
+    </li>
+
+    <li> Obtención de la lista de coches donde se puede usar un recambio
+    <p><label>URL:</label> <strong>/api/recambio-uso/{Id:int}</strong></p>
+    <p><label>Id =></label> Identificador del recambio que se quieren obtener los datos<br/>
+    - Si Id es cero, se obtienen todos los coches.</p>
+    
+    <p><label>Ejemplo:</label><a href="/api/recambio-uso/1"> /api/recambio-uso/1</a></p>
+    </li>
+
+  </ul>
+    
+  <h3>Comandos del módulo de acciones</h3>
+  <ul>
+    <li> Desvincula el uso de un recambio para uno o varios coches
+    <p><label>URL:</label> <strong>/api/del-recambio-usos/{ItemId:int}/{CochesList}</strong></p>
+
+    <p><label>ItemId =></label> Identificador del recambio que se quire desvincular su uso.<br/>
+       <label>CochesList =></label> Lista de identificadores de los coches de donde se quiere desvincular, es un grupo de número separado por espacio.</p>
+    </li>
+
+    <li> Vincula el uso de un recambio con uno o varios coches
+    <p><label>URL:</label> <strong>/api/add-recambio-usos/{ItemId:int}/{CochesList}</strong></p>
+
+    <p><label>ItemId =></label> Identificador del recambio que se quire vincular su uso.<br/>
+       <label>CochesList =></label> Lista de identificadores de los coches de a los que se quiere vincular, es un grupo de número separado por espacio.</p>
+    </li>
+  </ul>
+
+  <h3>Filtros</h3>
+  <p>Los filtros son un grupo de segmentos de la URL que se utilizan para pasarle datos a varios comandos, que fundamentalme limitan o filtran el número de registros devueltos, los filtros implementados hasta ahora son los siguientes:</p>
+  <ul>
+    <li> <p><label>Marca:</label> Limita los registros devueltos a los que tengan la marca de coche indicada.</p> </li>
+    <li> <p><label>Modelo:</label> Limita los registros devueltos a los que tengan el modelo indicado.</p> </li>
+    <li> <p><label>Motor:</label> Limita los registros devueltos a los que tengan el motor indicado.</p> </li>
+    <li> <p><label>Categoria:</label> Limita los registros devueltos a los que tengan la categoria indicada.</p> </li>
+    <li> <p><label>Fabricante:</label> Limita los registros devueltos a los que tengan el fabricante indicado.</p> </li>
+    <li> <p><label>Rango:</label> Indica el registro inicial y la cantidad de registros que deven ser devueltos.</p> </li>
+    <li> <p><label>Orden:</label> Indica el campo y el sentido de como deben estar ordenados los registros.</p> </li>
+  </ul>
+
+  <p>El tipo de filtro se pude especificar de 2 formas, uno es por el orden que aprecen e la URL que es el siguiente</p>
+    <label>../Marca/Modelo/Motor/Categoria/Fabricante/Rango/Orden</label>
+    <p>- Si no se quiere utilizar uno o más filtros en la posición correspondiente se puede colocar un 0 o la palabra 'todo'</p>
+
+  <p>La otra forma de indicar el fitro es colocando un prefijo, que seria al menos las 3 primeras letras del nombre, según el siguiente formato</p>
+    <p><label>prefijo</label>-<label>valor</label> donde:<br/>
+     <label>prefijo</label> = mar|mod|mot|car|fab|ran|ord<br/>
+     <label>valor</label> en los 5 primeros filtros el valor puede ponerse de 2 maneras, el identificador o el valor del campo</p> 
+
+  <p>Para los dos ultimos filtros se usan formatos diferentes</p>
+    <p><label>Orden:</label> [<label>nombre del campo</label>|<label>indice del campo</label>] <label>-</label><br/>
+     <label>nombre del campo =</label> codigo|categoria|fabricante|nombre|precio<br/>
+     <label>indice del campo =</label> 1|2|3|4|5  <br/>
+     <label>signo - al final =</label> es opcional e inica que el orden es desendente. </p>
+
+    <p><label>Rango:</label> [<label>primer registro</label>]-[<label>número de registros</label>] <br/>
+     <label>primer registro =</label> Ignora todos los registros que este antes del registro indicado, por defecto es el 0<br/>
+     <label>número de registros =</label> Cantidad de registros que se toman, por defecto son 30</p>
+
+    <p><label>Notas: </label><br/>
+      - Los caracteres [ y ] no forman parte de la sintaxis, son solo para agrupar.<br/>
+      - Los valores siempre se verifican contra la base de datos, ya sea un identificador o un valor y si no hay coicidencia no se retorna ningún registro.<br/>
+      - Existen dos valores especiales 0 y 'todo' que indican que no se tome en cuenta ese filtro</p>
+
+
+</div>
+
+
+
+@section Scripts{
+<script type="text/javascript">
+
+</script>
+}

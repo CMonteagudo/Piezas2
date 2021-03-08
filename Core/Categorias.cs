@@ -28,6 +28,13 @@ namespace Piezas2.Core
       }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary> Obtiene el nombre de una categoria, conociendo su Id </summary>
+    public string findNombre( int id)
+      {
+      return DbCtx.Categoria.Find(id)?.Nombre ?? "";
+      }
+
+    //---------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Obtiene el listado de todas las sub-categorias que hay en la base de dataos </summary>
     public List<IdName> getSubCategorias()
       {

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
+using static Piezas2.Core.Coches;
 
 namespace Piezas2.Core
   {
@@ -47,33 +48,12 @@ namespace Piezas2.Core
       if( string.IsNullOrWhiteSpace(Descripcion) ) Descripcion = "";
 
       Fabricante = DbCtx.Fabricantes.Find( IdFabricante )?.Nombre;
-      Categoria    = DbCtx.Categoria.Find( IdCategoria )?.Nombre;
+      Categoria  = DbCtx.Categoria.Find( IdCategoria )?.Nombre;
 
-      var sql = "SELECT c.* FROM Coche AS c INNER JOIN  ItemCoche AS ic ON c.Id = ic.IdCoche WHERE ic.IdItem = {0}";
-      var coches  = DbCtx.Coches.FromSqlRaw(sql,id).Include( c => c.MarcaNavigation ).Include( c => c.ModeloNavigation ).Include( c => c.MotorNavigation ).ToList();
-
-      foreach( var coche in coches )
-        Coches.Add( new CocheDesc(coche) );
+      Coches = new Coches( HttpCtx ).ForItem( id );
       }
-    }
 
-    //---------------------------------------------------------------------------------------------------------------------------------------
-    /// <summary> Mantiene los datos un coche, de una manera resumida y mas descriptiva  </summary>
-    public class CocheDesc
-      {
-      public CocheDesc( Coche coche )
-        {
-        Id      = coche.Id;
-        Marca   = coche.MarcaNavigation.Nombre;
-        Modelo  = coche.ModeloNavigation.Nombre;
-        Motor   = coche.MotorNavigation.Nombre;
-        UseItem = coche.ItemCoches.Count;
-        }
+    } 
+  //=======================================================================================================================================
 
-      public int Id { get; set; }
-      public string Marca { get; set; }
-      public string Modelo { get; set; }
-      public string Motor { get; set; }
-      public int UseItem { get; set; }
-      }
   }

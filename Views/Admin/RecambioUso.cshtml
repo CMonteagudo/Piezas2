@@ -162,19 +162,11 @@
     var Coches = @Model.CochesToJson();     
 
     // Datos sobre los recambios obtenidos mediante las busquedas
-    var findUrl = "";   // Url de la ultima busqueda realizada con todos los parametros
-    var Filter;         // Datos de los filtros usados para obtener los datos
-    var nItems = 0;     // Número de items totales para los filtros aplicados 
-    var lastItem = 0;   // Número del último item que se ha mostrado
-    var Orden = 0;      // Indice del campo por donde hay que ordenar, 0 => No ordenar, Negativo => Orden desendiente
-
     var cbDats;         // Maneja la entrada de datos mediante combos
     var cbCoches;       // Maneja la entrada de datos mediante combos
 
     var Msg;            // Maneja recuadro para mostrar errores
     var Conn;           // Objeto que maneja la conexion con el servidor
-
-    var chkInit = new Set();    // Coches que estaban chequeados al inicio
 
     // Inicia manipuladores y variables, después de cargarse la página
     $( function()
@@ -182,19 +174,20 @@
       cbDats   = new UIFilters( Datos, CbIDs );
       cbCoches = new UIFilters( CochesDatos, CochesCbIDs );
 
+      // Actualiza ultimo valor de la busqueda por nombre
       $("#findName").val( localStorage["lastFindName"] || "" );
 
-      // Atención cuando se oprimen diferentes elementos de la interface
+      // Cuando se oprime el boton para filtrar la lista de recambios 
       $("#FindRecambio").on( 'click', FillItemsList );   
 
-      // Atención cuando se oprimen diferentes elementos de la interface
+      // Cuando se oprime el boton para filtar la lista de coches
       $("#FindCoche").on( 'click', FillCochesList );   
 
       // Pone/quita el la ventana flotante (popup) con los filtros
       $(".filters-btn > button").on( 'click', e => { $(e.currentTarget.parentElement).addClass("open"); e.stopPropagation(); } );  
       $("body").on( 'click', CheckClickOnPopup );  
 
-      // Cierra el popup
+      // Cierra el popup por el boton que aparece a la derecha
       $(".filters-popup > .close").on( 'click', e => 
         { 
         $(e.currentTarget).parent().parent().removeClass("open"); 
@@ -206,14 +199,10 @@
       Msg = new MsgAlert( "#ErrorMsgItems" );
       Conn = new ServerConnection( "GET", (s)=>ConnError(s) );
 
-      //if( ItemId>0 )  FindCochesForItem( ItemId );
+      FillItemsList();
+      FillCochesList();
 
-      //DonwloadAllItems();
-      //DonwloadAllCoches();
-        FillItemsList();
-        FillCochesList();
-
-        if(ItemId) FindCochesForItem( ItemId );
+      if(ItemId) FindCochesForItem( ItemId );
       } );
 
     // Esta funcion chequea si el click se produjo dentro de una ventana popup
@@ -349,10 +338,10 @@
     // Busca los coches donde se usa el item dado por 'id'
     function FindCochesForItem( id )
       {
-      Conn.Send( "/Api/RecambioUso/" + id + "/1", (datos) => 
+      Conn.Send( "/api/recambio-uso/" + id , (datos) => 
         {
         SelectItem( id );
-        $("#ItemName").text( datos.nombre );
+        $("#ItemName").text( datos.nombre + " (uso=" + datos.coches.length + ')' );
 
         var cochesSet = new Set();
         for( let coche of datos.coches )
@@ -412,7 +401,7 @@
     function UpdateBase( lstAdd, lstDel )
       {
       if( lstAdd.length >0 )
-        Conn.Send( "/api/AddRecambioUsos/"+ItemId+"/"+lstAdd.join(" "), (datos) => 
+        Conn.Send( "/api/add-recambio-usos/"+ItemId+"/"+lstAdd.join(" "), (datos) => 
           {
           if( datos.Count != lstAdd.length )
             alert( "Ocurrio un error al insertar los coches"  );
@@ -421,7 +410,7 @@
           }, "#colCoches" );
 
       if( lstDel.length >0 )
-        Conn.Send( "/api/DelRecambioUsos/"+ItemId+"/"+lstDel.join(" "), (datos) => 
+        Conn.Send( "/api/del-recambio-usos/"+ItemId+"/"+lstDel.join(" "), (datos) => 
           {
           if( datos.Count != lstDel.length )
             alert( "Ocurrio un error al borrar los coches"  );

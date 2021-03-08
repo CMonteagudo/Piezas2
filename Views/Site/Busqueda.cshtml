@@ -1,20 +1,28 @@
 ﻿@model Piezas2.Models.FindRecambioModel
 @{
   ViewData["Title"] = "Busqueda de recambios";
+
+  string tipo = (string)ViewData["FindType"];
+
+  string tab1="", tab2="", tab3="" ; 
+
+       if( tipo=="code" ) tab2="active"; 
+  else if( tipo=="name" ) tab3="active"; 
+  else                    tab1="active"; 
 }
 
 <div class="main-frame">
 
-  <h3 style="text-align: center;"> Buscar recambios de coche </h3>
+  <h1> Buscar recambios de coche </h1>
 
   <ul class="nav nav-tabs">
-    <li class="nav-item active"><a class="tab-title nav-link" data-toggle="tab" href="#TabInfo">Información</a></li>
-    <li class="nav-item"><a class="tab-title nav-link" data-toggle="tab" href="#TabCode">Código</a></li>
-    <li class="nav-item"><a class="tab-title nav-link" data-toggle="tab" href="#TabName">Nombre</a></li>
+    <li class="nav-item @tab1"><a class="tab-title nav-link" data-toggle="tab" href="#TabInfo">Información</a></li>
+    <li class="nav-item @tab2"><a class="tab-title nav-link" data-toggle="tab" href="#TabCode">Código</a></li>
+    <li class="nav-item @tab3"><a class="tab-title nav-link" data-toggle="tab" href="#TabName">Nombre</a></li>
   </ul>
 
   <div class="tab-content">
-    <div class="tab-frame tab-pane fade in active" id="TabInfo">
+    <div class="tab-frame tab-pane fade in @tab1" id="TabInfo">
       <div class="btn-group" id="comboMarca">
         <button type="button" class="btn btn-default">&emsp;</button>
         <button type="button" class="btn dropdown-toggle btn-primary" data-toggle="dropdown" aria-expanded="false">
@@ -60,7 +68,7 @@
       </div>
     </div>
 
-    <div class="tab-frame tab-pane fade" id="TabCode">
+    <div class="tab-frame tab-pane fade in @tab2" id="TabCode">
         <div class="btn-group label-input">
           <label id="labelCode" for="inputCode" class="control-label">Código:</label>
           <input id="inputCode" class="form-control" placeholder="Código del recambio">
@@ -68,7 +76,7 @@
         </div>
     </div>
 
-    <div class="tab-frame tab-pane fade" id="TabName">
+    <div class="tab-frame tab-pane fade in @tab3" id="TabName">
         <div class="btn-group label-input">
           <label id="labelName" for="inputName" class="control-label">Nombre del Recambio:</label>
           <input id="inputName" class="form-control" placeholder="Palabra o frase del nombre">
@@ -76,6 +84,11 @@
         </div>
     </div>
 
+  </div>
+
+  <div class="show-tipo">
+    <div id="showTable" class="show-btn btn-selected"> <img src="~/images/btn-tabla.png" title="Muestra los resultados en forma de tabla"        /> </div>
+    <div id="showGrid"  class="show-btn"             > <img src="~/images/btn-grid.png"  title="Muestra los resultados en forma de cuadricolas"  /> </div>
   </div>
 
   <div class="table-responsive">
@@ -94,6 +107,9 @@
       </tbody>
     </table>
 
+    <div id="ItemsGrid" class="item-boxs">
+    </div>
+
     <div id="MsgsForFind" ></div>
 
     <div class="btn-group hidden" id="FindMore">
@@ -108,7 +124,8 @@
 @section Scripts{
   <script type="text/javascript">
 
-    var FindType = "@ViewData["FindType"]";
+    var FindType = "@tipo";
+    var ShowMode = localStorage["ShowItemsMode"] || 0;
 
     // Datos para todos los combos de seleccion de recamios
     var Datos = {
@@ -145,16 +162,24 @@
       {
       cbDats = new UIFilters( Datos, CbIDs );
 
+      $("#inputCode").val( localStorage["lastCode"] || "" );
+      $("#inputName").val( localStorage["lastName"] || "" );
+
       // Atención cuando se oprimen diferentes elementos de la interface
-      $("#FindByInfo").on( 'click', OnFindRecambio );   
+      $("#FindByInfo").on( 'click', OnFindByInfo ); 
+      $("#FindByCode").on( 'click', OnFindByCode ); 
+      $("#FindByName").on( 'click', OnFindByName ); 
+      
       $("#FindMore").on( 'click', OnFindMoreRecambio );  
       $("#ItemsList thead tr th").on( 'click', OnOrdenar );
+
+      $("#showTable").on( 'click', ()=>{ setShowMode(0); } );  
+      $("#showGrid" ).on( 'click', ()=>{ setShowMode(1); } );  
       
       Msg = new MsgAlert( "#MsgsForFind" );
       Conn = new ServerConnection( "GET", (s)=>ConnError(s) );
 
-      if( FindType=="info" )  OnFindRecambio();
-
+      findItems();
       } );
 
     // Muestra los errores producidos durante la solicitud de datos via AJAX
@@ -166,10 +191,54 @@
       Msg.Show( sMsg + json.sError, "danger");
       }
 
-    // Se llama al oprimir el botón de buscar recambio
-    function OnFindRecambio()
+    // Pone el modo como se van a mostrar los items
+    function setShowMode( modo )
       {
-      findUrl = "/Api/Recambios/" + cbDats.GetUrlSegments();
+      if( ShowMode == modo )  return;
+
+      ShowMode = modo;
+      localStorage["ShowItemsMode"] = modo;
+
+      findItems();
+      }
+
+    // Busca los items de acuerdo al tipo de busqueda que este activo
+    function findItems()
+      {
+      if( FindType=="info" ) OnFindByInfo(); 
+      if( FindType=="code" ) OnFindByCode(); 
+      if( FindType=="name" ) OnFindByName(); 
+      }
+
+    // Busca los recambios segùn la información establecida en los comboboxs
+    function OnFindByInfo()
+      {
+      FindType ="info";
+      FirstSearch( "/api/recambios/" + cbDats.GetUrlSegments() )            // Obtiene los datos de los combos
+      }
+
+    // Busca los recambios segùn el código suministrado
+    function OnFindByCode()
+      {
+      FindType = "code";
+      localStorage[ "lastCode" ] = $("#inputCode").val();                   // Preseva el valor del código
+
+      FirstSearch( "/api/recambios-con-codigo/" + $("#inputCode").val() );
+      }
+
+    // Busca los recambios que contengan una palabra o frase dentro de su nombre
+    function OnFindByName()
+      {
+      FindType=="name"
+      localStorage[ "lastName" ] = $("#inputName").val();                   // Preserva el valor del nombre
+
+      FirstSearch( "/api/recambios-con-nombre/" + $("#inputName").val() );
+      }
+
+    // Realiza la primera busqueda con la url (findUrl) q e este seteada
+    function FirstSearch( url )
+      {
+      findUrl = url;                                                        // Url basica para ordenar y buscar más
 
       Conn.Send( findUrl + "/Order-"+Orden, (datos) => 
         {
@@ -178,11 +247,11 @@
         nItems = datos.count; 
         lastItem = Items.length;
 
-        FillItemsList();
+        ShowItems();
         }, "#TabInfo" );
       }
 
-    // Carga mas recambio en pantallas si todavia no se han cargado todos
+    // Carga mas recambios en pantallas si todavia no se han cargado todos
     function OnFindMoreRecambio()
       {
       if( !findUrl ) return;
@@ -194,7 +263,7 @@
         Items = datos.items; 
         lastItem += Items.length;
 
-        FillItemsList( true );
+        ShowItems( true );
         }, "#TabInfo" );
       }
 
@@ -217,12 +286,43 @@
         nItems = datos.count; 
         lastItem = Items.length;
 
-        FillItemsList();
+        ShowItems();
         }, "#TabInfo" );
       }
 
     // Llena la lista de Itmes con los recambios encontrados
-    function FillItemsList( add = false)
+    function ShowItems( add = false)
+      {
+      var tabla = $("#ItemsList");
+      var grid  = $("#ItemsGrid");
+
+      $(".show-btn").removeClass("btn-selected");
+
+      if( ShowMode == 0 )  
+        {
+        tabla.removeClass("hidden");
+
+        grid.empty();
+        grid.addClass("hidden")
+
+        $("#showTable").addClass("btn-selected");
+        FillItemsTable( add );
+        }
+
+      if( ShowMode == 1 )  
+        {
+        grid.removeClass("hidden");
+
+        tabla.children().eq(1).empty();
+        tabla.addClass("hidden")
+
+        $("#showGrid").addClass("btn-selected");
+        FillItemsGrid( add );
+        }
+      }
+
+    // Llena la tabla con los recambios encontrados
+    function FillItemsTable( add = false)
       {
       if( !add ) $("#ItemsList").children().eq(1).empty();
 
@@ -255,6 +355,48 @@
 
       $("#nowRec").text( lastItem + " de " + nItems );
       }
+
+    // Llena la regilla con los recambios encontrados
+    function FillItemsGrid( add = false)
+      {
+      if( !add ) $("#ItemsGrid").empty();
+
+      for( var i = 0; i < Items.length; ++i )
+        {
+        var item = Items[i]; 
+
+        var foto = item.Foto!=null? item.Foto : "NoImagen.png";  
+
+        var itemHml = '<div class="item-box" data-id='+ item.id + '>' +
+                          '<div class="item-box-img" >' +
+                            '<a title   = "Recambio ' + item.nombre + '"' + 
+                               'alttext = "Recambio ' + item.nombre + '"' + 
+                               'href    = "/recambio/' + item.id +'/'+ item.nombre +'">' +
+
+                              '<img title="Recambio '+ item.nombre +'" src="/images/' +foto+ '" alt="" />' +
+                            '</a>' +
+                          '</div>' +
+                          '<div class="item-box-info">' +
+                            '<h3>' +
+                              '<a title="Recambio ' + item.nombre + '"' +
+                                 'href="/recambio/' + item.id + '/' + item.nombre + '">' +
+
+                                item.nombre +
+                              '</a>' +
+                            '</h3>' +
+                            '<span>Precio: <strong> ' + item.Precio + '</strong></span>' +
+                          '</div>' +
+                        '</div>' ;
+
+
+        $("#ItemsGrid").append( itemHml );
+        }
+
+      ShowInfo();                    // Muestra/esconde información debajo de la tabla de items
+
+      $("#nowRec").text( lastItem + " de " + nItems );
+      }
+
 
     // Pone un indicador en el encabezamiento de la tabla para indicar el orden aplicado
     function ShowOrder()
@@ -298,8 +440,9 @@
 
       // Tabla con la lista de recambios encontrados
       var tabla = $("#ItemsList");
-      if( count == 0 ) tabla.addClass("hidden"); 
-      else             tabla.removeClass("hidden"); 
+      var grid  = $("#ItemsGrid");
+
+      if( count == 0 ) { tabla.addClass("hidden");  grid.addClass("hidden");  }
 
       // Botón para buscar mas recambios
       var BtnMas = $("#FindMore");

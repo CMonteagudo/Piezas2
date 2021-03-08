@@ -23,13 +23,24 @@ namespace Piezas2.Core
     /// <summary> Número de items totales sin aplicar la paginación, solo se calcula para la primera página </summary>
     public int Count { get; set; } = -1;      // -1 => No se calculo la cantidad de registros
 
+    private readonly HttpContext HttpCtx;
+    private readonly DbPiezasContext DbCtx;
+
     //---------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Obtiene la lista de Items que satiface los parametros especificados </summary>
-    public Recambios( string datos, HttpContext HttpCtx )
+    public Recambios( HttpContext HttpCtx )
+      {
+      this.HttpCtx = HttpCtx;
+      this.DbCtx = (DbPiezasContext) HttpCtx.RequestServices.GetService(typeof(DbPiezasContext));                 // Obtiene contexto a la BD
+      }
+
+    //---------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary> Obtiene la lista de Items que satiface los parametros especificados </summary>
+    public bool FindByDatos( string datos )
       {
       Filters = new ItemsFilters( datos, HttpCtx );
 
-      if( !ValidateFilters() ) return;              // Si hay algún filtro no valido, no retorna ningún registro
+      if( !ValidateFilters() ) return false;              // Si hay algún filtro no valido, no retorna ningún registro
 
       string sSelect = $"SELECT DISTINCT I.Id, I.Fabricante, I.Categoria, I.Nombre, I.Codigo, I.Foto, I.Precio, I.Descripcion";
 
@@ -53,12 +64,37 @@ namespace Piezas2.Core
 
       string sOrder = $"ORDER BY {getOrderField()} OFFSET {Filters.RegFirst} ROWS FETCH NEXT {Filters.RegCount} ROWS ONLY";     // Ordena y limita los recambios devueltos
 
-      var DbCtx = (DbPiezasContext) HttpCtx.RequestServices.GetService(typeof(DbPiezasContext));                                // Obtiene contexto a la BD
-
       Items = DbCtx.Items.FromSqlRaw( $"{sSelect} FROM {sTable} {sWhere} {sOrder}" ).ToList();                                  // Ejecuta la secuencia SQL
 
       if( Filters.RegFirst == 0 )                                                                                               // Si la primera página
         Count = DbCtx.Items.FromSqlRaw( $"{sSelect} FROM {sTable} {sWhere}" ).Count();                                          // Calcula la cantidad de registros
+
+      return true;
+      }
+
+    //---------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary> Obtiene la lista de Items que contengan la cadena 'name' dentro de su nombre </summary>
+    internal void FindByName( string name, string datos )
+      {
+      Filters = new ItemsFilters( datos, HttpCtx );
+
+      string sSelect = $"SELECT DISTINCT * FROM Item WHERE (CHARINDEX('{name}', Nombre) > 0) ";
+
+      string sOrder = $"ORDER BY {getOrderField()} OFFSET {Filters.RegFirst} ROWS FETCH NEXT {Filters.RegCount} ROWS ONLY";     // Ordena y limita los recambios devueltos
+
+      Items = DbCtx.Items.FromSqlRaw( sSelect + sOrder ).ToList();                                  // Ejecuta la secuencia SQL
+
+      if( Filters.RegFirst == 0 )                                                                   // Si la primera página
+        Count = DbCtx.Items.FromSqlRaw( sSelect ).Count();                                          // Calcula la cantidad de registros
+      }
+
+    //---------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary> Obtiene la lista de Items que tengan el código especicicado </summary>
+    internal void FindByCode( int code )
+      {
+      var sCode = code.ToString();
+      Items = DbCtx.Items.Where( i => i.Codigo == sCode ).ToList();          
+      Count = Items.Count();
       }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
@@ -95,24 +131,6 @@ namespace Piezas2.Core
 
       Count = 0;                      // Pone contador de registros en 0
       return false;                   // No es necesario buscar, porque el menos un filtro no se va a cumplir
-      }
-
-    //---------------------------------------------------------------------------------------------------------------------------------------
-    /// <summary> Toma la secuencia 'items' y la ordena según lo indicado en los filtros </summary>
-    private IQueryable<Item> OrderBy( IQueryable<Item> items )
-      {
-      return Filters.Orden switch       // OrdenFields = { "codigo", "categoria", "fabricante", "nombre" }
-          {
-           1 => items.OrderBy( x => x.Codigo     ),
-           2 => items.OrderBy( x => x.Categoria  ),
-           3 => items.OrderBy( x => x.Fabricante ),
-           4 => items.OrderBy( x => x.Nombre     ),
-          -1 => items.OrderByDescending( x => x.Codigo     ),
-          -2 => items.OrderByDescending( x => x.Categoria  ),
-          -3 => items.OrderByDescending( x => x.Fabricante ),
-          -4 => items.OrderByDescending( x => x.Nombre     ),
-          _ => items
-          };
       }
 
     } //=======================================================================================================================================
