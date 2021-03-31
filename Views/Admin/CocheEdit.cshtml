@@ -1,0 +1,544 @@
+﻿@model Piezas2.Models.RecambiosDatosModel
+@{
+  ViewData["Title"] = "Modificación, Adición y Borrado de coches";
+}
+
+<div class="main-frame">
+  <div class="columns-for-edit">
+
+    <div style="position:relative;">
+      <span style="position: absolute; bottom: 3px;">Seleccione un recambio:</span>
+      <div class="btn-group filters-btn" style="width:100%;">
+        <button type="button" class="btn" style="background-color:transparent"></button>
+        <button type="button" class="btn dropdown-toggle show-popup" data-toggle="" aria-expanded="false" style="background-color:transparent; float:right;">
+           Filtrar: <span class="caret"></span>
+        </button>
+        <div class="dropdown-menu filters-popup" role="menu" style="left:unset; right: 0px; width: 250px; ">
+          <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+          <div class="flex-grid">
+            <div class="form-group item" id="FindForName">
+              <input type="text" id="FindTxtCoche" name="FindTxtCoche" placeholder="Texto que se desea buscar"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="position:relative;">
+      <a id="lnkHome" href="/admin"               ><label>Home       </label></a>
+      <a id="lnkNew"  href="javascript:newCoche()"><label>Nuevo Coche</label></a>
+    </div>
+
+    <div id="list-rec" >
+      <div id="ErrorMsgCoches" ></div>
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped" id="ItemsList">
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="edit-rec" >
+      <form id="edit-datos" name="datos" class="hidden" enctype="multipart/form-data" method="post" >
+        <div id="foto-datos" >
+          <div id="foto" >
+            <label>Foto:</label>
+            <div id="FotoFrame">
+              <img id="ImgFoto" onload="CenterImg(event)"/>
+            </div>
+            <input id="FileFoto" name="FileFoto" type="file" accept="image/*"/>
+            <label id="lbFileFoto" for="FileFoto">Seleccione <br/> un fichero</label>
+          </div>
+          <div id="datos">
+            <div class="label-val">
+              <label for="Marca" >Marca:&nbsp;</label>
+              <select id="Marca" name="Marca" placeholder="Seleccione una marca">
+                @foreach( var marca in Model.Marcas )
+                  {
+                  <option value="@marca.Id">@marca.Name</option>
+                  }
+              </select>
+            </div>
+            <div class="label-val">
+              <label for="Modelo">Modelo:&nbsp;</label>
+              <select id="Modelo" name="Modelo" placeholder="Seleccione el modelo">
+              </select>
+            </div>
+            <div class="label-val">
+              <label for="Caja">Caja:&nbsp;</label><input type="text" id="Caja" name="Caja" size="5" placeholder="Escriba la caja de velc."/>
+            </div>
+            <div class="label-val">
+              <label for="Carroceria">Carroceria:&nbsp;</label><input type="text" id="Carroceria" name="Carroceria" size="5" placeholder="Escriba la Carroceria" />
+            </div>
+            <div class="label-val">
+              <label for="Motor">Motor:&nbsp;</label>
+              <select id="Motor" name="Motor" placeholder="Seleccione el motor">
+                @foreach( var motor in Model.Motores2 )
+                  {
+                  <option value="@motor.Id">@motor.Nombre</option>
+                  }
+              </select>
+            </div>
+          <p id="MotorInfo"></p>
+          </div>
+        </div>
+
+        <div style="width:100%">
+          <br />
+          <label for="Descripcion">Descripcion: </label><textarea id="Descripcion" name="Descripcion"></textarea>
+        </div>
+
+        <div id="UpdateErrorMsg" ></div>
+
+        <div class="btn-group center-content">
+          <button id="btnDel"  type="button" class="btn btn-danger">Borrar</button>
+          <button id="btnCopy" type="button" class="btn btn-default">Duplicar</button>
+          <button id="btnSave" type="button" class="btn btn-primary">Guardar</button>
+        </div>
+
+      <input id="Id"   name="Id"   type="hidden"/>
+      <input id="Foto" name="Foto" type="hidden"/>
+
+      <label id="lbId" class="right-top"></label>
+      </form>
+
+    </div>
+
+
+  </div>
+</div>
+
+
+@section Scripts{
+  <script type="text/javascript">
+
+    // Identificador del item con el que se llama la página
+    var cocheId = @Model.Id;
+
+    // Lista de todos los Coches que hay en la base de datos
+    var Coches = [];     
+
+    var Modelos = @Model.ModelosToJson();
+    var Motores = @Model.Motores2ToJson();
+
+    var dataMotor;      // Id del motor que se estan mostrando los datos
+
+    // Item actual que se esta modificando
+    var nowCoche;       // Datos del item
+    var nextID;         // Identificador el items mas cercano al seleccionado
+
+    var Msg1;           // Maneja recuadro para mostrar errores en la parte de la lista
+    var Msg2;           // Maneja recuadro para mostrar errores en la parte de los datos
+
+    // Elementos donde estan los datos que se estan editando
+    var _fotoSrc;
+    var _fotoFile;
+
+    var _Id;
+    var _Marca;
+    var _Modelo;
+    var _Motor;
+    var _Caja;
+    var _Carroceria;
+    var _Descripcion;
+
+    // Valores de todos los campos al empezar la edicción
+    var EditVals = { fotoSrc:"", fotoFile:"", Id:0, Marca:null, Modelo:null, Motor:null, Caja:"", Carroceria:"", Descripcion:"" };
+
+    // Inicia manipuladores y variables, después de cargarse la página
+    $( function()
+      {
+      _fotoSrc  = $("#ImgFoto");
+      _fotoFile = $("#FileFoto");
+
+      _Id          = $("#Id");
+      _Marca       = $("#Marca");
+      _Modelo      = $("#Modelo");
+      _Motor       = $("#Motor");
+      _Caja        = $("#Caja");
+      _Carroceria  = $("#Carroceria");
+      _Descripcion = $("#Descripcion");
+      _MotorInfo   = $("#MotorInfo");
+
+      // Actualiza ultimo valor de la busqueda por nombre
+      $("#FindTxtCoche").val( localStorage["lastFindTxtCoche"] || "" );
+
+      // Cuando se oprime el boton para guardar los cambios realizados
+      $("#btnSave").on( 'click', GuardaCambios );   
+      $("#btnCopy").on( 'click', DuplicarDatos );   
+      $("#btnDel" ).on( 'click', DeleteCoche   );   
+
+      // Pone/quita el la ventana flotante (popup) con los filtros
+      $(".filters-btn > button").on( 'click', e => { $(e.currentTarget.parentElement).addClass("open"); e.stopPropagation(); } );  
+      $("body").on( 'click', CheckClickOnPopup );  
+
+      // Cierra el popup por el boton que aparece a la derecha
+      $(".filters-popup > .close").on( 'click', e => 
+        { 
+        $(e.currentTarget).parent().parent().removeClass("open"); 
+        e.stopPropagation();
+        } );  
+
+      Msg1 = new MsgAlert( "#ErrorMsgCoches" );
+      Msg2 = new MsgAlert( "#UpdateErrorMsg" );
+
+      _fotoFile.change( OnSelectImgFile );
+      _fotoSrc.keyup( CheckSave );
+
+      _Marca.change( MarkChanged );
+      _Modelo.change( CheckSave );
+      _Motor.change( MotorChanged );
+      _Caja.keyup( CheckSave );
+      _Carroceria.keyup( CheckSave );
+      _Descripcion.keyup( CheckSave );
+
+      $("#FindTxtCoche").keyup( FillCochesList );
+
+      RefreshCochesList( cocheId );
+      } );
+
+    // Se llama cuando se selecciona un fichero de imagen para ponerlo como foto del recambio
+    function OnSelectImgFile( e )
+      {
+	    var files = this.files;
+  	  if( !files[0].type.match(/image/) ) 
+        {
+        alert("Debe seleccionar un fichero de imagen");
+        return
+        }
+
+      var reader = new FileReader();
+      reader.onload = function(e)
+        { 
+        _fotoSrc[0].src = reader.result;
+        CheckSave();
+        };
+        
+      reader.readAsDataURL( files[0] );
+      }
+
+    // Esta funcion chequea si el click se produjo dentro de una ventana popup
+    function CheckClickOnPopup( e )
+      {
+      var popups = $(".filters-popup");
+      for( var i=0; i < popups.length; i++ )
+        {
+        var rect = $(".filters-popup")[i].getBoundingClientRect();
+
+        if( e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom )
+          return;
+        }
+
+      $(".filters-btn").removeClass("open");
+      }
+
+    // Actualiza la lista de coches con el contenido que hay en el servidor
+    function RefreshCochesList( id )
+      {
+      ClearItemDatos();
+
+      var Conn = new ServerConnection( "GET", (s)=>ConnError(s,Msg1) );
+
+      Conn.Send( "/api/coches-desc", (datos) => 
+        {
+        Msg1.Hide();
+
+        Coches = datos;
+
+        FillCochesList();
+
+        if( id>0 ) FindDatosForCoche( id );
+
+        }, "#list-rec" );
+      }
+
+    // Llena la lista de Coches con los recambios encontrados
+    function FillCochesList( )
+      {
+      //$(".filters-btn").removeClass("open")       // Cierra el popup de filtrado
+      $("#ItemsList").children().eq(0).empty();
+
+      var txt = $("#FindTxtCoche").val();
+      localStorage["lastFindTxtCoche"] = txt ;
+      txt = txt.toLowerCase();
+
+      for( var i = 0; i < Coches.length; ++i )
+        {
+        var coche = Coches[i]; 
+
+        var cocheName = (coche.marca +" "+ coche.modelo +" motor "+ coche.motor).toLowerCase();
+        if( txt.length>0 && cocheName.indexOf(txt)<0 ) continue;
+
+        var name = "<strong> "+ coche.marca +" </strong><span> "+ coche.modelo +"<strong> motor </strong>"+ coche.motor + "</span>";
+
+        var clss = coche.id == EditVals.Id? " class='row-selected'" : "";
+           
+        var itemHml = "<tr data-id="+ coche.id + clss + "><td>" + name + "</td></tr>";
+
+        $("#ItemsList").append( itemHml );
+        }
+
+      $("#ItemsList tbody tr").on( 'click', (e)=>
+        { 
+        var row = $(e.currentTarget);
+        var id  = row.data("id");
+
+        FindDatosForCoche( id );
+        } );
+
+      ShowInfo();                    // Muestra/esconde información debajo de la tabla de items
+      }
+
+    // Busca los datos del coche con identificador 'id'
+    function FindDatosForCoche( id )
+      {
+      if( DescartCocheChanged()==false ) return;
+
+      var Conn = new ServerConnection( "GET", (s)=>{ ShowPanelDatos(); ConnError(s,Msg2); } );
+      Conn.Send( "/api/coche/" + id , (datos) => 
+        {
+        Msg2.Hide();
+
+        nowCoche = datos;
+        if( nowCoche.id==0 )
+          {
+          Msg2.Show( "El coche con Id="+id+" no se encuentra en la base de datos", "danger" );
+          ClearItemDatos();
+          }
+        else
+          {
+          nextID = SelectTableRow( id, "#ItemsList", "#list-rec" );
+          SetItemDatos();
+          }
+
+        ShowPanelDatos();
+        }, "#edit-rec" );
+      }
+
+    // Muestra el panel de edicción de los datos
+    function ShowPanelDatos()        
+      {
+      $("#edit-datos").removeClass("hidden");
+      }
+
+    // Decide la informacion que se debe mostrar y cual no, de acuerdo al resultado de la busqueda
+    function ShowInfo()        
+      {
+      var count = ItemsList.children[0].children.length;                    // Cantidad de Items que se muestran en la tabla
+
+      ItemsList.style.display = count==0? "none" : "table";
+
+      // Cartel con información
+      if( count == 0 ) Msg1.Show( "No se encontro ningún coche que cumpla las condiciones dadas", "info" );
+      else             Msg1.Hide();
+      }
+
+    // Se llama cada vez que se va a cambiar el recambio que se esta editando, si el cambio no es posible retorna false
+    function DescartCocheChanged( )
+      {
+      if( DatosChanged() )
+        if( confirm("Desea descartar los cambios realizados") )
+          UpdateDatos();
+        else return false;
+
+      return true;
+      }
+
+    // Chequea si los datos cambia y pone el botón de Guardar o no
+    function CheckSave()
+      {
+      var chgd = DatosChanged();
+
+      btnSave.style.display = chgd? "block" : "none";
+      btnCopy.style.display = chgd || !EditVals.Id? "none"  : "block";
+      }
+
+    // Se llama cuando cambia la marca del coche, llena los modelos y pone botón de guardar
+    function MarkChanged()
+      {
+      FillModelos();
+      //FillMotores();
+      CheckSave();
+      }
+
+    // Se llama cuando cambia la el motor, pone los datos del motor y el botón de guardar
+    function MotorChanged()  
+      {
+      CheckSave();
+
+      var motorId = _Motor.val();
+      if( motorId == dataMotor ) return;
+
+      dataMotor = motorId;
+
+      for( let motor of Motores )
+        if( motor.Id == motorId )
+          {
+          _MotorInfo.html( "<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Potencia:</b> " + motor.Potencia  +" HP<br/>"+
+                           "<b>&nbsp;&nbsp;&nbsp;Capacidad:</b>                  " + motor.Capacidad +" Litros<br/>"+
+                           "<b>Combustible:</b>                                  " + (motor.Combustible? "Petroleo" : "Gasolina") );
+          return;
+          }
+
+      _MotorInfo.html("");
+      }
+
+
+    // Borra todos los datos que hay sobre el recambio actual
+    function ClearItemDatos()
+      {
+      EditVals ={ fotoSrc:"", fotoFile:"", Id:0, Marca:null, Modelo:null, Motor:null, Caja:"", Carroceria:"", Descripcion:"" };
+
+      nowCoche = null;
+      nextID = SelectTableRow( -1, "#ItemsList", "#list-rec" );
+
+      UpdateDatos();
+      }
+
+    // Pone los datos del recambio actual
+    function SetItemDatos( dupicate=false )        
+      {
+      var IdCoche = dupicate? 0 : nowCoche.id;
+
+      EditVals ={ fotoSrc     :nowCoche.foto, 
+                  fotoFile    :"", 
+                  Id          :IdCoche, 
+                  Marca       :nowCoche.marca, 
+                  Modelo      :nowCoche.modelo, 
+                  Motor       :nowCoche.motor, 
+                  Caja        :nowCoche.caja? nowCoche.caja : "", 
+                  Carroceria  :nowCoche.carroceria? nowCoche.carroceria : "", 
+                  Descripcion :nowCoche.descripcion? nowCoche.descripcion : "" };
+
+      UpdateDatos();
+      }
+
+    // Pone los datos del recambio actual
+    function UpdateDatos()        
+      {
+      _fotoSrc.attr("src", EditVals.fotoSrc );
+      _fotoFile.val( EditVals.fotoFile );
+
+      _Id.val( EditVals.Id );
+
+      _Marca.val( EditVals.Marca );
+      _Motor.val( EditVals.Motor );
+
+      FillModelos();
+      MotorChanged();
+      //FillMotores();
+
+      _Caja.val( EditVals.Caja );
+      _Carroceria.val( EditVals.Carroceria );
+      _Descripcion.val( EditVals.Descripcion );
+
+      $("#Foto").val( EditVals.fotoSrc );
+      $("#lbId").text( EditVals.Id>0? "ID: " + EditVals.Id  : "" );
+
+      btnSave.style.display = "none";
+
+      var disp = (EditVals.Id == 0)? "none" : "block";
+
+      btnCopy.style.display = disp;
+      btnDel.style.display  = disp; 
+      }
+
+    // Llena el combo con los modelos de la marca seleccionada
+    function FillModelos()        
+      {
+      var marca = _Marca.val();
+
+      _Modelo.children().remove();
+
+      for( let modelo of Modelos )
+        {
+        if( modelo.Marca == marca )
+          _Modelo.append( '<option value="'+ modelo.Id +'">'+ modelo.Nombre + '</option>' );
+        }    
+
+      _Modelo.val( EditVals.Modelo );
+      }
+
+    // Verifica si se cambio algun dato desde el inicio de la edicción
+    function DatosChanged()        
+      {
+      if( EditVals.fotoSrc     != _fotoSrc.attr("src") ) return true;
+      if( EditVals.fotoFile    != _fotoFile.val()     ) return true;
+
+      if( EditVals.Id          != _Id.val()           ) return true;
+      if( EditVals.Marca       != _Marca.val()        ) return true;
+      if( EditVals.Modelo      != _Modelo.val()       ) return true;
+      if( EditVals.Motor       != _Motor.val()        ) return true;
+      if( EditVals.Caja        != _Caja.val()         ) return true;
+      if( EditVals.Carroceria  != _Carroceria.val()   ) return true;
+      if( EditVals.Descripcion != _Descripcion.val()  ) return true;
+
+      return false;
+      }
+
+    // Verifica los datos que se estan editando del recambio actual
+    function ValidateDatos()        
+      {
+      if( ValidateSel( _Marca     , "la marca del coche."             ) &&
+          ValidateSel( _Modelo    , "el modelo del coche."            ) &&
+          ValidateStr( _Caja      , "El nombre de la caja"   , -1, 50 ) &&
+          ValidateStr( _Carroceria, "El nombre la carroceria", -1, 50 ) &&
+          ValidateSel( _Motor     , "el motor del coche."             ) )
+        return true;
+
+      return false;
+      }
+
+    // Determina cual es el modo de ediccion de los datos a utilizar
+    function newCoche()
+      {
+      if( DescartCocheChanged() )
+        {
+        ShowPanelDatos();
+        ClearItemDatos(); 
+        }
+      }
+
+    // Duplica los datos de la marca actual, para crear una similar
+    function DuplicarDatos()
+      {
+      if( DescartCocheChanged() )
+        SetItemDatos( true );
+      }
+
+    // Se llama para guardar los camnios realizados
+    function GuardaCambios()
+      {
+      if( !ValidateDatos() ) return;
+      var url = +_Id.val()>0? "/api/modify-coche" : "/api/add-coche";
+
+      var form = document.forms.namedItem("datos");
+
+      var srv = new ServerConnection( "POST", (s)=>ConnError(s, Msg2) );
+      srv.SendForm( form, url, (respJson) => 
+        {
+        RefreshCochesList( respJson.Id );
+        });
+      }
+
+    // Borra la marca actual de la base de datos
+    function DeleteCoche()
+      {
+      var name = nowCoche.marcaNavigation.nombre + " " + nowCoche.modeloNavigation.nombre;
+      if( !confirm("Esta seguro que desea borrar el coche:\n'" + name + "'" ) )
+        return;
+
+      var form = document.forms.namedItem("datos");
+
+      var srv = new ServerConnection( "DELETE", (s)=>ConnError(s, Msg2) );
+
+      srv.SendForm( form, "/api/delete-coche", (respJson) => 
+        {
+        RefreshCochesList( nextID );
+        });
+      }
+
+
+  </script>
+}

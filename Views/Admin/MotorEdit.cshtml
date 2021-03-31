@@ -1,0 +1,420 @@
+﻿@using Piezas2.Core
+
+@{
+  ViewData["Title"] = "Modificación, Adición y Borrado de motores";
+}
+
+<div class="main-frame">
+  <div class="columns-for-edit">
+
+    <div style="position:relative;">
+      <span style="position: absolute; bottom: 3px;">Seleccione un motor:</span>
+      <div class="btn-group filters-btn" style="width:100%;">
+        <button type="button" class="btn" style="background-color:transparent"></button>
+        <button type="button" class="btn dropdown-toggle show-popup" data-toggle="" aria-expanded="false" style="background-color:transparent; float:right;">
+           Filtrar: <span class="caret"></span>
+        </button>
+        <div class="dropdown-menu filters-popup" role="menu" style="left:unset; right: 0px; width: 250px; ">
+          <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+          <div class="flex-grid">
+            <div class="form-group item" id="FindForName">
+              <input type="text" id="FindTxtMotor" name="FindTxtMotor" placeholder="Texto que se desea buscar"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="position:relative;">
+      <a id="lnkHome" href="/admin"               ><label>Home        </label></a>
+      <a id="lnkNew"  href="javascript:newMotor()"><label>Nuevo motor</label></a>
+    </div>
+
+    <div id="list-rec" >
+      <div id="ErrorMsgMotors" ></div>
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped" id="ItemsList">
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="edit-rec" >
+      <form id="edit-datos" name="datos" class="hidden" enctype="multipart/form-data" method="post" >
+        <div id="foto-datos" style="grid-template-columns: auto;">
+          <div></div>
+          <div id="datos" style="grid-template-rows: 25px;">
+            <div class="label-val">
+              <label for="Nombre">Nombre:&nbsp;</label><input type="text" id="Nombre" name="Nombre" size="5" placeholder="Escriba nombre del motor"/>
+            </div>
+            <div class="label-val" style="grid-template-columns: 96px auto;">
+              <label for="Combustible" >Combustible:&nbsp;</label>
+              <select id="Combustible" name="Combustible" placeholder="Seleccione el combustible">
+                <option value="0">Gasolina</option>
+                <option value="1">Pretroleo</option>
+              </select>
+            </div>
+            <div class="label-val medida">
+              <label for="Capacidad">Capacidad:&nbsp;</label><input type="text" id="Capacidad" name="Capacidad" size="5" placeholder="Escriba la capacidad en Litros"/>
+              <label>Litros</label>
+            </div>
+            <div class="label-val medida">
+              <label for="Potencia">Potencia:&nbsp;</label><input type="text" id="Potencia" name="Potencia" size="5" placeholder="Escriba la Potencia en HP"/>
+              <label>HP</label>
+            </div>
+          </div>
+        </div>
+
+        <div style="width:100%">
+          <br />
+          <label for="Descripcion">Descripcion: </label><textarea id="Descripcion" name="Descripcion"></textarea>
+        </div>
+
+        <div id="UpdateErrorMsg" ></div>
+
+        <div class="btn-group center-content">
+          <button id="btnDel"  type="button" class="btn btn-danger">Borrar</button>
+          <button id="btnCopy" type="button" class="btn btn-default">Duplicar</button>
+          <button id="btnSave" type="button" class="btn btn-primary">Guardar</button>
+        </div>
+
+      <input id="Id"   name="Id"   type="hidden"/>
+      <input id="Foto" name="Foto" type="hidden"/>
+
+      <label id="lbId" class="right-top"></label>
+      </form>
+
+    </div>
+
+
+  </div>
+</div>
+
+
+@section Scripts{
+  <script type="text/javascript">
+
+    // Lista de todos los motores que hay en la base de datos
+    var Motors = [];     
+
+    // Item actual que se esta modificando
+    var nowMotor;       // Datos del item
+    var nextID;         // Identificador el items mas cercano al seleccionado
+
+    var Msg1;           // Maneja recuadro para mostrar errores en la parte de la lista
+    var Msg2;           // Maneja recuadro para mostrar errores en la parte de los datos
+
+    // Elementos donde estan los datos que se estan editando
+    var _Id;
+    var _Nombre;
+    var _Combustible;
+    var _Capacidad;
+    var _Potencia;
+    var _Descripcion;
+
+    // Valores de todos los campos al empezar la edicción
+    var EditVals = { Id:0, Nombre:"", Combustible:null, Capacidad:0, Potencia:0, Descripcion:"" };
+
+    // Inicia manipuladores y variables, después de cargarse la página
+    $( function()
+      {
+      _Id          = $("#Id");
+      _Nombre      = $("#Nombre");
+      _Combustible = $("#Combustible");
+      _Capacidad   = $("#Capacidad");
+      _Potencia    = $("#Potencia");
+      _Descripcion = $("#Descripcion");
+
+      // Actualiza ultimo valor de la busqueda por nombre
+      $("#FindTxtMotor").val( localStorage["lastFindTxtMotor"] || "" );
+
+      // Cuando se oprime el boton para guardar los cambios realizados
+      $("#btnSave").on( 'click', GuardaCambios );   
+      $("#btnCopy").on( 'click', DuplicarDatos );   
+      $("#btnDel" ).on( 'click', DeleteMotor   );   
+
+      // Pone/quita el la ventana flotante (popup) con los filtros
+      $(".filters-btn > button").on( 'click', e => 
+        { 
+        $(e.currentTarget.parentElement).addClass("open"); 
+        e.stopPropagation(); 
+        FindTxtMotor.focus();
+        } );  
+
+      $("body").on( 'click', CheckClickOnPopup );  
+
+      // Cierra el popup por el boton que aparece a la derecha
+      $(".filters-popup > .close").on( 'click', e => 
+        { 
+        $(e.currentTarget).parent().parent().removeClass("open"); 
+        e.stopPropagation();
+        } );  
+
+      Msg1 = new MsgAlert( "#ErrorMsgMotor" );
+      Msg2 = new MsgAlert( "#UpdateErrorMsg" );
+
+      _Nombre.keyup( CheckSave );
+      _Combustible.change( CheckSave );
+      _Capacidad.keyup( CheckSave );
+      _Potencia.keyup( CheckSave );
+      _Descripcion.keyup( CheckSave );
+
+      $("#FindTxtMotor").keyup( FillMotorsList );
+
+      RefreshMotorsList( @ViewData["Id"] );
+      } );
+
+    // Esta funcion chequea si el click se produjo dentro de una ventana popup
+    function CheckClickOnPopup( e )
+      {
+      var popups = $(".filters-popup");
+      for( var i=0; i < popups.length; i++ )
+        {
+        var rect = $(".filters-popup")[i].getBoundingClientRect();
+
+        if( e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom )
+          return;
+        }
+
+      $(".filters-btn").removeClass("open");
+      }
+
+    // Actualiza la lista de motores con el contenido que hay en el servidor
+    function RefreshMotorsList( id )
+      {
+      ClearItemDatos();
+
+      var Conn = new ServerConnection( "GET", (s)=>ConnError(s,Msg1) );
+
+      Conn.Send( "/api/motores", (datos) => 
+        {
+        Msg1.Hide();
+
+        Motors = datos;
+
+        FillMotorsList();
+
+        if( id>0 ) FindDatosForMotor( id );
+
+        }, "#list-rec" );
+      }
+
+    // Llena la lista de motores
+    function FillMotorsList( )
+      {
+      //$(".filters-btn").removeClass("open")       // Cierra el popup de filtrado
+      $("#ItemsList").children().eq(0).empty();
+
+      var txt = $("#FindTxtMotor").val();
+      localStorage["lastFindTxtMotor"] = txt ;
+      txt = txt.toLowerCase();
+
+      for( var i = 0; i < Motors.length; ++i )
+        {
+        var motor = Motors[i]; 
+        var name  = motor.nombre;
+
+        if( txt.length>0 && name.toLowerCase().indexOf(txt)<0 ) continue;
+
+        var clss = motor.id == EditVals.Id? " class='row-selected'" : "";
+           
+        var itemHml = "<tr data-id="+ motor.id + clss + "><td>" + name + "</td></tr>";
+
+        $("#ItemsList").append( itemHml );
+        }
+
+      $("#ItemsList tbody tr").on( 'click', (e)=>
+        { 
+        var row = $(e.currentTarget);
+        var id  = row.data("id");
+
+        FindDatosForMotor( id );
+        } );
+
+      ShowInfo();                    // Muestra/esconde información debajo de la tabla de items
+      }
+
+    // Busca los datos del motor con identificador 'id'
+    function FindDatosForMotor( id )
+      {
+      if( DescartMotorChanged()==false ) return;
+
+      ShowPanelDatos();
+      for( let motor of Motors )
+        {
+        if( motor.id==id )
+          {
+          Msg2.Hide();
+
+          nowMotor = motor;
+          nextID = SelectTableRow( id, "#ItemsList", "#list-rec" );
+          SetItemDatos();
+          return;
+          }
+        }
+
+      ClearItemDatos();
+      Msg2.Show( "El motor con Id="+id+" no se encuentra en la base de datos", "danger" );
+      }
+
+    // Muestra el panel de edicción de los datos
+    function ShowPanelDatos()        
+      {
+      $("#edit-datos").removeClass("hidden");
+      }
+
+    // Decide la informacion que se debe mostrar y cual no, de acuerdo al resultado de la busqueda
+    function ShowInfo()        
+      {
+      var count = ItemsList.children[0].children.length;                    // Cantidad de Items que se muestran en la tabla
+
+      ItemsList.style.display = count==0? "none" : "table";
+
+      // Cartel con información
+      if( count == 0 ) Msg1.Show( "No se encontro ningún Motor que cumpla las condiciones dadas", "info" );
+      else             Msg1.Hide();
+      }
+
+    // Se llama cada vez que se va a cambiar el motor que se esta editando, si el cambio no es posible retorna false
+    function DescartMotorChanged( )
+      {
+      if( DatosChanged() )
+        if( confirm("Desea descartar los cambios realizados") )
+          UpdateDatos();
+        else return false;
+
+      return true;
+      }
+
+    // Chequea si los datos cambia y pone el botón de Guardar o no
+    function CheckSave()
+      {
+      var chgd = DatosChanged();
+
+      btnSave.style.display = chgd? "block" : "none";
+      btnCopy.style.display = chgd || !EditVals.Id? "none"  : "block";
+      }
+
+    // Borra todos los datos que hay sobre el motor actual
+    function ClearItemDatos()
+      {
+      EditVals = { Id:0, Nombre:"", Combustible:null, Capacidad:0, Potencia:0, Descripcion:"" };
+
+      nowMotor = null;
+      nextID = SelectTableRow( -1, "#ItemsList", "#list-rec" );
+
+      UpdateDatos();
+      }
+
+    // Pone los datos del motor actual
+    function SetItemDatos( dupicate=false )        
+      {
+      var IdMotor = dupicate? 0 : nowMotor.id;
+
+      EditVals ={ Id          :IdMotor, 
+                  Nombre      :nowMotor.nombre,         
+                  Combustible :nowMotor.combustible, 
+                  Capacidad   :nowMotor.capacidad, 
+                  Potencia    :nowMotor.potencia, 
+                  Descripcion :nowMotor.descripcion? nowMotor.descripcion : "" };
+
+      UpdateDatos();
+      }
+
+    // Pone los datos del motor actual
+    function UpdateDatos()        
+      {
+      _Id.val( EditVals.Id );
+      _Nombre.val( EditVals.Nombre );
+      _Combustible.val( EditVals.Combustible );
+      _Capacidad.val( EditVals.Capacidad );
+      _Potencia.val( EditVals.Potencia );
+      _Descripcion.val( EditVals.Descripcion );
+
+      $("#lbId").text( EditVals.Id>0? "ID: " + EditVals.Id  : "" );
+
+      btnSave.style.display = "none";
+
+      var disp = (EditVals.Id == 0)? "none" : "block";
+
+      btnCopy.style.display = disp;
+      btnDel.style.display  = disp; 
+      }
+
+    // Verifica si se cambio algun dato desde el inicio de la edicción
+    function DatosChanged()        
+      {
+      if( EditVals.Id          != _Id.val()          ) return true;
+      if( EditVals.Nombre      != _Nombre.val()      ) return true;
+      if( EditVals.Combustible != _Combustible.val() ) return true;
+      if( EditVals.Capacidad   != _Capacidad.val()   ) return true;
+      if( EditVals.Potencia    != _Potencia.val()    ) return true;
+      if( EditVals.Descripcion != _Descripcion.val() ) return true;
+
+      return false;
+      }
+
+    // Verifica los datos del motor actual
+    function ValidateDatos()        
+      {
+      if( ValidateStr( _Nombre     , "El nombre del motor", 1, 50) &&
+          ValidateSel( _Combustible, "el combustible que usa el motor.") &&
+          ValidateNum( _Capacidad  , "La capacidad", 1, 1000, true ) &&
+          ValidateNum( _Potencia   , "La potencia" , 1, 1000, true ) )
+        return true;
+
+      return false;
+      }
+
+    // Pone el modo para instroducir los datos de un motor nuevo
+    function newMotor()
+      {
+      if( DescartMotorChanged() )
+        {
+        ShowPanelDatos();
+        ClearItemDatos(); 
+        }
+      }
+
+    // Duplica los datos de la marca actual, para crear una similar
+    function DuplicarDatos()
+      {
+      if( DescartMotorChanged() )
+        SetItemDatos( true );
+      }
+
+    // Se llama para guardar los camnios realizados
+    function GuardaCambios()
+      {
+      if( !ValidateDatos() ) return;
+      var url = +_Id.val()>0? "/api/modify-motor" : "/api/add-motor";
+
+      var form = document.forms.namedItem("datos");
+
+      var srv = new ServerConnection( "POST", (s)=>ConnError(s, Msg2) );
+      srv.SendForm( form, url, (respJson) => 
+        {
+        RefreshMotorsList( respJson.Id );
+        });
+      }
+
+    // Borra la marca actual de la base de datos
+    function DeleteMotor()
+      {
+      if( !confirm("Esta seguro que desea borrar el motor:\n'" + nowMotor.nombre + "'" ) )
+        return;
+
+      var form = document.forms.namedItem("datos");
+
+      var srv = new ServerConnection( "DELETE", (s)=>ConnError(s, Msg2) );
+
+      srv.SendForm( form, "/api/delete-motor", (respJson) => 
+        {
+        RefreshMotorsList( nextID );
+        });
+      }
+
+
+  </script>
+}

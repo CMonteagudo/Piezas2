@@ -123,22 +123,45 @@ h1, h2, h3 {
 }
 
 .item-box {                                             /* Recuadro donde se muestra un Item */
+  position: relative;
   display: flex;
   flex-direction: row;
-  border: 1px #ddd solid;
+  border: 1px #aaa solid;
   border-radius: 10px;
 }
 
-.item-box-img img {                                     /* Imgen dentro del recuadro de un item*/
+.item-over {                                            /* Recuadro trasparente que cubre el recuadro del Item*/
+  position: absolute;
+  left: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+}
+
+.item-over:hover {                                      /* Cuando se mueve el ratón por arriba de un Item */
+  background-color: #0001;
+  cursor: pointer;
+}
+
+.item-box-img {                                         /* Recuadro de la imagen dentro del Item*/
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
   width: 95px;
   height: 95px;
   margin-right: 10px;
+}
+
+.item-box-img img {                                     /* Imgen dentro del recuadro de un item*/
   border-top-left-radius: 10px;
   border-bottom-left-radius: 10px;
 }
 
 .item-box-info {                                        /* Recuadro donde se muestra la información del Item */
   position: relative;
+  flex-grow: 1;
 }
 
 .item-box-info h3 {                                     /* Zona donde se muestra el nombre del Item*/
@@ -259,11 +282,14 @@ a {
   font-weight: bold;
 }
 
-.btn.btn-default {                                    /* Hace que todos los combos tengan el mismo tamaño*/
+.combo-txt {                                          /* Hace que todos los combos tengan el mismo tamaño*/
   width: 160px;
   padding-left: 5px;
   text-align: left;
   padding-right: 5px;
+  color: #333;
+  background-color: #fff;
+  border-color: #ccc;
 }
 
 .btn-group .dropdown-menu li.tenue a,
@@ -334,7 +360,7 @@ a {
 .show-tipo > .show-btn:hover,
 .coche-name:hover,
 #CochesList > tbody > tr:hover,
-#ItemsList > tbody > tr:hover { /* Pone cursor cuando se pasa por arriba de las filas*/
+#ItemsList > tbody > tr:hover {                       /* Pone cursor cuando se pasa por arriba de las filas*/
   background-color: #f0f0f0;
   cursor: pointer;
 }
@@ -358,11 +384,11 @@ a {
   color: darkslategray;
 }
 
-.show-tipo{
+.show-tipo{                                           /* Barra para mostrar los botones para cambiar el tipo de vista de los resultados */
   height: 33px;
   }
 
-.show-tipo > .show-btn {
+.show-tipo > .show-btn {                              /* Caracteriticas de los botones de tipo de vista de los resultados */
   float: right;
   height: 27px;
   width: 27px;
@@ -371,7 +397,7 @@ a {
   margin: 0px 5px 5px 5px;
 }
 
-.show-btn.btn-selected {
+.show-btn.btn-selected {                              /* Forma de mostrar el boton de tipo de vista seleccionado */
   background-color: #eee;
   border-color: #286090;
 }
@@ -383,14 +409,21 @@ a {
   grid-column-gap: 10px;
 }
 
-#colItems, #colCoches {
+.columns-for-edit {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-bottom: 15px;
+  grid-column-gap: 10px;
+}
+
+#list-rec, #list-coches, #edit-rec {
   position: relative;
   height: 650px;
   background-color: #f4f4f4;
   border: #999 1px solid;
 }
 
-#colItems {
+#list-rec {
   overflow: auto;
 }
 
@@ -483,6 +516,150 @@ a {
   margin-left: auto;
   margin-right: auto;
   display: block;
+}
+
+/*------------------------------------------ Página de ediccion de recambio ------------------------------------------------------*/
+.columns-for-edit {
+  display: grid;
+  grid-template-columns: 30% 70%;
+  margin-bottom: 15px;
+  grid-column-gap: 10px;
+}
+
+#edit-rec {
+  padding: 10px;
+}
+
+#edit-rec label {
+  margin-bottom: 0px;
+}
+
+#foto-datos {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+}
+
+#foto-datos #foto {
+  overflow: hidden;
+}
+
+#ImgFoto{
+  overflow:auto;
+}
+
+#foto-datos #datos label {
+  width: 80px;
+  text-align: right;
+  line-height: 25px;
+}
+
+#foto-datos #datos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 25px 25px 25px;
+  margin-top: 15px;
+  padding: 10px;
+  grid-gap: 15px;
+}
+
+.label-val {
+  display: grid;
+  grid-template-columns: 80px auto;
+}
+
+.label-val label:first-child {
+  width: 80px;
+  text-align: right;
+  }
+
+.label-val label {
+  height:25px;
+  line-height: 25px;
+}
+
+.label-val.medida {
+  position: relative
+}
+
+.label-val.medida label:last-child {
+  position: absolute;
+  right: 5px;
+}
+
+.label-val.medida input {
+  padding-right: 45px;
+}
+
+#dato-nombre{
+  grid-column: 1/3;
+}
+
+#FotoFrame {
+  width: 120px;
+  height: 120px;
+  border: 1px solid #aaa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color:white;
+  overflow:hidden;
+}
+
+#FileFoto{
+  display : none;
+}
+
+#lbFileFoto {
+  width: 100%;
+  text-align: center;
+  color: cornflowerblue;
+
+}
+
+#lbFileFoto:hover {
+  background-color: #e0e0e0;
+  cursor: pointer;
+}
+
+.center-content {
+  display: flex;
+  justify-content: center;
+}
+
+.btn-group.center-content button {
+  border-radius: 5px !important;
+  width: 80px;
+  margin: 10px 20px 10px 20px !important;
+}
+
+#lnkHome {                                                                  /* Link para ir a la página inicial de la parte de arriba*/
+  position: absolute;
+  right: 10px;
+  bottom: 0px;
+}
+
+#lnkNew {                                                                   /* Link para crear una entidad nueva */
+  position: absolute;
+  right: 100px;
+  bottom: 0px;
+}
+
+#lnkHome label:hover, #lnkNew label:hover {
+  cursor: pointer;
+  background: #ddd;
+  padding: 0px 10px;
+}
+
+#Descripcion {
+  width: 100%;
+  height: 50px;
+  margin-bottom: 15px;
+}
+
+.right-top{
+  position: absolute;
+  top: 0px;
+  right: 20px;
 }
 
 /*----------------------------------------------------- Media Querys --------------------------------------------------------------*/

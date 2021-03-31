@@ -10,8 +10,8 @@
   <div class="row">
       <div class="col-md-4">
         <picture> 
-          @{ var foto = string.IsNullOrWhiteSpace(@Model.Foto)? "NoImagen.png" : @Model.Foto; }
-          <img style="min-height: 200px" src="/images/@foto" alt="Imagen de @Model.Nombre"> 
+          @{ var foto = string.IsNullOrWhiteSpace(@Model.Foto)? "/images/NoImagen.png" : @Model.Foto; }
+          <img style="min-height: 200px" src="@foto" alt="Imagen de @Model.Nombre"> 
         </picture>
       </div>
       <div class="col-md-8 table-responsive">

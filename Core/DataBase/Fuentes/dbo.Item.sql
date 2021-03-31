@@ -1,15 +1,15 @@
 ﻿CREATE TABLE [dbo].[Item] (
-    [Id]          INT           IDENTITY (1, 1) NOT NULL,
-    [Fabricante]  INT           NOT NULL,
-    [Categoria]   INT           NOT NULL,
-    [Nombre]      NVARCHAR (80) NOT NULL,
-    [Codigo]      NCHAR (50)    NOT NULL,
-    [Foto]        NCHAR (50)    NULL,
-    [Precio]      DECIMAL (18)  NULL,
-    [Descripcion] NTEXT         NULL,
+    [Id]          INT             IDENTITY (1, 1) NOT NULL,
+    [Fabricante]  INT             NOT NULL,
+    [Categoria]   INT             NOT NULL,
+    [Nombre]      NVARCHAR (80)   NOT NULL,
+    [Codigo]      NVARCHAR (50)   NOT NULL,
+    [Foto]        NVARCHAR (50)   NULL,
+    [Precio]      DECIMAL (18, 2) NULL,
+    [Descripcion] NVARCHAR (MAX)  NULL,
     PRIMARY KEY CLUSTERED ([Id] ASC),
-    CONSTRAINT [FK_Fabricante] FOREIGN KEY ([Fabricante]) REFERENCES [dbo].[Fabricante] ([Id]),
-    CONSTRAINT [FK_Categoria] FOREIGN KEY ([Categoria]) REFERENCES [dbo].[Categoria] ([Id])
+    CONSTRAINT [FK_Fabricante] FOREIGN KEY ([Fabricante]) REFERENCES [dbo].[Fabricante] ([Id]) ON UPDATE CASCADE,
+    CONSTRAINT [FK_Categoria] FOREIGN KEY ([Categoria]) REFERENCES [dbo].[Categoria] ([Id]) ON UPDATE CASCADE
 );
 
 

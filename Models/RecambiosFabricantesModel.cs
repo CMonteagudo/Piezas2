@@ -24,16 +24,15 @@ namespace Piezas2.Models
       {
       Maker = maker.Replace('-',' ') .ToUpper();
 
-      var found = new Recambios( HttpCtx );
-      found.FindByDatos( $"fab-{Maker}/orden-categoria/rango-0-10000" );
+      var recambs = new Recambios( HttpCtx ).FindByDatos( $"fab-{Maker}/orden-categoria/rango-0-10000" );
 
-      MakerId = found.Filters.Fabricante.Id;
+      MakerId = recambs.Filters.Fabricante.Id;
 
       var catTable = new Categorias( HttpCtx );
 
       GrupoItems grp = null;
       int lastCat = -1;
-      foreach( var item in found.Items )
+      foreach( var item in recambs.Items )
         {
         if( item.Categoria != lastCat )
           {

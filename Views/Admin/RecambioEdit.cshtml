@@ -1,0 +1,540 @@
+﻿@model Piezas2.Models.RecambiosDatosModel
+@{
+  ViewData["Title"] = "Define el uso de los recambios";
+}
+
+<div class="main-frame">
+  <div class="columns-for-edit">
+
+    <div style="position:relative;">
+      <span style="position: absolute; bottom: 3px;">Seleccione un recambio:</span>
+      <div class="btn-group filters-btn" style="width:100%;">
+        <button type="button" class="btn" style="background-color:transparent"></button>
+        <button type="button" class="btn dropdown-toggle show-popup" data-toggle="" aria-expanded="false" style="background-color:transparent; float:right;">
+           Filtrar: <span class="caret"></span>
+        </button>
+        <div class="dropdown-menu filters-popup" role="menu">
+          <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+          <div class="flex-grid">
+            <div class="btn-group item" id="comboCategoria">
+              <button type="button" class="btn combo-txt no-close">&emsp;</button>
+              <button type="button" class="btn dropdown-toggle btn-primary no-close" data-toggle="dropdown" aria-expanded="false">
+                <span class="caret"></span><span class="sr-only">Toggle Dropdown</span>
+              </button>
+              <ul class="dropdown-menu no-close" role="menu"></ul>
+            </div>
+
+            <div class="btn-group item" id="comboSubCategoria">
+              <button type="button" class="btn combo-txt">&emsp;</button>
+              <button type="button" class="btn dropdown-toggle btn-primary" data-toggle="dropdown" aria-expanded="false">
+                <span class="caret"></span><span class="sr-only">Toggle Dropdown</span>
+              </button>
+              <ul class="dropdown-menu" role="menu"></ul>
+            </div>
+
+            <div class="btn-group item" id="comboFabricante">
+              <button type="button" class="btn combo-txt">&emsp;</button>
+              <button type="button" class="btn dropdown-toggle btn-primary" data-toggle="dropdown" aria-expanded="false">
+                <span class="caret"></span><span class="sr-only">Toggle Dropdown</span>
+              </button>
+              <ul class="dropdown-menu" role="menu"></ul>
+            </div>
+
+            <div class="form-group item" id="FindForName">
+              <input type="text" id="findName" name="findName" placeholder="Texto que se desea buscar"/>
+            </div>
+          </div>
+
+          <div class="btn-group" id="FindRecambio">
+            <button type="button" class="btn btn-primary">Buscar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="position:relative;">
+      <a id="lnkHome" href="/admin"              ><label>Home          </label></a>
+      <a id="lnkNew"  href="javascript:newItem()"><label>Nuevo Recambio</label></a>
+    </div>
+
+    <div id="list-rec" >
+      <div id="ErrorMsgItems" ></div>
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped hidden" id="ItemsList">
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="edit-rec" >
+      <form id="edit-datos" name="datos" class="hidden" enctype="multipart/form-data" method="post" >
+        <div id="foto-datos" >
+          <div id="foto" >
+            <label>Foto:</label>
+            <div id="FotoFrame">
+              <img id="ImgFoto" onload="CenterImg(event)"/>
+            </div>
+            <input id="FileFoto" name="FileFoto" type="file" accept="image/*"/>
+            <label id="lbFileFoto" for="FileFoto">Seleccione <br/> un fichero</label>
+          </div>
+          <div id="datos">
+            <div class="label-val" id="dato-nombre">
+              <label>Nombre:&nbsp;</label><input type="text" id="Nombre" name="Nombre" size="10" placeholder="Escriba el nombre del recambio"/>
+            </div>
+            <div class="label-val medida">
+              <label>Precio:&nbsp;</label><input type="text" id="Precio" name="Precio" size="5" placeholder="Escriba el precio"/>
+              <label>Euros</label>
+            </div>
+            <div class="label-val">
+              <label>Código:&nbsp;</label><input type="text" id="Codigo" name="Codigo" size="5" placeholder="Escriba el código" />
+            </div class="label-val">
+            <div class="label-val">
+              <label>Fabricante:&nbsp;</label>
+              <select id="Fabricante" name="Fabricante" placeholder="Seleccione un fabricante">
+                @foreach( var item in Model.Fabricantes )
+                  {
+                  <option value="@item.Id">@item.Name</option>
+                  }
+              </select>
+            </div>
+            <div class="label-val">
+              <label>Categoria:&nbsp;</label>
+              <select id="Categoria" name="Categoria" placeholder="Seleccione una categoria">
+                @foreach( var item in Model.Categorias )
+                  {
+                  <option value="@item.Id">@item.Name</option>
+                  }
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div style="width:100%">
+          <br />
+          <label>Descripcion: </label><textarea id="Descripcion" name="Descripcion"></textarea>
+        </div>
+
+        <div id="UpdateErrorMsg" ></div>
+
+        <div class="btn-group center-content">
+          <button id="btnDel"  type="button" class="btn btn-danger">Borrar</button>
+          <button id="btnCopy" type="button" class="btn btn-default">Duplicar</button>
+          <button id="btnSave" type="button" class="btn btn-primary">Guardar</button>
+        </div>
+
+      <input id="Id"   name="Id"   type="hidden"/>
+      <input id="Foto" name="Foto" type="hidden"/>
+
+      <label id="lbId" class="right-top"></label>
+      </form>
+
+    </div>
+
+
+  </div>
+</div>
+
+
+@section Scripts{
+  <script type="text/javascript">
+
+    // Identificador del item con el que se llama la página
+    var ItemId = @Model.Id;
+
+    // Datos para todos los combos de seleccion de recamios
+    var Datos = {
+                Categor: @Model.CategoriasToJson(),
+                SubCate: @Model.SubCategoriasToJson(),
+                Fabric : @Model.FabricantesToJson(),
+                };
+
+    // Identificadores de los combos para la seleccion de recambios
+    var CbIDs = {
+                Categor: "#comboCategoria",
+                SubCate: "#comboSubCategoria",
+                Fabric : "#comboFabricante"
+                };
+
+    // Lista de todos los items que hay en la base de datos
+    var Items = [];     
+
+    // Item actual que se esta modificando
+    var nowItem;        // Datos del item
+    var nextID;         // Identificador el items mas cercano al seleccionado
+
+    // Datos sobre los recambios obtenidos mediante las busquedas
+    var cbDats;         // Maneja la entrada de datos mediante combos
+
+    var Msg1;           // Maneja recuadro para mostrar errores en la parte de la lista
+    var Msg2;           // Maneja recuadro para mostrar errores en la parte de los datos
+
+    // Elementos donde estan los datos que se estan editando
+    var _fotoSrc;
+    var _fotoFile;
+
+    var _Id;
+    var _Nombre;
+    var _Precio;
+    var _Codigo;
+    var _Fabricante;
+    var _Categoria;
+    var _Descripcion;
+
+    var EditVals;       // Valores de todos los campos al empezar la edicción
+
+    // Inicia manipuladores y variables, después de cargarse la página
+    $( function()
+      {
+      _fotoSrc  = $("#ImgFoto");
+      _fotoFile = $("#FileFoto");
+
+      _Id          = $("#Id");
+      _Nombre      = $("#Nombre");
+      _Precio      = $("#Precio");
+      _Codigo      = $("#Codigo");
+      _Fabricante  = $("#Fabricante");
+      _Categoria   = $("#Categoria");
+      _Descripcion = $("#Descripcion");
+
+      cbDats   = new UIFilters( Datos, CbIDs );
+
+      // Actualiza ultimo valor de la busqueda por nombre
+      $("#findName").val( localStorage["lastFindName"] || "" );
+
+      // Cuando se oprime el boton para filtrar la lista de recambios 
+      $("#FindRecambio").on( 'click', FillRecambiosList );   
+
+      // Cuando se oprime el boton para filtrar la lista de recambios 
+      $("#btnSave").on( 'click', GuardaCambios );   
+      $("#btnCopy").on( 'click', DuplicarDatos );   
+      $("#btnDel" ).on( 'click', DeleteItem    );   
+
+      // Pone/quita el la ventana flotante (popup) con los filtros
+      $(".filters-btn > button").on( 'click', e => { $(e.currentTarget.parentElement).addClass("open"); e.stopPropagation(); } );  
+      $("body").on( 'click', CheckClickOnPopup );  
+
+      // Cierra el popup por el boton que aparece a la derecha
+      $(".filters-popup > .close").on( 'click', e => 
+        { 
+        $(e.currentTarget).parent().parent().removeClass("open"); 
+        e.stopPropagation();
+        } );  
+
+      Msg1 = new MsgAlert( "#ErrorMsgItems" );
+      Msg2 = new MsgAlert( "#UpdateErrorMsg" );
+
+      _fotoFile.change( OnSelectImgFile );
+      _fotoSrc.keyup( CheckSave );
+
+      _Nombre.keyup( CheckSave );
+      _Precio.keyup( CheckSave );
+      _Codigo.keyup( CheckSave );
+      _Fabricante.change( CheckSave );
+      _Categoria.change( CheckSave );
+      _Descripcion.keyup( CheckSave );
+
+      RefreshRecambiosList( ItemId );
+      } );
+
+    // Se llama cuando se selecciona un fichero de imagen para ponerlo como foto del recambio
+    function OnSelectImgFile( e )
+      {
+	    var files = this.files;
+  	  if( !files[0].type.match(/image/) ) 
+        {
+        alert("Debe seleccionar un fichero de imagen");
+        return
+        }
+
+      var reader = new FileReader();
+      reader.onload = function(e)
+        { 
+        _fotoSrc[0].src = reader.result;
+        CheckSave();
+        };
+        
+      reader.readAsDataURL( files[0] );
+      }
+
+    // Esta funcion chequea si el click se produjo dentro de una ventana popup
+    function CheckClickOnPopup( e )
+      {
+      var popups = $(".filters-popup");
+      for( var i=0; i < popups.length; i++ )
+        {
+        var rect = $(".filters-popup")[i].getBoundingClientRect();
+
+        if( e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom )
+          return;
+        }
+
+      $(".filters-btn").removeClass("open");
+      }
+
+    // Actualiza la lista de coches con el contenido que hay en el servidor
+    function RefreshRecambiosList( id )
+      {
+      ClearItemDatos();
+
+      var Conn = new ServerConnection( "GET", (s)=>ConnError(s,Msg1) );
+
+      Conn.Send( "/api/recambios/0/0/0/0/0/Order-4/Range-0-10000", (datos) => 
+        {
+        Msg1.Hide();
+
+        Items = datos.items;
+
+        FillRecambiosList();
+
+        if( id>0 ) FindDatosForItem( id );
+
+        }, "#list-rec" );
+      }
+
+    // Llena la lista de Items con los recambios encontrados
+    function FillRecambiosList( )
+      {
+      $(".filters-btn").removeClass("open")       // Cierra el popup de filtrado
+      $("#ItemsList").children().eq(0).empty();
+
+      var fab = cbDats.GetSelFrabricante(); 
+      var cat = cbDats.GetSelCategoria();   
+      var sub = cbDats.GetSelSubCategoria();
+      var txt = $("#findName").val();
+
+      localStorage["lastFindName"] = txt ;
+
+      txt = txt.toLowerCase();
+
+      for( var i = 0; i < Items.length; ++i )
+        {
+        var item = Items[i]; 
+
+        if( fab>0 && fab!=item.fabricante ) continue;
+        if( cat>0 && cat!=item.categoria  ) continue;
+        if( sub>0 && sub!= parseInt(item.codigo/1000)*1000  ) continue;
+        if( txt.length >0 && item.nombre.toLowerCase().indexOf(txt)<0 ) continue;
+
+        var selCls = item.id == ItemId? " class='row-selected'" : ""
+        var itemHml = "<tr data-id="+ item.id + selCls + "><td>"+ item.nombre +"</td></tr>";
+        $("#ItemsList").append( itemHml );
+        }
+
+      $("#ItemsList tbody tr").on( 'click', (e)=>
+        { 
+        var row = $(e.currentTarget);
+        var id  = row.data("id");
+
+        FindDatosForItem( id );
+        } );
+
+      ShowInfo();                    // Muestra/esconde información debajo de la tabla de items
+      }
+
+    // Busca los coches donde se usa el item dado por 'id'
+    function FindDatosForItem( id )
+      {
+      if( DescartItemChanged()==false ) return;
+
+      ShowPanelDatos();
+
+      var Conn = new ServerConnection( "GET", (s)=>{ ShowPanelDatos(); ConnError(s,Msg2); } );
+      Conn.Send( "/api/recambio/" + id + "/0", (datos) => 
+        {
+        Msg2.Hide();
+
+        nowItem = datos;
+        if( nowItem.idItem == 0 )
+          {
+          Msg2.Show( "El recambio con Id="+id+" no se encuentra en la base de datos", "danger" );
+          ClearItemDatos();
+          }
+        else
+          {
+          nextID = SelectTableRow( id, "#ItemsList", "#list-rec" );
+          SetItemDatos();
+          }
+
+        ShowPanelDatos();
+
+        }, "#edit-rec" );
+      }
+
+    // Muestra el panel de edicción de los datos
+    function ShowPanelDatos()        
+      {
+      $("#edit-datos").removeClass("hidden");
+      }
+
+    // Decide la informacion que se debe mostrar y cual no, de acuerdo al resultado de la busqueda
+    function ShowInfo()        
+      {
+      var tabla = $("#ItemsList");
+      var count = tabla.children().eq(0).children().length;               // Cantidad de Items que se muestran en la tabla
+
+      // Tabla con la lista de recambios encontrados
+      if( count == 0 ) tabla.addClass("hidden"); 
+      else             tabla.removeClass("hidden"); 
+
+      // Cartel con información
+      if( count == 0 ) Msg1.Show( "No se encontro ningún recambio que cumpla las condiciones dadas", "info" );
+      else             Msg1.Hide();
+      }
+
+    // Se llama cada vez que se va a cambiar el recambio que se esta editando, si el cambio no es posible retorna false
+    function DescartItemChanged( )
+      {
+      if( DatosChanged() )
+        if( confirm("Desea descartar los cambios realizados") )
+          UpdateDatos();
+        else return false;
+
+      return true;
+      }
+
+    // Chequea si los datos cambia y pone el botón de Guardar o no
+    function CheckSave()
+      {
+      var chgd = DatosChanged();
+
+      btnSave.style.display = chgd? "block" : "none";
+      btnCopy.style.display = chgd || !EditVals.Id? "none"  : "block";
+      }
+
+    // Borra todos los datos que hay sobre el recambio actual
+    function ClearItemDatos()
+      {
+      EditVals ={ fotoSrc:"", fotoFile:"", Id:0, Nombre:"", Precio:"", Codigo:"", Fabricante:null, Categoria:null, Descripcion:"" };
+
+      nowItem = null;
+      nextID  = SelectTableRow( -1, "#ItemsList", "#list-rec" );
+
+      UpdateDatos();
+      }
+
+    // Pone los datos del recambio actual
+    function SetItemDatos( dupicate=false )        
+      {
+      var IdItem = dupicate? 0 : nowItem.idItem;
+
+      EditVals ={ fotoSrc:nowItem.foto, 
+                  fotoFile:"", 
+                  Id:IdItem, 
+                  Nombre:nowItem.nombre, 
+                  Precio:nowItem.precio, 
+                  Codigo:nowItem.codigo, 
+                  Fabricante:nowItem.idFabricante, 
+                  Categoria:nowItem.idCategoria, 
+                  Descripcion:nowItem.descripcion };
+
+      UpdateDatos();
+      }
+
+    // Pone los datos del recambio actual
+    function UpdateDatos()        
+      {
+      _fotoSrc.attr("src", EditVals.fotoSrc );
+      _fotoFile.val( EditVals.fotoFile );
+
+      _Id.val( EditVals.Id );
+      _Nombre.val( EditVals.Nombre );
+      _Precio.val( EditVals.Precio );
+      _Codigo.val( EditVals.Codigo );
+      _Fabricante.val( EditVals.Fabricante );
+      _Categoria.val( EditVals.Categoria );
+      _Descripcion.val( EditVals.Descripcion );
+
+      $("#Foto").val( EditVals.fotoSrc );
+      $("#lbId").text( EditVals.Id>0? "ID: " + nowItem.idItem  : "" );
+
+      btnSave.style.display = "none";
+
+      var disp = (EditVals.Id == 0)? "none" : "block";
+
+      btnCopy.style.display = disp;
+      btnDel.style.display  = disp; 
+      }
+
+    // Verifica si se cambio algun dato desde el inicio de la edicción
+    function DatosChanged()        
+      {
+      if( EditVals.fotoSrc     != _fotoSrc.attr("src") ) return true;
+      if( EditVals.fotoFile    != _fotoFile.val()    ) return true;
+
+      if( EditVals.Id          != _Id.val()          ) return true;
+      if( EditVals.Nombre      != _Nombre.val()      ) return true;
+      if( EditVals.Precio      != _Precio.val()      ) return true;
+      if( EditVals.Codigo      != _Codigo.val()      ) return true;
+      if( EditVals.Fabricante  != _Fabricante.val()  ) return true;
+      if( EditVals.Categoria   != _Categoria.val()   ) return true;
+      if( EditVals.Descripcion != _Descripcion.val() ) return true;
+
+      return false;
+      }
+
+
+    // Verifica y obtiene los datos del recambio actual
+    function ValidateDatos()        
+      {
+      if( ValidateStr( _Nombre    , "El nombre del recambio"     , 1   , 80    ) &&
+          ValidateNum( _Precio    , "El valor del precio"        , 0.1 , 2000  , false ) &&
+          ValidateNum( _Codigo    , "El código del recambio"     , 1000, 100000, true ) &&
+          ValidateSel( _Fabricante, "el fabricante del recambio.", 0 ) &&
+          ValidateSel( _Categoria , "la categoria del recambio." , 0 ) )
+        return true;
+
+      return false;
+      }
+
+    // Determina cual es el modo de ediccion de los datos a utilizar
+    function newItem()
+      {
+      if( DescartItemChanged() )
+        {
+        ShowPanelDatos();
+        ClearItemDatos(); 
+        }
+      }
+
+    // Duplica los datos de la marca actual, para crear una similar
+    function DuplicarDatos()
+      {
+      if( DescartItemChanged() )
+        SetItemDatos( true );
+      }
+
+    // Se llama para guardar los camnios realizados
+    function GuardaCambios()
+      {
+      if( !ValidateDatos() ) return;
+      var url = +_Id.val()>0? "/api/modify-recambio" : "/api/add-recambio";
+
+      var form = document.forms.namedItem("datos");
+
+      var srv = new ServerConnection( "POST", (s)=>ConnError(s, Msg2) );
+      srv.SendForm( form, url, (respJson) => 
+        {
+        RefreshRecambiosList( respJson.Id );
+        });
+      }
+
+    // Borra la marca actual de la base de datos
+    function DeleteItem()
+      {
+      if( !confirm("Esta seguro que desea borrar el coche:\n'" + nowItem.nombre + "'" ) )
+        return;
+
+      var form = document.forms.namedItem("datos");
+
+      var srv = new ServerConnection( "DELETE", (s)=>ConnError(s, Msg2) );
+
+      srv.SendForm( form, "/api/delete-recambio", (respJson) => 
+        {
+        RefreshRecambiosList( nextID );
+        });
+      }
+
+
+  </script>
+}

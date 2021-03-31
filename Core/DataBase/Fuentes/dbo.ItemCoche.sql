@@ -2,8 +2,8 @@
     [IdItem]  INT NOT NULL,
     [IdCoche] INT NOT NULL,
     CONSTRAINT [PK_ItemCoche] PRIMARY KEY CLUSTERED ([IdItem] ASC, [IdCoche] ASC),
-    CONSTRAINT [FK_Coche] FOREIGN KEY ([IdCoche]) REFERENCES [dbo].[Coche] ([Id]),
-    CONSTRAINT [FK_Item] FOREIGN KEY ([IdItem]) REFERENCES [dbo].[Item] ([Id])
+    CONSTRAINT [FK_Coche] FOREIGN KEY ([IdCoche]) REFERENCES [dbo].[Coche] ([Id]) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT [FK_IteM] FOREIGN KEY ([IdItem]) REFERENCES [dbo].[Item] ([Id]) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 

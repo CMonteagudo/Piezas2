@@ -2,7 +2,7 @@
     [Id]          INT            IDENTITY (1, 1) NOT NULL,
     [Nombre]      NVARCHAR (50)  NOT NULL,
     [Logo]        NVARCHAR (50)  NULL,
-    [Desctiption] NVARCHAR (MAX) NULL,
+    [Descripcion] NVARCHAR (MAX) NULL,
     PRIMARY KEY CLUSTERED ([Id] ASC)
 );
 

@@ -15,7 +15,7 @@ namespace Piezas2.Core.Model
 
     public int Id { get; set; }
     public string Nombre { get; set; }
-    public string Imagen { get; set; }
+    public string Logo { get; set; }
     public string Descripcion { get; set; }
 
     [JsonIgnore]

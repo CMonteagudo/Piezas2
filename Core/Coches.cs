@@ -48,9 +48,41 @@ namespace Piezas2.Core
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Obtiene los datos de un coche conociendo su ID </summary>
-    public Coche findCoche( int id )
+    public Coche Find( int id )
       {
-      return DbCtx.Coches.Where( c => c.Id==id ).Include( c => c.MarcaNavigation ).Include( c => c.ModeloNavigation ).Include( c => c.MotorNavigation )?.First(); 
+      if( DbCtx.Coches.Find(id) == null ) return null;
+
+      return DbCtx.Coches.Where( c => c.Id==id )?.Include( c => c.MarcaNavigation ).Include( c => c.ModeloNavigation ).Include( c => c.MotorNavigation )?.First(); 
+      }
+
+    //---------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary> Obtiene la lista de todos los coches, donde solo se retornan los datos principales (Id,Marca,Modelo y Motor) </summary>
+    public List<CocheDesc> AllDesc()
+      {
+      var coches  = DbCtx.Coches.Include( c => c.MarcaNavigation )
+                                .Include( c => c.ModeloNavigation )
+                                .Include( c => c.MotorNavigation )
+                                .Select( c => new CocheDesc(c) );
+
+      return coches.ToList();
+      }
+
+    //---------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary> Obtiene una cadena que representa el nombre del coche  </summary>
+    public string CocheName( Coche coche, bool motor=false  )
+      {
+      var marca = coche.MarcaNavigation !=null? coche.MarcaNavigation.Nombre  : DbCtx.Marcas.Find(coche.Marca  )?.Nombre ?? "";
+      var model = coche.ModeloNavigation!=null? coche.ModeloNavigation.Nombre : DbCtx.Modelos.Find(coche.Modelo)?.Nombre ?? "";
+
+      var name = $"{marca} {model}".Trim();
+      if( motor )
+        { 
+        var moto = coche.MotorNavigation!=null? coche.MotorNavigation.Nombre : DbCtx.Motors.Find(coche.Motor)?.Nombre ?? "";
+
+        if( moto.Length >0 ) name += " para " + moto;
+        }
+
+      return name;
       }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
@@ -73,23 +105,75 @@ namespace Piezas2.Core
       return lst;
       }
 
+    //---------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary> Guarda los cambios ralizados a un coche o crea uno nuevo (Id==0) </summary>
+    public int Change( Coche coche )
+      {
+      if( coche.Id == 0 )
+        {
+        var newItem = DbCtx.Coches.Add( coche );
+
+        DbCtx.SaveChanges();
+        return newItem.Entity.Id;
+        }
+      else
+        {
+        var edtCoche =  DbCtx.Coches.Find( coche.Id );
+        if( edtCoche==null ) return 0;
+
+        edtCoche.Marca       = coche.Marca;
+        edtCoche.Modelo      = coche.Modelo;
+        edtCoche.Motor       = coche.Motor;
+        edtCoche.Foto        = coche.Foto;
+        edtCoche.Caja        = coche.Caja;
+        edtCoche.Carroceria  = coche.Carroceria;
+        edtCoche.Descripcion = coche.Descripcion;
+
+        DbCtx.SaveChanges();
+        return coche.Id;
+        }
+      }
+
+    //---------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary> Borra el coche con identificado id </summary>
+    public void Delete( int id )
+      {
+      var coche = DbCtx.Coches.Find( id );
+      if( coche == null ) return;
+
+      DbCtx.Coches.Remove( coche );
+
+      DbCtx.SaveChanges();
+      }
+
+    //---------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary> Garda los cambios ralizados a un coche o crea uno nuevo (Id==0) </summary>
+    public void ChangeFoto( int id, string fName )
+      {
+      DbCtx.Coches.Find( id ).Foto = fName;
+
+      DbCtx.SaveChanges();
+      }
+    }
+
   //---------------------------------------------------------------------------------------------------------------------------------------
   /// <summary> Mantiene los datos un coche, de una manera resumida y mas descriptiva  </summary>
   public class CocheDesc
+    {
+    public CocheDesc( Coche coche )
       {
-      public CocheDesc( Coche coche )
-        {
-        Id      = coche.Id;
-        Marca   = coche.MarcaNavigation.Nombre;
-        Modelo  = coche.ModeloNavigation.Nombre;
-        Motor   = coche.MotorNavigation.Nombre;
-        }
-
-      public int Id { get; set; }
-      public string Marca { get; set; }
-      public string Modelo { get; set; }
-      public string Motor { get; set; }
+      Id = coche.Id;
+      Marca = coche.MarcaNavigation.Nombre;
+      Modelo = coche.ModeloNavigation.Nombre;
+      Motor = coche.MotorNavigation.Nombre;
       }
+
+    public int Id { get; set; }
+    public string Marca { get; set; }
+    public string Modelo { get; set; }
+    public string Motor { get; set; }
+    }
+
   //---------------------------------------------------------------------------------------------------------------------------------------
   /// <summary> Todos los datos del coche más los mombres de la marca, el modelo y el motor  </summary>
   public class CocheDescFull
@@ -103,17 +187,17 @@ namespace Piezas2.Core
       Caja        = coche.Caja;
       Carroceria  = coche.Carroceria;
       Foto        = coche.Foto;
-      Description = coche.Description;
-      
+      Description = coche.Descripcion;
+
       Marca  = coche.MarcaNavigation.Nombre;
       Modelo = coche.ModeloNavigation.Nombre;
       Motor  = coche.MotorNavigation.Nombre;
 
-      Combustible  = coche.MotorNavigation.Combustible == 0 ? "gasolina" : "petroleo";
-      Capacidad    = coche.MotorNavigation.Capacidad;
-      Potencia     = coche.MotorNavigation.Potencia;
+      Combustible = coche.MotorNavigation.Combustible == 0 ? "gasolina" : "petroleo";
+      Capacidad   = coche.MotorNavigation.Capacidad;
+      Potencia    = coche.MotorNavigation.Potencia;
 
-        if( Foto        == null ) Foto ="";
+      if( Foto        == null ) Foto = "";
       if( Description == null ) Description = "";
       if( Caja        == null ) Caja = "";
       if( Carroceria  == null ) Carroceria = "";
@@ -134,7 +218,6 @@ namespace Piezas2.Core
     public string Combustible { get; set; }
     public int Capacidad { get; set; }
     public int Potencia { get; set; }
-
     }
+
   }
-}

@@ -195,7 +195,7 @@ namespace Piezas2.Core
           DbTable.Marca      => DbCtx.Marcas     .FirstOrDefault( x => x.Nombre == name )?.Id ?? -1,
           DbTable.Modelo     => DbCtx.Modelos    .FirstOrDefault( x => x.Nombre == name )?.Id ?? -1,
           DbTable.Motor      => DbCtx.Motors     .FirstOrDefault( x => x.Nombre == name )?.Id ?? -1,
-          DbTable.Categoria  => DbCtx.Categoria  .FirstOrDefault( x => x.Nombre == name )?.Id ?? -1,
+          DbTable.Categoria  => DbCtx.Categorias  .FirstOrDefault( x => x.Nombre == name )?.Id ?? -1,
           DbTable.Fabricante => DbCtx.Fabricantes.FirstOrDefault( x => x.Nombre == name )?.Id ?? -1,
           _ => -1,
           };

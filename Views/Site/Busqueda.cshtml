@@ -24,7 +24,7 @@
   <div class="tab-content">
     <div class="tab-frame tab-pane fade in @tab1" id="TabInfo">
       <div class="btn-group" id="comboMarca">
-        <button type="button" class="btn btn-default">&emsp;</button>
+        <button type="button" class="btn combo-txt">&emsp;</button>
         <button type="button" class="btn dropdown-toggle btn-primary" data-toggle="dropdown" aria-expanded="false">
           <span class="caret"></span><span class="sr-only">Toggle Dropdown</span>
         </button>
@@ -32,7 +32,7 @@
       </div>
 
       <div class="btn-group" id="comboModelo">
-        <button type="button" class="btn btn-default">&emsp;</button>
+        <button type="button" class="btn combo-txt">&emsp;</button>
         <button type="button" class="btn dropdown-toggle btn-primary" data-toggle="dropdown" aria-expanded="false">
           <span class="caret"></span><span class="sr-only">Toggle Dropdown</span>
         </button>
@@ -40,7 +40,7 @@
       </div>
 
       <div class="btn-group" id="comboMotor">
-        <button type="button" class="btn btn-default">&emsp;</button>
+        <button type="button" class="btn combo-txt">&emsp;</button>
         <button type="button" class="btn dropdown-toggle btn-primary" data-toggle="dropdown" aria-expanded="false">
           <span class="caret"></span><span class="sr-only">Toggle Dropdown</span>
         </button>
@@ -48,7 +48,7 @@
       </div>
 
       <div class="btn-group" id="comboCategoria">
-        <button type="button" class="btn btn-default">&emsp;</button>
+        <button type="button" class="btn combo-txt">&emsp;</button>
         <button type="button" class="btn dropdown-toggle btn-primary" data-toggle="dropdown" aria-expanded="false">
           <span class="caret"></span><span class="sr-only">Toggle Dropdown</span>
         </button>
@@ -56,7 +56,7 @@
       </div>
 
       <div class="btn-group" id="comboFabricante">
-        <button type="button" class="btn btn-default">&emsp;</button>
+        <button type="button" class="btn combo-txt">&emsp;</button>
         <button type="button" class="btn dropdown-toggle btn-primary" data-toggle="dropdown" aria-expanded="false">
           <span class="caret"></span><span class="sr-only">Toggle Dropdown</span>
         </button>
@@ -177,19 +177,10 @@
       $("#showGrid" ).on( 'click', ()=>{ setShowMode(1); } );  
       
       Msg = new MsgAlert( "#MsgsForFind" );
-      Conn = new ServerConnection( "GET", (s)=>ConnError(s) );
+      Conn = new ServerConnection( "GET", (s)=>ConnError(s,Msg) );
 
       findItems();
       } );
-
-    // Muestra los errores producidos durante la solicitud de datos via AJAX
-    function ConnError( json )
-      {
-      var sMsg = "";
-      if( json.Error>0 ) sMsg = "<b> Error:" + json.Error + "</b> ";
-
-      Msg.Show( sMsg + json.sError, "danger");
-      }
 
     // Pone el modo como se van a mostrar los items
     function setShowMode( modo )
@@ -365,29 +356,19 @@
         {
         var item = Items[i]; 
 
-        var foto = item.Foto!=null? item.Foto : "NoImagen.png";  
+        var foto   = item.foto==null  ? "/images/Items/NoImagen.png" : item.foto;  
+        var precio = item.precio==null? "Sin definir"                : item.precio;  
 
-        var itemHml = '<div class="item-box" data-id='+ item.id + '>' +
+        var itemHml = '<div class="item-box" data-id='+ item.id + ' onclick="location=\'/recambio/' + item.id + '/' + item.nombre + '\'">' +
                           '<div class="item-box-img" >' +
-                            '<a title   = "Recambio ' + item.nombre + '"' + 
-                               'alttext = "Recambio ' + item.nombre + '"' + 
-                               'href    = "/recambio/' + item.id +'/'+ item.nombre +'">' +
-
-                              '<img title="Recambio '+ item.nombre +'" src="/images/' +foto+ '" alt="" />' +
-                            '</a>' +
+                              '<img title="Recambio '+ item.nombre +'" src="'+ foto +'" alt="'+ item.nombre +'" onload="CenterImg(event)"/>' +
                           '</div>' +
                           '<div class="item-box-info">' +
-                            '<h3>' +
-                              '<a title="Recambio ' + item.nombre + '"' +
-                                 'href="/recambio/' + item.id + '/' + item.nombre + '">' +
-
-                                item.nombre +
-                              '</a>' +
-                            '</h3>' +
-                            '<span>Precio: <strong> ' + item.Precio + '</strong></span>' +
+                            '<h3>' + item.nombre + '</h3>' +
+                            '<span>Precio: <strong> ' + precio + '</strong></span>' +
                           '</div>' +
+                          '<div class="item-over"></div>' +
                         '</div>' ;
-
 
         $("#ItemsGrid").append( itemHml );
         }

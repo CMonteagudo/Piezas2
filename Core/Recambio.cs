@@ -28,7 +28,7 @@ namespace Piezas2.Core
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Construye el objeto y obtiene los datos de la base de datos </summary>
-    public Recambio( int id, HttpContext HttpCtx )
+    public Recambio( int id, HttpContext HttpCtx, int cocheInfo )
       {
       var DbCtx = (DbPiezasContext) HttpCtx.RequestServices.GetService(typeof(DbPiezasContext));                                // Obtiene contexto a la BD
 
@@ -47,10 +47,13 @@ namespace Piezas2.Core
       if( string.IsNullOrWhiteSpace(Foto)        ) Foto = "";
       if( string.IsNullOrWhiteSpace(Descripcion) ) Descripcion = "";
 
-      Fabricante = DbCtx.Fabricantes.Find( IdFabricante )?.Nombre;
-      Categoria  = DbCtx.Categoria.Find( IdCategoria )?.Nombre;
+      if( cocheInfo > 0 )
+        { 
+        Fabricante = DbCtx.Fabricantes.Find( IdFabricante )?.Nombre;
+        Categoria  = DbCtx.Categorias.Find( IdCategoria )?.Nombre;
 
-      Coches = new Coches( HttpCtx ).ForItem( id );
+        Coches = new Coches( HttpCtx ).ForItem( id );
+        }
       }
 
     } 

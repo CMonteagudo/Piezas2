@@ -19,7 +19,7 @@ namespace Piezas2.Core.Model
         public string Caja { get; set; }
         public string Carroceria { get; set; }
         public string Foto { get; set; }
-        public string Description { get; set; }
+        public string Descripcion { get; set; }
 
         public virtual Marca MarcaNavigation { get; set; }
         public virtual Modelo ModeloNavigation { get; set; }

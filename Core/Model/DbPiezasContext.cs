@@ -17,8 +17,8 @@ namespace Piezas2.Core.Model
       {
       }
 
-    public virtual DbSet<Categorium> Categoria { get; set; }
-    public virtual DbSet<SubCategoria> SubCategoria { get; set; }
+    public virtual DbSet<Categorium> Categorias { get; set; }
+    public virtual DbSet<SubCategoria> SubCategorias { get; set; }
     public virtual DbSet<Coche> Coches { get; set; }
     public virtual DbSet<Fabricante> Fabricantes { get; set; }
     public virtual DbSet<Item> Items { get; set; }
@@ -40,15 +40,26 @@ namespace Piezas2.Core.Model
 
       modelBuilder.Entity<Categorium>( entity =>
        {
+         entity.ToTable( "Categoria" );
+
          entity.HasIndex( e => e.Nombre, "IX_Categoria" )
                   .IsUnique();
 
-         entity.Property( e => e.Imagen ).HasMaxLength( 50 );
+         entity.Property( e => e.Logo ).HasMaxLength( 50 );
 
          entity.Property( e => e.Nombre )
                   .IsRequired()
                   .HasMaxLength( 50 );
        } );
+
+      modelBuilder.Entity<SubCategoria>( entity =>
+      {
+        entity.ToTable( "SubCategoria" );
+
+        entity.Property( e => e.Nombre )
+                 .IsRequired()
+                 .HasMaxLength( 50 );
+      } );
 
       modelBuilder.Entity<Coche>( entity =>
        {

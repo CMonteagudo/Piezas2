@@ -3,6 +3,18 @@
   ViewData["Title"] = $"Recambios para los coches {Model.Marca} {Model.Modelo} con motor {Model.Motor}";
 }
 
+<script type="text/javascript">
+function ImgCenter(e)
+  {
+  var img = e.currentTarget;
+
+  if( img.naturalWidth > img.naturalHeight )
+    { img.style.width = "100%"; img.style.height = "auto"; }
+  else
+    { img.style.width = "auto"; img.style.height = "100%"; }
+  };
+</script>
+
 <div class="main-frame">
 
   <h1> Recambios para coches <strong> @Model.Marca @Model.Modelo con motor @Model.Motor </strong> al alcance de tu bolsillo.</h1>
@@ -16,26 +28,16 @@
     <div class="item-boxs">
       @foreach( var item in Items )
         {
-        <div class="item-box">
+        <div class="item-box" data-id="@item.Id" onclick="location='/recambio/@item.Id/@item.Nombre'">
           <div class="item-box-img" >
-            <a title   = "Recambio @item.Nombre" 
-               alttext = "Recambio @item.Nombre" 
-               href    = "/recambio/@item.Id/@item.Nombre">
-
-              @{var foto = item.Foto!=null? item.Foto : "NoImagen.png"; } 
-              <img title="Recambio @item.Nombre" src="/images/@foto" alt="" />
-            </a>
+              @{var foto = item.Foto!=null? item.Foto : "/images/Items/NoImagen.png"; } 
+             <img title="Recambio @item.Nombre" src="@foto" alt="Foto de @item.Nombre" onload="ImgCenter(event)"/>
           </div>
           <div class="item-box-info">
-            <h3>
-              <a title="Recambio @item.Nombre"
-                 href="/recambio/@item.Id/@item.Nombre">
-
-                @item.Nombre
-              </a>
-            </h3>
-            <span>Precio: <strong> @item.Precio </strong></span>
+            <h3>@item.Nombre</h3>
+            <span>Precio: <strong>@item.Precio</strong></span>
           </div>
+          <div class="item-over"></div>
         </div>
         }
     </div>
@@ -60,6 +62,13 @@
 
 @section Scripts{
   <script type="text/javascript">
+
+    // Inicia manipuladores y variables, después de cargarse la página
+    $( function()
+      {
+      $(".item-box-img img").on( 'load', CenterImg ); 
+      } );
+
 
     // Configura la busqueda de recambios para la opcion seleccionada y la manda a ejecutar
     function BuscarMas( IdMarca, IdModelo, IdMotor )

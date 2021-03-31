@@ -15,7 +15,7 @@ namespace Piezas2.Models
     /// <summary> Construye el objeto y obtiene los datos de la base de datos </summary>
     public RecambioModel( int id, HttpContext HttpCtx )
       {
-      Item = new Recambio( id, HttpCtx );
+      Item = new Recambio( id, HttpCtx, 1 );
       }
 
     public int Id { get { return Item.IdItem; } }

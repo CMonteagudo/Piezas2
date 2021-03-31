@@ -48,7 +48,7 @@ namespace Piezas2.Models
         case 511: return "Se requiere la atenticación del navegador";
         default:
           if( ErrorCode >= 500 ) return "El servidor fallo al completar la solicitud";
-          else if( ErrorCode >= 400 ) return "La solicitud tiene una sintaxis incorrecta 0 no puede porcesarse";
+          else if( ErrorCode >= 400 ) return "La solicitud tiene una sintaxis incorrecta o no puede procesarse";
           else if( ErrorCode >= 300 ) return "El cliente debe tomar una acción adicional para completar la solicitud";
           else if( ErrorCode >= 200 ) return "La petición fue atendida correctamete";
           else if( ErrorCode >= 100 ) return "La patición fue recibida y continua en proceso";

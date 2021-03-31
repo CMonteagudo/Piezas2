@@ -35,12 +35,19 @@ namespace Piezas2.Core
       }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary> Busca el recambio con el identificador dado y retorna sus datos o null si fue encontrado </summary>
+    public Item Find( int Id )
+      {
+      return DbCtx.Items.Find( Id );
+      }
+
+    //---------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Obtiene la lista de Items que satiface los parametros especificados </summary>
-    public bool FindByDatos( string datos )
+    public Recambios FindByDatos( string datos )
       {
       Filters = new ItemsFilters( datos, HttpCtx );
 
-      if( !ValidateFilters() ) return false;              // Si hay algún filtro no valido, no retorna ningún registro
+      if( !ValidateFilters() ) return this;              // Si hay algún filtro no valido, no retorna ningún registro
 
       string sSelect = $"SELECT DISTINCT I.Id, I.Fabricante, I.Categoria, I.Nombre, I.Codigo, I.Foto, I.Precio, I.Descripcion";
 
@@ -69,12 +76,63 @@ namespace Piezas2.Core
       if( Filters.RegFirst == 0 )                                                                                               // Si la primera página
         Count = DbCtx.Items.FromSqlRaw( $"{sSelect} FROM {sTable} {sWhere}" ).Count();                                          // Calcula la cantidad de registros
 
-      return true;
+      return this;
       }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary> Inserta o cambia un recambio, de acuerdo a los datos suministrados </summary>
+    public int Change( Item pza )
+      {
+      if( pza.Id == 0 )
+        {
+        var newItem = DbCtx.Items.Add( pza );
+
+        DbCtx.SaveChanges();
+        return newItem.Entity.Id;
+        }
+      else
+        {
+        var edtItem =  DbCtx.Items.Find( pza.Id );
+        if( edtItem == null) return 0;
+
+        edtItem.Nombre      = pza.Nombre;
+        edtItem.Codigo      = pza.Codigo;
+        edtItem.Precio      = pza.Precio;
+        edtItem.Foto        = pza.Foto;
+        edtItem.Categoria   = pza.Categoria;
+        edtItem.Fabricante  = pza.Fabricante;
+        edtItem.Descripcion = pza.Descripcion;
+
+        DbCtx.SaveChanges();
+        return pza.Id;
+        }
+      }
+
+    //---------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary> Borra el recambio, indicado por el id </summary>
+    public void Delete( int id )
+      {
+      var item = DbCtx.Items.Find( id );
+      if( item == null ) return;
+
+      DbCtx.Items.Remove( item );
+
+      DbCtx.SaveChanges();
+      }
+
+      //---------------------------------------------------------------------------------------------------------------------------------------
+      /// <summary> Cambia la foto del recambio por la foto especificada </summary>
+      internal void ChangeFoto( int id, string fotoName )
+      {
+      DbCtx.Items.Find( id ).Foto = fotoName;
+
+      DbCtx.SaveChanges();
+      }
+
+
+    //---------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Obtiene la lista de Items que contengan la cadena 'name' dentro de su nombre </summary>
-    internal void FindByName( string name, string datos )
+    internal Recambios FindByName( string name, string datos )
       {
       Filters = new ItemsFilters( datos, HttpCtx );
 
@@ -86,15 +144,37 @@ namespace Piezas2.Core
 
       if( Filters.RegFirst == 0 )                                                                   // Si la primera página
         Count = DbCtx.Items.FromSqlRaw( sSelect ).Count();                                          // Calcula la cantidad de registros
+
+      return this;
       }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Obtiene la lista de Items que tengan el código especicicado </summary>
-    internal void FindByCode( int code )
+    internal Recambios FindByCode( int code )
       {
       var sCode = code.ToString();
       Items = DbCtx.Items.Where( i => i.Codigo == sCode ).ToList();          
       Count = Items.Count();
+
+      return this;
+      }
+
+    //---------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary> Retorna la lista de items que no son usados por ningún coche </summary>
+    internal List<IdName> FindNoUsed()
+      {
+      string sSelect = "SELECT I.* FROM Item AS I LEFT JOIN ItemCoche AS IC ON I.Id = IC.IdItem WHERE ISNULL(IC.IdItem,0)= 0";    // Ordena y limita los recambios devueltos
+
+      return DbCtx.Items.FromSqlRaw( sSelect ).Select( i => new IdName( i.Id, i.Nombre ) ).ToList();                              // Ejecuta la secuencia SQL
+      }
+
+    //---------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary> Retorna la lista de items son usados al menos por un coche </summary>
+    internal List<IdName> FindUsed()
+      {
+      string sSelect = "SELECT I.Id, Nombre FROM Item AS I INNER JOIN ItemCoche AS IC ON I.Id = IC.IdItem GROUP BY I.Id, Nombre ORDER BY COUNT(I.Id) DESC OFFSET 0 ROWS";    // Ordena y limita los recambios devueltos
+
+      return DbCtx.Items.FromSqlRaw( sSelect ).Select( i => new IdName( i.Id, i.Nombre ) ).ToList();                              // Ejecuta la secuencia SQL
       }
 
     //---------------------------------------------------------------------------------------------------------------------------------------

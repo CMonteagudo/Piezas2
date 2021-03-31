@@ -404,7 +404,7 @@ class ServerConnection
     {
     this.metodo = metodo || "GET";                // Metodo empleado para la conexion (GET(por defecto),POST,PUT,DELETE,PATCH)
     this.fError = funError || this.ShowError;     // Función que se llama cuando hay error, por defecto 'alert'
-    this.body   = null;                           // Información que se manda en el cuerpo de la solicitud
+    this.data   = null;                           // Información que se manda en el cuerpo de la 
     }
 
   // Envia la solicitud al servidor a traves de la URL dada y devueleve los resultados a traves de la función 'funResult( jsonResult )'
@@ -412,21 +412,41 @@ class ServerConnection
     {
     var cur = curElm? new WaitCursor(curElm) : null;
     $.ajax( {
-      url: Url, body:this.body, method:this.metodo,
+      url: Url, data:this.data, method:this.metodo, 
       complete: (xhr) =>
         {
-//        setTimeout( ()=>                        // Para emular una demora en la carga de los datos
-//          {
+        //setTimeout( ()=>                        // Para emular una demora en la carga de los datos
+        //  {
           if( cur ) cur.Hide();
 
           var json = this.checkReturn( xhr );
 
           if( json.Error == 0 ) funResult( json );
           else                  this.fError( json );
-//          }, 3000 );
+          //}, 3000 );
         }
       } );
     }
+
+  SendForm( form, Url, funResult )
+    {
+    var cur = new WaitCursor( form );
+
+    var oReq = new XMLHttpRequest();
+    oReq.open( this.metodo, Url, true );
+    oReq.onload = (oEven)=>
+      {
+      cur.Hide();
+
+      var json = this.checkReturn( oReq );
+
+      if( json.Error == 0 ) funResult( json );
+      else                  this.fError( json );
+      };
+
+    oReq.send( new FormData( form ) ); 
+    }
+
 
   // Chequea que el retorno desde Ajax es corecto
   checkReturn( xhr )
@@ -451,6 +471,7 @@ class ServerConnection
       var Code = xhr.status;
       switch( Code )                                        // La conexión no termino
         {
+        case 204: sErr = "La solicitud se realizo correctamente, pero no se devolvio ningún contenido"; break;
         case 400: sErr = "La solicitud realizada es errorea"; break;
         case 401: sErr = "El recurda solicitado requiere autorizacion"; break;
         case 402: sErr = "Acceso denegado"; break;
@@ -459,7 +480,7 @@ class ServerConnection
         case 406: sErr = "El servidor no puede dar una de las respuestas aceptadas"; break;
         case 408: sErr = "Se agotó el tiempo para responder a la solicitud"; break;
         case 410: sErr = "El recurso ya no esta disponible en el servidor"; break;
-        case 400: sErr = "El recurso ya no esta disponible en el servidor"; break;
+        case 415: sErr = "Tipo de medio no disponible en el servidor"; break;
         case 500: sErr = "Ocurrio un error intero en el servidor"; break;
         case 501: sErr = "Al menos hay una funcionalidad que no esta implementada en el servidor"; break;
         case 505: sErr = "Versión de HTTP no soportada"; break;
@@ -468,7 +489,7 @@ class ServerConnection
         case 511: sErr = "Se requiere la atenticación del navegador"; break;
         default: 
                 if( Code>=500 ) sErr = "El servidor fallo al completar la solicitud";
-          else if( Code>=400 ) sErr = "La solicitud tiene una sintaxis incorrecta 0 no puede porcesarse";
+          else if( Code>=400 ) sErr = "La solicitud tiene una sintaxis incorrecta o no puede procesarse";
           else if( Code>=300 ) sErr = "El cliente debe tomar una acción adicional para completar la solicitud";
           else if( Code>=200 ) sErr = "La petición fue atendida correctamete";
           else if( Code>=100 ) sErr = "La patición fue recibida y continua en proceso";
@@ -488,3 +509,120 @@ class ServerConnection
     alert( sMsg + json.sError );
     }
   }
+
+// Muestra los errores producidos durante la solicitud de datos via AJAX.
+// json = Respuesta del servidor en el formato {Error:..., sError:... }
+//        donde: Error -> Número del error y sError -> Descripción del error.
+// msg  = Objeto para mostrar errores dentro de la página del tipo MsgAlert
+function ConnError( json, msg )
+  {
+  var sMsg = "";
+  if( json.Error>0 ) sMsg = "<b> Error:" + json.Error + "</b> ";
+
+  msg.Show( sMsg + json.sError, "danger");
+  }
+
+// Se usa en el evento OnLoad de un tag img para hacer que la imagen se centre en su contenedor, 
+// verticalmente o horizontalmente de acuerdo a su relacion de aspecto
+function CenterImg(e)
+  {
+  var img = e.currentTarget;
+
+  if( img.naturalWidth > img.naturalHeight )
+    { img.style.width = "100%"; img.style.height = "auto"; }
+  else
+    { img.style.width = "auto"; img.style.height = "100%"; }
+  };
+
+// Chequea que le entrada Inp tenga un valor entero entre min y max
+function ValidateNum( Inp, name, min, max, int=false )
+  {
+  var num = +Inp.val();
+
+  var sErr = "";
+       if( isNaN(num) ) sErr = ", debe ser un valor númerico";
+  else if( num <  min ) sErr = ", debe ser mayor o igual que " + min;
+  else if( num >  max ) sErr = ", debe tener un valor menor que " + max;
+  else if( int && num % 1!=0 ) sErr = ", debe ser un número entero";
+  else return true;
+
+  alert( name + sErr );
+  Inp.focus();
+  return false;
+  }
+
+// Verifica que la entrada inp tenga una cadena entre min y max caracteres
+function ValidateStr( Inp, name, min, max )
+  {
+  var sVal = Inp.val();
+
+  var sErr = "";
+       if( sVal.length < min ) sErr = ", debe de tener al menos " + min + " caracteres.";
+  else if( sVal.length > max ) sErr = ", debe de tener menos de " + max + " caracteres.";
+  else return true;
+
+  alert( name + sErr );
+  Inp.focus();
+  return false;
+  }
+
+// Verifica que la entrada inp tenga un valor seleccionado
+function ValidateSel( Inp, name, def=-1 )
+  {
+  var val = Inp.val();
+
+  var sErr = "";
+       if( val == null ) sErr = "Debe seleccionar ";
+  else if( val == def  ) sErr = "Debe cambiar ";
+  else return true;
+
+  alert( sErr + name );
+  Inp.focus();
+  return false;
+  }
+
+// Selecciona en la tabla 'idTable' la fila con identificador 'idRow'
+function SelectTableRow( idRow, Table, tbFrm )
+  {
+  var tbBody = $(Table).children().eq(0);
+  tbBody.find( ".row-selected" ).removeClass( "row-selected" );   // Quita la seleccion todas la filas
+
+  if( idRow==-1 ) return -1;                                      // idRow = -1, solo quita la selección 
+
+  var rows = tbBody.children();                                   // Toma todas las filas
+  for( let i=0; i<rows.length; i++ )                              // Recorre todas las filas
+    {
+    var row = rows.eq(i);
+    if( row.data("id") == idRow )                                // Id de la fila coincide con el buscado
+      {
+      row.addClass( "row-selected" );                            // Selecciona la fila
+      setRowVisible( row, tbFrm );                               // Asegura que la fila sea visible dentro de 'tbFrm'
+
+      var nextIdx = i<rows.length-1? i+1 : i-1;                   // Busca un id, cercano
+      if( nextIdx < 0 ) return -1;
+
+      return rows.eq(nextIdx).data("id");                         // Retorna ID cercano al seleccionado
+      }
+    }
+
+  return -1;
+  }
+
+// Garantiza que la fila 'rowItem' sea visible dentro del frame que cotiene la tabla 'tbFrm'
+function setRowVisible( rowItem, tbFrm )
+  {
+  var view = $(tbFrm)[0];
+  var elm = rowItem[0];
+
+  var Y = view.scrollTop;
+  var H = view.clientHeight;
+
+  var y = elm.offsetTop;
+  var h = elm.clientHeight;
+
+  if( y > Y && y+h < Y+H ) return;
+
+  view.scrollTop = y - (H-h)/2;
+  }
+
+

@@ -64,7 +64,7 @@ namespace Piezas2.Controllers
       }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
-    ///<summary> Página para mostrar los datos de un recambio </summary>
+    ///<summary> Página para mostrar la lista de recambios para un fabricante dado </summary>
     [Route( "/fabricantes-de-recambios/{maker?}" )]
     public IActionResult RecambiosFabricantes( string maker = "" )
       {

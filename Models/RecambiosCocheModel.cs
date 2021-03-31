@@ -28,14 +28,12 @@ namespace Piezas2.Models
       {
       if( ! fillCocheDatos( cocheId, HttpCtx ) ) return;
 
-      var found = new Recambios( HttpCtx );
-      found.FindByDatos( $"Mar-{MarcaId}/Mod-{ModeloId}/Mot-{MotorId}/orden-categoria/rango-0-10000" );
-
       var catTable = new Categorias( HttpCtx );
+      var Items    = new Recambios( HttpCtx ).FindByDatos( $"Mar-{MarcaId}/Mod-{ModeloId}/Mot-{MotorId}/orden-categoria/rango-0-10000" ).Items;
 
       GrupoItems grp = null;
       int lastCat = -1;
-      foreach( var item in found.Items )
+      foreach( var item in Items )
         {
         if( item.Categoria != lastCat )
           {
@@ -55,7 +53,7 @@ namespace Piezas2.Models
     /// <summary> Busca el coche con id 'cocheId' y toma sus datos </summary>
     private bool fillCocheDatos( int cocheId, HttpContext HttpCtx )
       {
-      var coche = new Coches(HttpCtx).findCoche( cocheId );
+      var coche = new Coches(HttpCtx).Find( cocheId );
       if( coche==null ) return false;
 
       MarcaId = coche.Marca;
