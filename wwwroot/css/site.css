@@ -228,6 +228,148 @@ a {
   color: darkslategrey;
 }
 
+header {
+	background-color: #f1f1f1;
+  line-height: 50px;
+  height: 50px;
+}
+
+header #btnLog {
+	cursor: pointer;
+	float: right;
+	margin-right: 30px;
+	padding: 0px 10px;
+  font-weight: bold;
+}
+
+header #btnLog:hover {
+	cursor: pointer;
+  background-color: #ddd !important;
+}
+
+header #btnLog .icon {
+	width: 25px;
+	height: 25px;
+	vertical-align: middle;
+	margin-bottom: 5px;
+  margin-right: 5px;
+}
+
+#BoxUser {
+	width: 250px;
+}
+
+.BoxFloat {
+	display: none;
+	position: absolute;
+	border: 1px solid #AAA;
+	background-color: #FFF;
+	z-index: 3500;
+	line-height: normal;
+	cursor: default;
+	white-space: normal;
+	font-weight: normal;
+	padding: 10px;
+	box-shadow: 5px 5px 30px #808080;
+	box-sizing: border-box;
+}
+
+.LineInput {
+	border: 1px solid #808080;
+	padding: 5px;
+	margin-bottom: 10px;
+	box-sizing: border-box;
+	width: 100%;
+}
+
+.btnRight, .btnLeft {
+	border: 1px solid #808080;
+	padding: 5px;
+	margin-bottom: 10px;
+	text-align: center;
+	background: #1F9430;
+	color: #FFFFFF;
+	font-weight: 600;
+	cursor: pointer;
+	border-radius: 5px;
+}
+
+.btnLeft {
+	width: 30%;
+	float: left;
+}
+
+.btnRight {
+	width: 65%;
+	float: right;
+}
+
+.MsgError {
+	display: none;
+	margin-bottom: 10px;
+	color: #D51414;
+	font-size: 13px;
+}
+
+.item-pu {
+	line-height: 30px;
+	padding: 5px 10px;
+	white-space: nowrap;
+	cursor: pointer;
+	display: block;
+}
+
+.item-pu:hover {
+	background-color: #C4DEFC;
+	cursor: pointer;
+}
+
+.link-bottom {
+	clear: both;
+	padding: 10px 0px;
+	text-align: center;
+}
+
+.link-bottom span {
+	color: #1F9430;
+	font-weight: bold;
+	padding: 6px;
+}
+
+.link-bottom span:hover {
+  background-color: #C0F1F9;
+  cursor: pointer;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #ItemsList thead tr th {                              /* Celdas del encabezamiento de la tabla de items*/
   background-color: #eee;
   padding: 4px 6px;
@@ -390,6 +532,18 @@ a {
 
 .show-tipo > .show-btn {                              /* Caracteriticas de los botones de tipo de vista de los resultados */
   float: right;
+}
+
+#show-lst-panel {
+  position: absolute;
+  left: -5px;
+  top: 0px;
+  display:none;
+  z-index:300;
+}
+
+#show-lst-panel, 
+.show-tipo > .show-btn {                              /* Caracteriticas de los botones de tipo de vista de los resultados */
   height: 27px;
   width: 27px;
   border: 1px solid #aaa;
@@ -416,6 +570,10 @@ a {
   grid-column-gap: 10px;
 }
 
+#panelList {
+  z-index: 200;
+}
+
 #list-rec, #list-coches, #edit-rec {
   position: relative;
   height: 650px;
@@ -423,8 +581,14 @@ a {
   border: #999 1px solid;
 }
 
+#lb-sel-list {
+  position: absolute;
+  bottom: 3px;
+}
+
 #list-rec {
   overflow: auto;
+  z-index: 1;
 }
 
 #CochesHeard {
@@ -524,6 +688,13 @@ a {
   grid-template-columns: 30% 70%;
   margin-bottom: 15px;
   grid-column-gap: 10px;
+  position: relative;
+}
+
+#headerDatos, #headerList {
+  position: relative;
+  min-height: 30px;
+  background-color: #fff;
 }
 
 #edit-rec {
@@ -626,6 +797,10 @@ a {
   justify-content: center;
 }
 
+#edit-datos .center-content {
+  min-height: 55px;
+}
+
 .btn-group.center-content button {
   border-radius: 5px !important;
   width: 80px;
@@ -659,9 +834,33 @@ a {
 .right-top{
   position: absolute;
   top: 0px;
-  right: 20px;
+  right: 70px;
 }
 
+#btnClose {
+	right: 0px;
+	display: none;
+	background-color: transparent;
+	border: none;
+	font-size: 24px;
+}
+
+#NewRec{
+	width: 100%;
+	height: 100%;
+	z-index: 500;
+	position: fixed;
+	top: 0px;
+}
+
+#NewRec iframe {
+	width: 350px;
+	border: 0px;
+	margin-left: auto;
+	margin-right: auto;
+  margin-top: 20px;
+  display: block;
+}
 /*----------------------------------------------------- Media Querys --------------------------------------------------------------*/
 @media (max-width: 1100px) {
   .marcas { grid-template-columns: 1fr 1fr; }                     /* No caben las marcas en 4 columnas, las pone en 2 */
@@ -686,12 +885,13 @@ a {
   #ItemsGrid.item-boxs { grid-template-columns: 1fr 1fr 1fr; }    /* Si esta en busqueda pasa a 3 */
   }
 
+
 @media (max-width: 825px) {
-  .coches {  grid-column-gap: 15px; }                             /* Pone separación entre comnas mas pequeña*/
+  .coches { grid-column-gap: 15px; }                              /* Pone separación entre comnas mas pequeña*/
 
   #ItemsGrid.item-boxs { grid-template-columns: 1fr 1fr; }        /* Si esta en busqueda pasa a 2 columnas */
 
-  .marcas img {                                                   /* Pone los logos de las marcas más pequeños */
+  .marcas img { /* Pone los logos de las marcas más pequeños */
     width: 100px;
     height: 100px;
     margin-right: 15px;
@@ -712,3 +912,32 @@ a {
   #labelName {  width: 100%;  }                                   /* No cabe buscar por nombre, fuerza a dos lineas */
   #labelCode {  width: 100%;  }
 }
+
+/*--------------------------------------------- Para las paginas de edicción -------------------------------------------------------*/
+
+@media (max-width: 900px) {                                       /* Las páginas de edicción de datos, pasan tener un solo panel*/
+  #show-lst-panel { display: block; }                             /* Muestra el botón para sacar la lista*/
+  .columns-for-edit {  display: block; }                          /* Quita el layout para las 2 columnas*/
+  #lb-sel-list { left: 35px; }                                    /* Corre el lable de la primera columna para con interfiera con el botón*/
+
+  #panelList {                                                    /* Oculta la lista y pone animación*/
+    position: absolute;
+    width: 300px;
+    left: -310px;
+    transition-property: left;
+    transition-duration: 0.5s;
+    transition-timing-function: linear;
+  }
+}
+
+@media (max-width: 600px) {
+#foto-datos #datos { grid-template-columns: 1fr; }                /* Pone los datos en una sola columna*/
+#dato-nombre { grid-column: initial; }                            /* El nombre pasa a ocupar una columna en lugar de 2*/
+}
+
+@media (max-width: 400px) {
+#foto-datos { grid-template-columns: 1fr; }                       /* Pone la foto en la parte de arriba*/
+#foto-datos #foto { margin: auto; }                               /* Centra la foto */  
+#foto-datos #datos { grid-template-rows: initial; }               /* Quita la altura de las filas*/ 
+}
+

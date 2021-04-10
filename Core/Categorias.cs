@@ -11,7 +11,7 @@ namespace Piezas2.Core
   /// <summary> Obtiene la lista de todas las categorias de recambio disponibles en la base de datos </summary>
   public class Categorias
     {
-    private DbPiezasContext DbCtx;
+    private readonly DbPiezasContext DbCtx;
     //---------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Construye el objeto obtener categorias y subcategorias de la base de datos </summary>
     public Categorias( HttpContext HttpCtx )

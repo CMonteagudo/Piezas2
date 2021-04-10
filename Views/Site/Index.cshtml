@@ -257,10 +257,13 @@
               };
 
   var cbDats;         // Maneja la entrada de datos mediante combos
+  var Menu;
 
   // Inicia manipuladores y variables, después de cargarse la página
   $( function()
     {
+    Menu = new UsersMenu(); 
+
     cbDats = new UIFilters( Datos, CbIDs );
 
     $("#inputCode").val( localStorage["lastCode"] || "" );

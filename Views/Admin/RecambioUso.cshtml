@@ -215,21 +215,6 @@
       if(ItemId) FindCochesForItem( ItemId );
       } );
 
-    // Esta funcion chequea si el click se produjo dentro de una ventana popup
-    function CheckClickOnPopup( e )
-      {
-      var popups = $(".filters-popup");
-      for( var i=0; i < popups.length; i++ )
-        {
-        var rect = $(".filters-popup")[i].getBoundingClientRect();
-
-        if( e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom )
-          return;
-        }
-
-      $(".filters-btn").removeClass("open");
-      }
-
     // Llena la lista de Items con los recambios encontrados
     function FillItemsList( )
       {
@@ -339,7 +324,7 @@
     // Busca los coches donde se usa el item dado por 'id'
     function FindCochesForItem( id )
       {
-      Conn.Send( "/api/recambio-uso/" + id , (datos) => 
+      Conn.Send( "/api/coches-con-recambio/" + id , (datos) => 
         {
         SelectTableRow( id, "#ItemsList", "#list-rec" );
         $("#ItemName").text( datos.nombre + " (uso=" + datos.coches.length + ')' );

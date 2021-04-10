@@ -1,66 +1,80 @@
 ﻿@{
   ViewData["Title"] = "Modificación, Adición y Borrado de marcas de coches";
+
+  var  val = ViewData["Widget"];
+  bool modeWidget = (val!=null && (int)val == 1);
 }
 
 <div class="main-frame">
   <div class="columns-for-edit">
+  @if( !modeWidget )
+    {
+    <div id="show-lst-panel"> <img src="~/images/btn-tabla.png" title="Muestra/Oculta lista para selección de recambio a editar." /> </div>
 
-    <div>
-      <span>Marcas:</span>
-    </div>
+    <div id="panelList">
+      <div id="headerList">
+        <span id="lb-sel-list">Seleccione una Marca:</span>
+      </div>
 
-    <div style="position:relative;">
-      <a id="lnkHome" href="/admin"               ><label>Home       </label></a>
-      <a id="lnkNew"  href="javascript:newMarca()"><label>Nueva Marca</label></a>
-    </div>
-
-    <div id="list-rec" >
-      <div id="ErrorMsgMarcas" ></div>
-      <div class="table-responsive">
-        <table class="table table-bordered table-striped hidden" id="ItemsList">
-          <tbody></tbody>
-        </table>
+      <div id="list-rec" >
+        <div id="ErrorMsgMarcas" ></div>
+        <div class="table-responsive">
+          <table class="table table-bordered table-striped hidden" id="ItemsList">
+            <tbody></tbody>
+          </table>
+        </div>
       </div>
     </div>
+    }
 
-    <div id="edit-rec" >
-      <form id="edit-datos" name="datos" class="hidden" enctype="multipart/form-data" method="post" >
-        <div id="foto-datos" >
-          <div id="foto" >
-            <label>Logo:</label>
-            <div id="FotoFrame">
-              <img id="ImgFoto" onload="CenterImg(event)"/>
+    <div id="panelDatos">
+    @if( !modeWidget )
+      {
+      <div  id="headerDatos">
+        <a id="lnkHome" href="/admin"               ><label>Home       </label></a>
+        <a id="lnkNew"  href="javascript:newMarca()"><label>Nueva Marca</label></a>
+      </div>
+      }
+
+      <div id="edit-rec" >
+        <form id="edit-datos" name="datos" class="hidden" enctype="multipart/form-data" method="post" >
+          <div id="foto-datos" >
+            <div id="foto" >
+              <label>Logo:</label>
+              <div id="FotoFrame">
+                <img id="ImgFoto" onload="CenterImg(event)"/>
+              </div>
+              <input id="FileFoto" name="FileFoto" type="file" accept="image/*"/>
+              <label id="lbFileFoto" for="FileFoto">Seleccione <br/> un fichero</label>
             </div>
-            <input id="FileFoto" name="FileFoto" type="file" accept="image/*"/>
-            <label id="lbFileFoto" for="FileFoto">Seleccione <br/> un fichero</label>
-          </div>
-          <div id="datos">
-            <div class="label-val">
-              <label for="Nombre">Nombre:&nbsp;</label><input type="text" id="Nombre" name="Nombre" size="5" placeholder="Escriba le nombre"/>
+            <div id="datos">
+              <div class="label-val">
+                <label for="Nombre">Nombre:&nbsp;</label><input type="text" id="Nombre" name="Nombre" size="5" placeholder="Escriba le nombre"/>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div style="width:100%">
-          <br />
-          <label for="Descripcion">Descripcion: </label><textarea id="Descripcion" name="Descripcion"></textarea>
-        </div>
+          <div style="width:100%">
+            <br />
+            <label for="Descripcion">Descripcion: </label><textarea id="Descripcion" name="Descripcion"></textarea>
+          </div>
 
-        <div id="UpdateErrorMsg" ></div>
+          <div id="UpdateErrorMsg" ></div>
 
-        <div class="btn-group center-content">
-          <button id="btnDel"  type="button" class="btn btn-danger">Borrar</button>
-          <button id="btnCopy" type="button" class="btn btn-default">Duplicar</button>
-          <button id="btnSave" type="button" class="btn btn-primary">Guardar</button>
-        </div>
+          <div class="btn-group center-content">
+            <button id="btnDel"  type="button" class="btn btn-danger">Borrar</button>
+            <button id="btnCopy" type="button" class="btn btn-default">Duplicar</button>
+            <button id="btnSave" type="button" class="btn btn-primary">Guardar</button>
+          </div>
 
-      <input id="Id"   name="Id"   type="hidden"/>
-      <input id="Logo" name="Logo" type="hidden"/>
+        <input id="Id"   name="Id"   type="hidden"/>
+        <input id="Logo" name="Logo" type="hidden"/>
 
-      <label id="lbId" class="right-top"></label>
-      </form>
+        <label id="lbId" class="right-top"></label>
+        <button id="btnClose" type="button" class="right-top" title="Cierra la ventana." ><span aria-hidden="true">&times;</span></button>
+        </form>
+      </div>
     </div>
-
 
   </div>
 </div>
@@ -90,6 +104,10 @@
      // Valores de todos los campos al empezar la edicción
     var EditVals = { fotoSrc:"", fotoFile:"", Id:0, Nombre:"", Descripcion:"" };      
 
+    var paramId      = @ViewData["Id"];                         // Identificador que se pasa como parametro a la página
+    var ModoWidget   = @ViewData["Widget"];                     // Estable el modo Widget, que se usa para llamar la página dentro de otras páginas
+    var WidgetNotify = null;                                    // Funcion para notificar al padre cuando esta en modo iFarme
+
     // Inicia manipuladores y variables, después de cargarse la página
     $( function()
       {
@@ -105,7 +123,6 @@
       $("#btnCopy").on( 'click', DuplicarDatos );   
       $("#btnDel" ).on( 'click', DeleteMarca );   
 
-      Msg1 = new MsgAlert( "#ErrorMsgMarcas" );
       Msg2 = new MsgAlert( "#UpdateErrorMsg" );
 
       _fotoFile.change( OnSelectImgFile );
@@ -114,8 +131,25 @@
       _Nombre.keyup( CheckSave );
       _Descripcion.keyup( CheckSave );
 
-      RefreshMarcasList( @ViewData["Id"] );
+      if( !ModoWidget )
+        {
+        $("#show-lst-panel" ).on( 'click', e =>{ e.stopPropagation(); AnimatePanel(); } );  
+        $("#panelDatos"     ).on( 'click', e =>{ AnimatePanel(true);} );
+
+        Msg1 = new MsgAlert( "#ErrorMsgMarcas" );
+
+        RefreshMarcasList( paramId );
+        }
+      else
+        {
+        setWidgetStyles();
+        FindMarcaFromServer( paramId );
+        }
+
       } );
+
+    // Si esta en modo Widget notifica el cambio de tamaño para ajustar el tamño del frame
+    $(document).ready( function() { ModoWidgetConfig( panelDatos ); } );
 
     // Se llama cuando se selecciona un fichero de imagen para ponerlo como foto del recambio
     function OnSelectImgFile( e )
@@ -135,21 +169,6 @@
         };
         
       reader.readAsDataURL( files[0] );
-      }
-
-    // Esta funcion chequea si el click se produjo dentro de una ventana popup
-    function CheckClickOnPopup( e )
-      {
-      var popups = $(".filters-popup");
-      for( var i=0; i < popups.length; i++ )
-        {
-        var rect = $(".filters-popup")[i].getBoundingClientRect();
-
-        if( e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom )
-          return;
-        }
-
-      $(".filters-btn").removeClass("open");
       }
 
     // Actualiza la lista de marcas con el contenido que hay en el servidor
@@ -172,7 +191,7 @@
         }, "#edit-rec" );
       }
 
-    // Llena la lista de Marcas con los recambios encontrados
+    // Llena la lista de Marcas con las marcas en la BD
     function FillMarcasList( )
       {
       $("#ItemsList").children().eq(0).empty();
@@ -205,6 +224,8 @@
       if( DescartMarcaChanged()==false ) return;
 
       ShowPanelDatos();
+      AnimatePanel(true);
+
       for( let marca of Marcas )
         {
         if( marca.id==id )
@@ -220,6 +241,30 @@
 
       ClearItemDatos();
       Msg2.Show( "La marca con Id="+id+" no se encuentra en la base de datos", "danger" );
+      }
+
+    // Busca los datos de la marca con identificador 'id' desde el servidor
+    function FindMarcaFromServer( id )
+      {
+      ShowPanelDatos();
+      ClearItemDatos();
+      if( id<=0 ) return;
+
+      var Conn = new ServerConnection( "GET", (s)=>ConnError(s,Msg2) );
+
+      Conn.Send( "/api/marca/" + id, (datos) => 
+        {
+        Msg2.Hide();
+
+        nowMarca = datos;
+        if( nowMarca.id<= 0 )
+          {
+          Msg2.Show( "La marca con Id="+id+" no se encuentra en la base de datos", "danger" );
+          return;
+          }
+
+         SetItemDatos();
+        }, "#panelDatos" );
       }
 
     // Muestra el panel de edicción de los datos
@@ -353,14 +398,17 @@
     function GuardaCambios()
       {
       if( !ValidateDatos() ) return;
-      var url = +_Id.val()>0? "/api/modify-marca" : "/api/add-marca";
+      var add = _Id.val()<=0;                                                           // Determina si esta adicionando o modificando
+      var url = add? "/api/add-marca" : "/api/modify-marca" ;
 
       var form = document.forms.namedItem("datos");
 
       var srv = new ServerConnection( "POST", (s)=>ConnError(s, Msg2) );
       srv.SendForm( form, url, (respJson) => 
         {
-        RefreshMarcasList( respJson.Id );
+        var id = respJson.Id;
+        if( WidgetNotify ) WidgetNotify( add? "add":"modify", id );                     // Si esta en un Widget, notifica que se Adiciono/Mofifico un modelo
+        else               RefreshMarcasList( id );                                     // Refresca la lista de marcas y continua la edicción
         });
       }
 
@@ -376,7 +424,8 @@
 
       srv.SendForm( form, "/api/delete-marca", (respJson) => 
         {
-        RefreshMarcasList( nextID );
+        if( WidgetNotify ) WidgetNotify("delete");
+        else               RefreshMarcasList( nextID );
         });
       }
 

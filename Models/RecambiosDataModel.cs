@@ -56,7 +56,7 @@ namespace Piezas2.Models
         if( tipo != DataInfo.Coches )
           Motores = new Motores( HttpCtx ).FindForCoche( "en uso", null );
         else
-          Motores2 = new Motores( HttpCtx ).All();
+          Motores2 = new Motores( HttpCtx ).ListMotores();
 
 
         Coches = new RecambioUsos( 0, HttpCtx ).UsoInCoches().Coches;

@@ -26,7 +26,7 @@ namespace Piezas2.Core
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Obtiene el listado de todos los coches que hay en la base de datos </summary>
-    internal List<Motor> All()
+    internal List<Motor> ListMotores()
       {
       return DbCtx.Motors.ToList();
       }

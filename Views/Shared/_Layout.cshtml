@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@{
+  var  val = ViewData["Widget"];
+  bool modeWidget = (val!=null && (int)val == 1);
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -8,32 +12,110 @@
   <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
-  <header>
-  </header>
+  @if( !modeWidget )
+    {
+    <header>
+       <div id="btnLog"> <img class="icon" src="images/login.svg" alt=""><span id="User">Entrar</span></div>
+
+        <div id="HidedBoxs" style="display:none">
+          <!-- Cuadro para loguearse o crear usuario nuevo -->
+          <div id="BoxUser" class="BoxFloat" style="position: absolute; left: -102.6px; top: 38px; display: none;">
+            <div id="LogIn" style="display: block;">
+              <div><input class="LineInput" type="text"     placeholder="Usuario"      autocomplete="off"></div>
+              <div><input class="LineInput" type="password" placeholder="Contraseñas"  autocomplete="off"></div>
+              <div class="MsgError"></div>
+              <div class="btnRight">Entrar</div>
+              <div class="btnLeft">&lt;&lt;</div>
+            </div>
+  
+            <div id="NewUser" style="display: none;">
+              <div><input class="LineInput" type="text" placeholder="Correo electrónico"></div>
+              <div><input class="LineInput" type="text" placeholder="Usuario"></div>
+              <div><input class="LineInput" type="password" placeholder="Contraseñas"></div>
+              <div><input class="LineInput" type="password" placeholder="Confirmar contraseñas"></div>
+              <div><input class="LineInput Telef" type="text" placeholder="Teléfono"></div>
+              <div class="MsgError"></div>
+              <div class="btnRight">Crear</div>
+              <div class="btnLeft">&lt;&lt;</div>
+            </div>
+  
+            <div id="EditUser" style="display: none;">
+              <div><input class="LineInput" type="text" placeholder="Correo electrónico"></div>
+              <div><input class="LineInput" type="text" placeholder="Usuario"></div>
+              <div><input class="LineInput" type="password" placeholder="Contraseñas"></div>
+              <div><input class="LineInput" type="password" placeholder="Confirmar contraseñas"></div>
+              <div><input class="LineInput Telef" type="text" placeholder="Teléfono"></div>
+              <div class="MsgError"></div>
+              <div class="btnRight">Modificar</div>
+              <div class="btnLeft">&lt;&lt;</div>
+            </div>
+  
+            <div id="ConfirmCode" style="display: none;">
+              <p>Hemos enviado un código de validación al correo del usuario.</p>
+              <p>Escriba el código en el cuadro y oprima validar para completar el proceso.</p>
+              <div><input class="LineInput" type="text"   placeholder="Código"></div>
+              <div><input class="LineInput" type="hidden" placeholder="User Id"></div>
+              <div class="MsgError"></div>
+              <div>
+                <div class="btnRight">Validar</div>
+                <div class="btnLeft">&lt;&lt;</div>
+              </div>
+              <div class="link-bottom">
+                <span>Re-Enviar el código.</span>
+              </div>
+            </div>
+  
+            <div id="MsgPassWord" style="display: none;">
+              <p>Le hemos enviado la contraseña a la dirección de correo electrónico asociada al nombre de usuario.</p>
+              <div class="btnLeft">&lt;&lt;</div>
+            </div>
+  
+            <div id="MsgUpdate" style="display: none;">
+              <p>Los datos del usuario actual, fueron actualizados satisfactoriamente .</p>
+              <p>Para que los cambios tengan efecto, debe que salir y volver a entrar</p>
+              <div class="btnLeft">&lt;&lt;</div>
+            </div>
+  
+            <div id="mnuUser" class="list" style="display: none;">
+              <div class="item-pu" cmd="1" style="display: none;">Salir</div>
+              <div class="item-pu" cmd="2">Entrar como Usuario</div>
+              <div class="item-pu" cmd="3">Crear nuevo Usuario</div>
+              <div class="item-pu" cmd="4" style="display: none;">Editar datos de Usuario</div>
+              <div class="item-pu" cmd="5" style="display: none;">Inscribir propiedad</div>
+              <div class="MsgError"></div>
+            </div>
+          </div>
+        </div>
+
+    </header>
+    }
 
   @RenderBody()
 
-  <footer class="border-top footer text-muted">
-    <div class="footer-row">
-      <div><a title="Mapa del sitio web de venta de recambios de coche para autos del Grupo VAG" href="/mapa-del-sitio">Mapa del sitio</a></div>
-      <div><span >|</span></div>
-      <div><a title="Información de Contacto" href="/informacion-de-contacto">Contacto</a></div>
-      <div><span >|</span></div>
-      <div><a title="Información sobre nuestra empresa" href="/acerca-de">Sobre nuestro sitio</a></div>
-    </div>
+  @if( !modeWidget )
+    {
+    <footer class="border-top footer text-muted">
+      <div class="footer-row">
+        <div><a title="Mapa del sitio web de venta de recambios de coche para autos del Grupo VAG" href="/mapa-del-sitio">Mapa del sitio</a></div>
+        <div><span >|</span></div>
+        <div><a title="Información de Contacto" href="/informacion-de-contacto">Contacto</a></div>
+        <div><span >|</span></div>
+        <div><a title="Información sobre nuestra empresa" href="/acerca-de">Sobre nuestro sitio</a></div>
+      </div>
 
-    <div class="footer-row">
-      <div> <a title="Follow us on Google+" rel="nofollow" href="https://plus.google.com/+pamicarro">Google+</a></div>
-      <div><span class="separator">|</span></div>
-      <div> <a title="Follow us on Facebook" rel="nofollow" href="https://www.facebook.com/pamicarro/">Facebook</a></div>
-      <div><span class="separator">|</span></div>
-      <div> <a title="Follow us on Twitter" rel="nofollow" href="https://twitter.com/Pamicarro">Twitter</a></div>
-    </div>
+      <div class="footer-row">
+        <div> <a title="Follow us on Google+" rel="nofollow" href="https://plus.google.com/+pamicarro">Google+</a></div>
+        <div><span class="separator">|</span></div>
+        <div> <a title="Follow us on Facebook" rel="nofollow" href="https://www.facebook.com/pamicarro/">Facebook</a></div>
+        <div><span class="separator">|</span></div>
+        <div> <a title="Follow us on Twitter" rel="nofollow" href="https://twitter.com/Pamicarro">Twitter</a></div>
+      </div>
 
-    <div class="copyright">
-      <span>© 2021 Pa'mi carro.</span>
-    </div>
-  </footer>
+      <div class="copyright">
+        <span>© 2021 Pa'mi carro.</span>
+      </div>
+    </footer>
+    }
 
   <script src="~/lib/jquery/dist/jquery.min.js"></script>
   <script src="~/js/bootstrap.js"></script>

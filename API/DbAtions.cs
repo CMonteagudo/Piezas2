@@ -34,11 +34,18 @@ namespace Piezas2
       Env = env;
       }
 
+    //---------------------------------------------------------------------------------------------------------------------------------------
+    ///<summary> Determina si el usuario logueado es un administrador o no </summary>
+    public bool Admin { get { return ( HttpContext.Session.GetInt32( "Admin" ) == 1 ); } }
+
+    #region ======================================================    RECAMBIOS      ==========================================================
     //-----------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Quita el uso del item 'ItemId' por los coches dados en la lista 'CochesList' </summary>
     [HttpGet( "/api/del-recambio-usos/{ItemId:int}/{CochesList}" )]
     public ActionResult<string> DelRecambioUsos( int ItemId, string CochesList )
       {
+      if( !Admin ) return NoAccess();
+
       var uso    = new RecambioUsos( ItemId, HttpContext );
       var numDel = uso.DeleteCoches( CochesList );
 
@@ -50,6 +57,10 @@ namespace Piezas2
     [HttpGet( "/api/add-recambio-usos/{ItemId:int}/{CochesList}" )]
     public ActionResult<string> AddRecambioUsos( int ItemId, string CochesList )
       {
+      if( !Admin ) return NoAccess();
+
+      if( HttpContext.Session.GetInt32( "Admin" ) == null ) return Content( "" );
+
       var uso = new RecambioUsos( ItemId, HttpContext );
       var numAdd = uso.AddCoches( CochesList );
 
@@ -57,10 +68,68 @@ namespace Piezas2
       }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary> Adiciona un nuevo recambio a la Base de Datos </summary>
+    [HttpPost( "/api/add-recambio" )]
+    public ActionResult<string> AddRecambio( IFormFile FileFoto/*, Item pza*/ )
+      {
+      if( !Admin ) return NoAccess();
+
+      var piezas = new Recambios(HttpContext);                          // Obtiene objeto para operaciones con los coches
+      var pza    = GetRecambio();
+      try
+        {
+        pza.Id = 0;                                                     // Fuerza a que se cree un registro nuevo
+        int Id = AddModifyRecambio( FileFoto, pza, piezas );
+        return OkJsn( Id );
+        }
+      catch( Exception ) { return ErrModify( pza.Id, pza.Nombre ); }
+      }
+
+    //-----------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary> Modifica los datos de un recambio ya existente </summary>
+    [HttpPost( "/api/modify-recambio" )]
+    public ActionResult<string> ModifyRecambio( IFormFile FileFoto/*, Item pza*/ )
+      {
+      if( !Admin ) return NoAccess();
+
+      var piezas = new Recambios(HttpContext);                             // Obtiene objeto para operaciones con los coches
+      var pza    = GetRecambio();
+      try
+        {
+        int Id = AddModifyRecambio( FileFoto, pza, piezas );
+        if( Id <= 0 ) return ErrNoExist( pza.Id, pza.Nombre );
+
+        return OkJsn( Id );
+        }
+      catch( Exception ) { return ErrModify( pza.Id, pza.Nombre ); }
+      }
+
+    //-----------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary>Borra el recambio espcecificado </summary>
+    [HttpDelete( "/api/delete-recambio" )]
+    public ActionResult<string> DeleteRecambio( /*Item pza*/ )
+      {
+      if( !Admin ) return NoAccess();
+
+      var pza = GetRecambio();
+      int Id = pza.Id;
+
+      try { new Recambios( HttpContext ).Delete( Id ); }
+      catch( Exception e ) { return ErrOnDel( e, Id, pza.Nombre ); }
+
+      DeleteFile( pza.Foto );
+      return OkJsn( Id );
+      }
+    #endregion
+
+    #region ======================================================    FABRICANTE      =========================================================
+    //-----------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Adiciona un nuev fabricante de coche </summary>
     [HttpPost( "/api/add-fabricante" )]
     public ActionResult<string> AddMaker( IFormFile FileFoto/*, Fabricante maker*/ )
       {
+      if( !Admin ) return NoAccess();
+
       Fabricante maker = GetMaker();
       try
         {
@@ -76,6 +145,8 @@ namespace Piezas2
     [HttpPost( "/api/modify-fabricante" )]
     public ActionResult<string> ModifyMaker( IFormFile FileFoto/*, Fabricante maker*/ )
       {
+      if( !Admin ) return NoAccess();
+
       Fabricante maker = GetMaker();
       try
         {
@@ -92,6 +163,8 @@ namespace Piezas2
     [HttpDelete( "/api/delete-fabricante" )]
     public ActionResult<string> DeleteMaker( /*Fabricante maker*/ )
       {
+      if( !Admin ) return NoAccess();
+
       var maker = GetMaker();
       int Id = maker.Id;
 
@@ -101,12 +174,16 @@ namespace Piezas2
       DeleteFile( maker.Logo );
       return OkJsn( Id );
       }
+    #endregion
 
+    #region ======================================================    MARCA      ==============================================================
     //-----------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Adiciona una nueva marca de coche </summary>
     [HttpPost( "/api/add-marca" )]
     public ActionResult<string> AddMarca( IFormFile FileFoto/*, Marca marca*/ )
       {
+      if( !Admin ) return NoAccess();
+
       Marca marca = GetMarca();
       try
         {
@@ -122,6 +199,8 @@ namespace Piezas2
     [HttpPost( "/api/modify-marca" )]
     public ActionResult<string> ModifyMarca( IFormFile FileFoto/*, Marca marca*/ )
       {
+      if( !Admin ) return NoAccess();
+
       Marca marca = GetMarca();
       try
         {
@@ -138,6 +217,8 @@ namespace Piezas2
     [HttpDelete( "/api/delete-marca" )]
     public ActionResult<string> DeleteMarca( /*Marca marca*/ )
       {
+      if( !Admin ) return NoAccess();
+
       var marca = GetMarca();
       int Id = marca.Id;
 
@@ -147,7 +228,9 @@ namespace Piezas2
       DeleteFile( marca.Logo );
       return OkJsn( Id );
       }
+    #endregion
 
+    #region ======================================================    CATEGORIA      ==========================================================
     //-----------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Adiciona una nueva categoria de recambio de coche </summary>
     [HttpPost( "/api/add-categoria" )]
@@ -181,12 +264,16 @@ namespace Piezas2
       DeleteFile( cat.Logo );
       return OkJsn( edId );
       }
+    #endregion
 
+    #region ======================================================    COCHE      ==============================================================
     //-----------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Adiciona un nuevo coche a la Base de Datos </summary>
     [HttpPost( "/api/add-coche" )]
     public ActionResult<string> AddCoche( IFormFile FileFoto/*, Coche coche*/ )
       {
+      if( !Admin ) return NoAccess();
+
       var  coches = new Coches(HttpContext);                              // Obtiene objeto para operaciones con los coches
       Coche coche = GetCoche();
       try
@@ -203,6 +290,8 @@ namespace Piezas2
     [HttpPost( "/api/modify-coche" )]
     public ActionResult<string> ModifyCoche( IFormFile FileFoto/*, Coche coche*/ )
       {
+      if( !Admin ) return NoAccess();
+
       var  coches = new Coches(HttpContext);                             // Obtiene objeto para operaciones con los coches
       Coche coche = GetCoche();
       try
@@ -220,6 +309,8 @@ namespace Piezas2
     [HttpDelete( "/api/delete-coche" )]
     public ActionResult<string> DeleteCoche( /*Coche coche*/ )
       {
+      if( !Admin ) return NoAccess();
+
       var coche  = GetCoche();
       int Id     = coche.Id;
       var coches = new Coches(HttpContext);                             // Obtiene objeto para operaciones con los coches
@@ -230,12 +321,16 @@ namespace Piezas2
       DeleteFile( coche.Foto );
       return OkJsn( Id );
       }
+    #endregion
 
+    #region ======================================================    MODELO      =============================================================
     //-----------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Adiciona un nuevo modelo a la Base de Datos </summary>
     [HttpPost( "/api/add-modelo" )]
     public ActionResult<string> AddModelo( /* Modelo modelo*/ )
       {
+      if( !Admin ) return NoAccess();
+
       Modelo modelo = GetModelo();
       try
         {
@@ -251,6 +346,8 @@ namespace Piezas2
     [HttpPost( "/api/modify-modelo" )]
     public ActionResult<string> ModifyModelo( /*Modelo modelo*/ )
       {
+      if( !Admin ) return NoAccess();
+
       Modelo modelo = GetModelo();
       try
         {
@@ -267,6 +364,8 @@ namespace Piezas2
     [HttpDelete( "/api/delete-modelo" )]
     public ActionResult<string> DeleteModelo( /*Modelo modelo*/ )
       {
+      if( !Admin ) return NoAccess();
+
       Modelo modelo = GetModelo();
 
       try                  { new Modelos(HttpContext).Delete( modelo.Id );   }
@@ -274,12 +373,16 @@ namespace Piezas2
 
       return OkJsn( modelo.Id );
       }
+    #endregion
 
+    #region ======================================================    MOTOR      ==============================================================
     //-----------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Adiciona un nuevo motor a la Base de Datos </summary>
     [HttpPost( "/api/add-motor" )]
     public ActionResult<string> AddMotor( /* Motor motor*/ )
       {
+      if( !Admin ) return NoAccess();
+
       Motor motor = GetMotor();
       try
         {
@@ -295,6 +398,8 @@ namespace Piezas2
     [HttpPost( "/api/modify-motor" )]
     public ActionResult<string> ModifyMotor( /*Motor motor*/ )
       {
+      if( !Admin ) return NoAccess();
+
       Motor motor = GetMotor();
       try
         {
@@ -311,6 +416,8 @@ namespace Piezas2
     [HttpDelete( "/api/delete-motor" )]
     public ActionResult<string> DeleteMotor( /*Motor motor*/ )
       {
+      if( !Admin ) return NoAccess();
+
       Motor motor = GetMotor();
 
       try                  { new Motores( HttpContext ).Delete( motor.Id ); }
@@ -318,60 +425,126 @@ namespace Piezas2
 
       return OkJsn( motor.Id );
       }
+    #endregion
+
+
+    #region ======================================================    USUARIO      ============================================================
+    //-----------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary> Registra un usuario para el uso se la aplicación </summary>
+    [HttpPost( "/api/login" )]
+    public ActionResult<Usuario> LogInUsuario( /* Usuario user*/ )
+      {
+      var (name, pass) = GetUserPassword();
+      var user = new Usuarios( HttpContext ).LogIn( name, pass );
+
+      return user;
+      }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
-    /// <summary> Adiciona un nuevo recambio a la Base de Datos </summary>
-    [HttpPost( "/api/add-recambio" )]
-    public ActionResult<string> AddRecambio( IFormFile FileFoto/*, Item pza*/ )
+    /// <summary> Desregistra un usuario si habia alguno regisrado </summary>
+    [HttpPost( "/api/logout" )]
+    public ActionResult<string> LogoutUsuario()
       {
-      var piezas = new Recambios(HttpContext);                          // Obtiene objeto para operaciones con los coches
-      var pza    = GetRecambio();
+      new Usuarios( HttpContext ).LogOut();
+
+      return "{\"Error\":0, \"Out\":1}";
+      }
+
+    //-----------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary> Envia el código de verificación por el correo del usuario  </summary>
+    [HttpPost( "/api/send-code" )]
+    public ActionResult<string> SendCodigo( [FromForm] int Id )
+      {
       try
         {
-        pza.Id = 0;                                                     // Fuerza a que se cree un registro nuevo
-        int Id = AddModifyRecambio( FileFoto, pza, piezas );
-        return OkJsn( Id );
+        new Usuarios( HttpContext ).SendCode( Id );
+        return OkJsn( 0 );
         }
-      catch( Exception ) { return ErrModify( pza.Id, pza.Nombre ); }
+      catch( Exception e ) { return ErrSendMail(e); }
       }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
-    /// <summary> Modifica los datos de un recambio ya existente </summary>
-    [HttpPost( "/api/modify-recambio" )]
-    public ActionResult<string> ModifyRecambio( IFormFile FileFoto/*, Item pza*/ )
+    /// <summary> Envia la contraseñas al correo del usuario </summary>
+    [HttpPost( "/api/send-password" )]
+    public ActionResult<string> SendPassWord( [FromForm] string Nombre )
       {
-      var piezas = new Recambios(HttpContext);                             // Obtiene objeto para operaciones con los coches
-      var pza    = GetRecambio();
       try
         {
-        int Id = AddModifyRecambio( FileFoto, pza, piezas );
-        if( Id <= 0 ) return ErrNoExist( pza.Id, pza.Nombre );
-
-        return OkJsn( Id );
+        new Usuarios( HttpContext ).SendPassword( Nombre );
+        return OkJsn( 0 );
         }
-      catch( Exception ) { return ErrModify( pza.Id, pza.Nombre ); }
+      catch( Exception e ) { return ErrSendMail(e); }
       }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
-    /// <summary>Borra el recambio espcecificado </summary>
-    [HttpDelete( "/api/delete-recambio" )]
-    public ActionResult<string> DeleteRecambio( /*Item pza*/ )
+    /// <summary> Verifica que el código de verificación del usuario es correcto </summary>
+    [HttpPost( "/api/veryfy-code" )]
+    public ActionResult<Usuario> VeryfyCode( [FromForm] int Id, [FromForm] string Code )
       {
-      var pza = GetRecambio();
-      int Id = pza.Id;
+      Usuario user = new Usuarios( HttpContext ).VeryfyCode( Id, Code );
 
-      try  { new Recambios(HttpContext).Delete( Id ); }
-      catch( Exception e ) { return ErrOnDel( e, Id, pza.Nombre ); }
-
-      DeleteFile( pza.Foto );
-      return OkJsn( Id );
+      return user;
       }
 
+    //-----------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary> Adiciona un nuevo usuario a la Base de Datos </summary>
+    [HttpPost( "/api/add-usuario" )]
+    public ActionResult<string> AddUsuario( /* Usuario user*/ )
+      {
+      Usuario user = GetUser();
+      try
+        {
+        user.Id = 0;                                                       // Fuerza a que se cree un registro nuevo
+        int Id = new Usuarios(HttpContext).Change( user );
+        return OkJsn( Id );
+        }
+      catch( Exception e ) { return ErrModify( user.Id, user.Nombre, e ); }
+      }
+
+    //-----------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary> Modifica los datos de un usuario ya existente </summary>
+    [HttpPost( "/api/modify-usuario" )]
+    public ActionResult<string> ModifyUsuario( /*Usuario user*/ )
+      {
+      Usuario user = GetUser();
+      try
+        {
+        int Id =  new Usuarios(HttpContext).Change( user );
+        if( Id <= 0 ) return ErrNoExist( user.Id, user.Nombre );
+
+        var confirm = new Usuarios(HttpContext).Find(Id).Confirmado;
+
+        return OkJsn( Id, $", \"confirm\":{confirm}" );
+        }
+      catch( Exception e) { return ErrModify( user.Id, user.Nombre, e ); }
+      }
+
+    //-----------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary>Borra el usuario especificado </summary>
+    [HttpDelete( "/api/delete-usuario" )]
+    public ActionResult<string> DeleteUsuario( /*Usuario user*/ )
+      {
+      Usuario user = GetUser();
+
+      try { new Usuarios( HttpContext ).Delete( user.Id ); }
+      catch( Exception e ) { return ErrOnDel( e, user.Id, user.Nombre ); }
+
+      return OkJsn( user.Id );
+      }
+    #endregion
+
+    #region ======================================================    RETORNOS JSON    ======================================================
     //---------------------------------------------------------------------------------------------------------------------------------------
     ///<summary> Retorna una cadena JSON que indica que todo estuvo bien para el elemento identifcado por 'id'  </summary>
-    private string OkJsn( int id )
+    private string OkJsn( int id, string more="" )
       {
-      return $"{{\"Error\":0, \"Id\":{id} }}";
+      return $"{{\"Error\":0, \"Id\":{id}{more} }}";
+      }
+
+    ///<summary> Retorna una cadena JSON con un error de acceso denegado  </summary>
+    private string NoAccess()
+      {
+      return ErrJsn( 9999, $"Acceso denegado para el usuario actual." );
       }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
@@ -382,17 +555,40 @@ namespace Piezas2
       }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
-    ///<summary> Retorna una cadena JSON con el código y el mensaje de cuando un record no se encuentra en la base de datos  </summary>
-    private string ErrNoExist( int id, string name )
+    ///<summary> Retorna una cadena JSON con el código y el mensaje de cuando un record no se puede modificar o adicionar  </summary>
+    private string ErrModify( int id, string name, Exception e = null )
       {
-      return ErrJsn( 1003, $"No se encontro en la base de datos, el registro con Id={id} y nombre '{name}'." );
+      string jSon = TranslateException( e );
+      if( jSon != null ) return jSon;
+
+      if( id==0 ) return ErrJsn( 1001, $"Error al adicionar el regístro con nombre '{name}'" );
+      else        return ErrJsn( 1001, $"Error al modificar el regístro con Id={id} y nombre '{name}'" );
       }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
-    ///<summary> Retorna una cadena JSON con el código y el mensaje de cuando un record no se puede modificar o adicionar  </summary>
-    private string ErrModify( int id, string name )
+    ///<summary> Retorna una cadena JSON con el código y el mensaje que no se puede enviar el email  </summary>
+    private string ErrSendMail( Exception e = null )
       {
-      return ErrJsn( 1001, $"Error al adicionar o modificar el regístro con Id={id} y nombe '{name}'" );
+      string jSon = TranslateException( e );
+      if( jSon != null ) return jSon;
+
+      return ErrJsn( 1004, "Hubo un problema al enviar el correo." );
+      }
+
+    //---------------------------------------------------------------------------------------------------------------------------------------
+    ///<summary> Mira la excepción y trata de traducirla en un mensaje más entendible para el usuario  </summary>
+    private string TranslateException( Exception e )
+      {
+      if( e == null ) return null;
+
+      switch( e.Message )
+        {
+        case "UserExist": return ErrJsn( 1005, $"Ya exite un usuario con ese nombre." );
+        case "MailExist": return ErrJsn( 1006, $"Ya exite un usuario con ese correo." );
+        case "UserNoExist": return ErrJsn( 1006, $"El usuario indicado no existe." );
+        }
+
+      return null;
       }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
@@ -406,6 +602,16 @@ namespace Piezas2
       return ErrJsn( 1002, sErr );
       }
 
+    //---------------------------------------------------------------------------------------------------------------------------------------
+    ///<summary> Retorna una cadena JSON con el código y el mensaje de cuando un record no se encuentra en la base de datos  </summary>
+    private string ErrNoExist( int id, string name )
+      {
+      return ErrJsn( 1003, $"No se encontro en la base de datos, el registro con Id={id} y nombre '{name}'." );
+      }
+
+    #endregion
+
+    #region ===================================    CREACION DE OBJETOS A PARTIR DE LOS DATOS ENVIADOS    ======================================
     //-----------------------------------------------------------------------------------------------------------------------------------------
     /// <summary>Obteine un objeto Marca con los datos obtenidos del formulario </summary>
     private Marca GetMarca()
@@ -413,6 +619,42 @@ namespace Piezas2
       var frm = HttpContext.Request.Form;
 
       return new Marca { Id = int.Parse( frm["Id"] ), Nombre = frm["Nombre"], Logo = frm["Logo"], Descripcion = frm["Descripcion"] };
+      }
+
+    //-----------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary>Obteine un objeto Usuario con los datos obtenidos del formulario </summary>
+    private Usuario GetUser()
+      {
+      if( HttpContext.Request.HasFormContentType )
+        {
+        var frm = HttpContext.Request.Form;
+        return new Usuario { Id         = int.Parse( frm["Id"] ), 
+                             Nombre     = frm["Nombre"], 
+                             Correo     = frm["Correo"], 
+                             Telefonos  = frm["Telefonos"],
+                             PassWord   = frm["PassWord"]
+                           };
+        }
+
+      var qry = HttpContext.Request.Query;
+      return new Usuario { Id         = int.Parse( qry["Id"] ), 
+                            Nombre     = qry["Nombre"], 
+                            Correo     = qry["Correo"], 
+                            Telefonos  = qry["Telefonos"],
+                            PassWord   = qry["PassWord"]
+                          };
+      }
+
+    private (string, string) GetUserPassword()
+      {
+      if( HttpContext.Request.HasFormContentType )
+        {
+        var frm = HttpContext.Request.Form;
+        return ( frm["Nombre"], frm["PassWord"] );
+        }
+
+      var qry = HttpContext.Request.Query;
+      return (qry["Nombre"], qry["PassWord"]);
       }
 
     //-----------------------------------------------------------------------------------------------------------------------------------------
@@ -497,7 +739,9 @@ namespace Piezas2
                         Descripcion =            frm["Descripcion"]
                       };
       }
+    #endregion
 
+    #region ========================================    ADICCION/MODIFICACION DE REGISTRO    ================================================
     //---------------------------------------------------------------------------------------------------------------------------------------
     ///<summary> Adiciona una nueva marca o modifica una ya existente (si marca.Id==0 crea una nueva)  </summary>
     private int AddModifyMarca( IFormFile fileFoto, Marca marca )
@@ -625,7 +869,9 @@ namespace Piezas2
 
       return Id;
       }
+    #endregion
 
+    #region ========================================    FUNCIONES PARA TRABAJO CON FICHEROS   ===============================================
     //---------------------------------------------------------------------------------------------------------------------------------------
     ///<summary> Guarda la foto cargada desde el cliente en el servidor  </summary>
     private string SaveFile( string dir, string name, IFormFile fileFoto )
@@ -677,6 +923,8 @@ namespace Piezas2
         }
       catch( Exception ) { return false; }
       }
+    #endregion
+
 
     }//=========================================================================================================================================
   }

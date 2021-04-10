@@ -11,7 +11,7 @@ namespace Piezas2.Core
   /// <summary> Maneja todas las acciones relacionadas con las marcas de los coches </summary>
   public class Marcas
     {
-    DbPiezasContext DbCtx;            // Conecto para acceder a la base de datos
+    readonly DbPiezasContext DbCtx;            // Conecto para acceder a la base de datos
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Construye el objeto con informacion se la conexion </summary>

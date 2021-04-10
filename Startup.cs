@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Piezas2.Core.Model;
+using Piezas2.Core.Servicios;
 
 namespace Piezas2
   {
@@ -39,6 +40,12 @@ namespace Piezas2
     /// <summary>Se llama para establecer todos los servicios que se van a utilizar</summary>
     public void ConfigureServices( IServiceCollection services )
       {
+      services.AddDistributedMemoryCache();
+      services.AddSession();
+
+      services.Configure<MailSettings>( Configuration.GetSection( "MailSettings" ) );
+      services.AddTransient<IMailService, MailService>();
+
       services.AddControllersWithViews();
       services.AddEntityFrameworkSqlServer().AddDbContext<DbPiezasContext>( 
         ( serviceProvider, options ) => options.UseSqlServer( conneStr ).UseInternalServiceProvider( serviceProvider ) );
@@ -70,6 +77,7 @@ namespace Piezas2
 
       app.UseAuthorization();
 
+      app.UseSession();
       app.UseEndpoints( endpoints =>
        {
        endpoints.MapControllers();

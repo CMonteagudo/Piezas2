@@ -73,8 +73,8 @@
     <p><label>Ejemplo:</label><a href="/api/modelos-por-marca/skoda"> /api/modelos-por-marca/skoda</a></p>
     </li>
 
-    <li> Obtención de una lista de motores de coches
-    <p> <label>URL:</label> <strong>/api/motores/{marca}/{modelo}</strong></p> 
+    <li> Obtención de una lista con la descripcion minima de motores de coches
+    <p> <label>URL:</label> <strong>/api/motores-desc/{marca}/{modelo}</strong></p> 
 
     <p><label>marca  =></label> Especifica la marca de coche a la que pertenen los motore devueltos.<br/>
        <label>modelo =></label> Especifica el modelo de coche a la que pertenen los motore devueltos.</p>
@@ -83,7 +83,7 @@
        - La marca y el modelo pueden especificarse con el nombre o con el identificador.<br/>
        - El valor de 0 o la cadena 'todo' para los 2 paramentros significa que no se tenga en cuenta.</p>
     
-    <p><label>Ejemplo:</label><a href="/api/motores/volkswagen/todo"> /api/motores/volkswagen/todo</a></p>
+    <p><label>Ejemplo:</label><a href="/api/motores-desc/volkswagen/todo"> /api/motores/volkswagen/todo</a></p>
     </li>
 
     <li> Obtención de una lista de todas las categorias de recambios
@@ -112,11 +112,11 @@
     </li>
 
     <li> Obtención de la lista de coches donde se puede usar un recambio
-    <p><label>URL:</label> <strong>/api/recambio-uso/{Id:int}</strong></p>
+    <p><label>URL:</label> <strong>/api/coches-con-recambio/{Id:int}</strong></p>
     <p><label>Id =></label> Identificador del recambio que se quieren obtener los datos<br/>
     - Si Id es cero, se obtienen todos los coches.</p>
     
-    <p><label>Ejemplo:</label><a href="/api/recambio-uso/1"> /api/recambio-uso/1</a></p>
+    <p><label>Ejemplo:</label><a href="/api/coches-con-recambio/1"> /api/recambio-uso/1</a></p>
     </li>
 
   </ul>

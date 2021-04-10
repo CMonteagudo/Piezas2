@@ -5,108 +5,107 @@
 
 <div class="main-frame">
   <div class="columns-for-edit">
+    <div id="show-lst-panel"> <img src="~/images/btn-tabla.png" title="Muestra/Oculta lista para selección de recambio a editar." /> </div>
 
-    <div style="position:relative;">
-      <span style="position: absolute; bottom: 3px;">Seleccione un recambio:</span>
-      <div class="btn-group filters-btn" style="width:100%;">
-        <button type="button" class="btn" style="background-color:transparent"></button>
-        <button type="button" class="btn dropdown-toggle show-popup" data-toggle="" aria-expanded="false" style="background-color:transparent; float:right;">
-           Filtrar: <span class="caret"></span>
-        </button>
-        <div class="dropdown-menu filters-popup" role="menu" style="left:unset; right: 0px; width: 250px; ">
-          <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <div id="panelList">
+      <div id="headerList">
+        <span id="lb-sel-list">Seleccione un recambio:</span>
+        <div class="btn-group filters-btn" style="width:100%;">
+          <button type="button" class="btn" style="background-color:transparent"></button>
+          <button type="button" class="btn dropdown-toggle show-popup" data-toggle="" aria-expanded="false" style="background-color:transparent; float:right;">
+             Filtrar: <span class="caret"></span>
+          </button>
+          <div class="dropdown-menu filters-popup" role="menu" style="left:unset; right: 0px; width: 250px; ">
+            <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 
-          <div class="flex-grid">
-            <div class="form-group item" id="FindForName">
-              <input type="text" id="FindTxtCoche" name="FindTxtCoche" placeholder="Texto que se desea buscar"/>
+            <div class="flex-grid">
+              <div class="form-group item" id="FindForName">
+                <input type="text" id="FindTxtCoche" name="FindTxtCoche" placeholder="Texto que se desea buscar"/>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div style="position:relative;">
-      <a id="lnkHome" href="/admin"               ><label>Home       </label></a>
-      <a id="lnkNew"  href="javascript:newCoche()"><label>Nuevo Coche</label></a>
-    </div>
-
-    <div id="list-rec" >
-      <div id="ErrorMsgCoches" ></div>
-      <div class="table-responsive">
-        <table class="table table-bordered table-striped" id="ItemsList">
-          <tbody></tbody>
-        </table>
+      <div id="list-rec" >
+        <div id="ErrorMsgCoches" ></div>
+        <div class="table-responsive">
+          <table class="table table-bordered table-striped" id="ItemsList">
+            <tbody></tbody>
+          </table>
+        </div>
       </div>
     </div>
 
-    <div id="edit-rec" >
-      <form id="edit-datos" name="datos" class="hidden" enctype="multipart/form-data" method="post" >
-        <div id="foto-datos" >
-          <div id="foto" >
-            <label>Foto:</label>
-            <div id="FotoFrame">
-              <img id="ImgFoto" onload="CenterImg(event)"/>
+
+    <div id="panelDatos">
+      <div id="headerDatos">
+        <a id="lnkHome" href="/admin"               ><label>Home       </label></a>
+        <a id="lnkNew"  href="javascript:newCoche()"><label>Nuevo Coche</label></a>
+      </div>
+
+      <div id="edit-rec" >
+        <form id="edit-datos" name="datos" class="hidden" enctype="multipart/form-data" method="post" >
+          <div id="foto-datos" >
+            <div id="foto" >
+              <label>Foto:</label>
+              <div id="FotoFrame">
+                <img id="ImgFoto" onload="CenterImg(event)"/>
+              </div>
+              <input id="FileFoto" name="FileFoto" type="file" accept="image/*"/>
+              <label id="lbFileFoto" for="FileFoto">Seleccione <br/> un fichero</label>
             </div>
-            <input id="FileFoto" name="FileFoto" type="file" accept="image/*"/>
-            <label id="lbFileFoto" for="FileFoto">Seleccione <br/> un fichero</label>
+            <div id="datos">
+              <div class="label-val">
+                <label for="Marca" >Marca:&nbsp;</label>
+                <select id="Marca" name="Marca" placeholder="Seleccione una marca">
+                </select>
+              </div>
+              <div class="label-val">
+                <label for="Modelo">Modelo:&nbsp;</label>
+                <select id="Modelo" name="Modelo" placeholder="Seleccione el modelo">
+                </select>
+              </div>
+              <div class="label-val">
+                <label for="Caja">Caja:&nbsp;</label><input type="text" id="Caja" name="Caja" size="5" placeholder="Escriba la caja de velc."/>
+              </div>
+              <div class="label-val">
+                <label for="Carroceria">Carroceria:&nbsp;</label><input type="text" id="Carroceria" name="Carroceria" size="5" placeholder="Escriba la Carroceria" />
+              </div>
+              <div class="label-val">
+                <label for="Motor">Motor:&nbsp;</label>
+                <select id="Motor" name="Motor" placeholder="Seleccione el motor">
+                </select>
+              </div>
+            <p id="MotorInfo"></p>
+            </div>
           </div>
-          <div id="datos">
-            <div class="label-val">
-              <label for="Marca" >Marca:&nbsp;</label>
-              <select id="Marca" name="Marca" placeholder="Seleccione una marca">
-                @foreach( var marca in Model.Marcas )
-                  {
-                  <option value="@marca.Id">@marca.Name</option>
-                  }
-              </select>
-            </div>
-            <div class="label-val">
-              <label for="Modelo">Modelo:&nbsp;</label>
-              <select id="Modelo" name="Modelo" placeholder="Seleccione el modelo">
-              </select>
-            </div>
-            <div class="label-val">
-              <label for="Caja">Caja:&nbsp;</label><input type="text" id="Caja" name="Caja" size="5" placeholder="Escriba la caja de velc."/>
-            </div>
-            <div class="label-val">
-              <label for="Carroceria">Carroceria:&nbsp;</label><input type="text" id="Carroceria" name="Carroceria" size="5" placeholder="Escriba la Carroceria" />
-            </div>
-            <div class="label-val">
-              <label for="Motor">Motor:&nbsp;</label>
-              <select id="Motor" name="Motor" placeholder="Seleccione el motor">
-                @foreach( var motor in Model.Motores2 )
-                  {
-                  <option value="@motor.Id">@motor.Nombre</option>
-                  }
-              </select>
-            </div>
-          <p id="MotorInfo"></p>
+
+          <div style="width:100%">
+            <br />
+            <label for="Descripcion">Descripcion: </label><textarea id="Descripcion" name="Descripcion"></textarea>
           </div>
-        </div>
 
-        <div style="width:100%">
-          <br />
-          <label for="Descripcion">Descripcion: </label><textarea id="Descripcion" name="Descripcion"></textarea>
-        </div>
+          <div id="UpdateErrorMsg" ></div>
 
-        <div id="UpdateErrorMsg" ></div>
+          <div class="btn-group center-content">
+            <button id="btnDel"  type="button" class="btn btn-danger">Borrar</button>
+            <button id="btnCopy" type="button" class="btn btn-default">Duplicar</button>
+            <button id="btnSave" type="button" class="btn btn-primary">Guardar</button>
+          </div>
 
-        <div class="btn-group center-content">
-          <button id="btnDel"  type="button" class="btn btn-danger">Borrar</button>
-          <button id="btnCopy" type="button" class="btn btn-default">Duplicar</button>
-          <button id="btnSave" type="button" class="btn btn-primary">Guardar</button>
-        </div>
+        <input id="Id"   name="Id"   type="hidden"/>
+        <input id="Foto" name="Foto" type="hidden"/>
 
-      <input id="Id"   name="Id"   type="hidden"/>
-      <input id="Foto" name="Foto" type="hidden"/>
-
-      <label id="lbId" class="right-top"></label>
-      </form>
+        <label id="lbId" class="right-top"></label>
+        </form>
+      </div>
 
     </div>
 
 
   </div>
+
 </div>
 
 
@@ -119,8 +118,9 @@
     // Lista de todos los Coches que hay en la base de datos
     var Coches = [];     
 
-    var Modelos = @Model.ModelosToJson();
-    var Motores = @Model.Motores2ToJson();
+    var Modelos = []; 
+    var Motores = []; 
+    var Marcas  = []; 
 
     var dataMotor;      // Id del motor que se estan mostrando los datos
 
@@ -149,6 +149,9 @@
     // Inicia manipuladores y variables, después de cargarse la página
     $( function()
       {
+      // Actualiza ultimo valor de la busqueda por nombre
+      $("#FindTxtCoche").val( localStorage["lastFindTxtCoche"] || "" );
+
       _fotoSrc  = $("#ImgFoto");
       _fotoFile = $("#FileFoto");
 
@@ -161,41 +164,42 @@
       _Descripcion = $("#Descripcion");
       _MotorInfo   = $("#MotorInfo");
 
-      // Actualiza ultimo valor de la busqueda por nombre
-      $("#FindTxtCoche").val( localStorage["lastFindTxtCoche"] || "" );
-
-      // Cuando se oprime el boton para guardar los cambios realizados
-      $("#btnSave").on( 'click', GuardaCambios );   
-      $("#btnCopy").on( 'click', DuplicarDatos );   
-      $("#btnDel" ).on( 'click', DeleteCoche   );   
-
-      // Pone/quita el la ventana flotante (popup) con los filtros
-      $(".filters-btn > button").on( 'click', e => { $(e.currentTarget.parentElement).addClass("open"); e.stopPropagation(); } );  
-      $("body").on( 'click', CheckClickOnPopup );  
-
-      // Cierra el popup por el boton que aparece a la derecha
-      $(".filters-popup > .close").on( 'click', e => 
-        { 
-        $(e.currentTarget).parent().parent().removeClass("open"); 
-        e.stopPropagation();
-        } );  
-
-      Msg1 = new MsgAlert( "#ErrorMsgCoches" );
-      Msg2 = new MsgAlert( "#UpdateErrorMsg" );
-
       _fotoFile.change( OnSelectImgFile );
       _fotoSrc.keyup( CheckSave );
 
-      _Marca.change( MarkChanged );
-      _Modelo.change( CheckSave );
-      _Motor.change( MotorChanged );
+      _Marca.change( OnMarkChanged );
+      _Modelo.change( OnModeloChanged );
+      _Motor.change( OnMotorChanged );
       _Caja.keyup( CheckSave );
       _Carroceria.keyup( CheckSave );
       _Descripcion.keyup( CheckSave );
 
       $("#FindTxtCoche").keyup( FillCochesList );
 
+
+      // Cuando se oprime el boton para guardar los cambios realizados
+      $("#btnSave").on( 'click', GuardaCambios );   
+      $("#btnCopy").on( 'click', DuplicarDatos );   
+      $("#btnDel" ).on( 'click', DeleteCoche   );   
+
+      $("#show-lst-panel" ).on( 'click', e =>{ e.stopPropagation(); AnimatePanel(); } );  
+      $("#panelDatos"     ).on( 'click', e =>{ AnimatePanel(true);} );
+
+      // Pone/quita el la ventana flotante (popup) con los filtros
+      $(".filters-btn > button").on( 'click', e => { $(e.currentTarget.parentElement).addClass("open"); e.stopPropagation(); } );  
+      $("body").on( 'click', CheckClickOnPopup );  
+
+      // Cierra el popup por el boton que aparece a la derecha
+      $(".filters-popup > .close").on( 'click', HidePopUp ); 
+
+      Msg1 = new MsgAlert( "#ErrorMsgCoches" );
+      Msg2 = new MsgAlert( "#UpdateErrorMsg" );
+
       RefreshCochesList( cocheId );
+
+      RefreshMarcas();
+      RefreshModelos();
+      RefreshMotores();
       } );
 
     // Se llama cuando se selecciona un fichero de imagen para ponerlo como foto del recambio
@@ -218,19 +222,52 @@
       reader.readAsDataURL( files[0] );
       }
 
-    // Esta funcion chequea si el click se produjo dentro de una ventana popup
-    function CheckClickOnPopup( e )
+    // Actualiza la lista de marcas desde el servidor
+    function RefreshMarcas( id )
       {
-      var popups = $(".filters-popup");
-      for( var i=0; i < popups.length; i++ )
+      var Conn = new ServerConnection( "GET", (s)=>ConnError(s,Msg2) );
+
+      Conn.Send( "/api/marcas", (datos) => 
         {
-        var rect = $(".filters-popup")[i].getBoundingClientRect();
+        Msg2.Hide();
 
-        if( e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom )
-          return;
-        }
+        Marcas = datos;
+        if( id != null ) EditVals.Marca = id;
 
-      $(".filters-btn").removeClass("open");
+        FillMarcas();
+        }, "#panelDatos" );
+      }
+
+    // Actualiza la lista de modelos desde el servidor
+    function RefreshModelos( id )
+      {
+      var Conn = new ServerConnection( "GET", (s)=>ConnError(s,Msg2) );
+
+      Conn.Send( "/api/modelos", (datos) => 
+        {
+        Msg2.Hide();
+
+        Modelos = datos;
+        if( id != null ) EditVals.Modelo = id;
+
+        FillModelos();
+        }, "#panelDatos" );
+      }
+
+    // Actualiza la lista de motores desde el servidor
+    function RefreshMotores( id )
+      {
+      var Conn = new ServerConnection( "GET", (s)=>ConnError(s,Msg2) );
+
+      Conn.Send( "/api/motores", (datos) => 
+        {
+        Msg2.Hide();
+
+        Motores = datos;
+        if( id != null ) EditVals.Motor = id;
+
+        FillMotores();
+        }, "#panelDatos" );
       }
 
     // Actualiza la lista de coches con el contenido que hay en el servidor
@@ -256,7 +293,6 @@
     // Llena la lista de Coches con los recambios encontrados
     function FillCochesList( )
       {
-      //$(".filters-btn").removeClass("open")       // Cierra el popup de filtrado
       $("#ItemsList").children().eq(0).empty();
 
       var txt = $("#FindTxtCoche").val();
@@ -290,6 +326,50 @@
       ShowInfo();                    // Muestra/esconde información debajo de la tabla de items
       }
 
+    // Llena el combo con los modelos de la marca seleccionada
+    function FillMarcas()        
+      {
+      _Marca.children().remove();
+
+      for( let marca of Marcas )
+        _Marca.append( '<option value="'+ marca.id +'">'+ marca.nombre + '</option>' );
+
+      _Marca.append( '<option value="-1">'+ "*** Nueva ***" + '</option>' );
+      _Marca.val( EditVals.Marca );
+      }
+
+    // Llena el combo con los modelos de la marca seleccionada
+    function FillModelos()        
+      {
+      _Modelo.children().remove();
+
+      var marca = _Marca.val();
+      if( marca==null ) return;
+
+      for( let modelo of Modelos )
+        {
+        if( modelo.marca == marca )
+          _Modelo.append( '<option value="'+ modelo.id +'">'+ modelo.nombre + '</option>' );
+        }    
+
+      _Modelo.append( '<option value="-1">'+ "*** Nuevo ***" + '</option>' );
+      _Modelo.val( EditVals.Modelo );
+      }
+
+    // Llena el combo con los motores que se pueden seleccionar
+    function FillMotores()        
+      {
+      _Motor.children().remove();
+
+      for( let motor of Motores )
+        _Motor.append( '<option value="'+ motor.id +'">'+ motor.nombre + '</option>' );
+
+      _Motor.append( '<option value="-1">'+ "*** Nuevo ***" + '</option>' );
+      _Motor.val( EditVals.Motor );
+
+      showMotorInfo( EditVals.Motor );
+      }
+
     // Busca los datos del coche con identificador 'id'
     function FindDatosForCoche( id )
       {
@@ -313,6 +393,7 @@
           }
 
         ShowPanelDatos();
+        AnimatePanel(true);
         }, "#edit-rec" );
       }
 
@@ -355,35 +436,78 @@
       }
 
     // Se llama cuando cambia la marca del coche, llena los modelos y pone botón de guardar
-    function MarkChanged()
+    function OnMarkChanged()
       {
-      FillModelos();
-      //FillMotores();
-      CheckSave();
+      if( _Marca.val() >= 0 ) { FillModelos(); CheckSave(); }
+      else                    OnNewMarca();
+      }
+
+    // Se llama cuando cambia la modelo del coche, revisa si e una nuevo y manda a adicionar
+    function OnModeloChanged()
+      {
+      if( _Modelo.val() >= 0 ) CheckSave();
+      else                     OnNewModelo();
       }
 
     // Se llama cuando cambia la el motor, pone los datos del motor y el botón de guardar
-    function MotorChanged()  
+    function OnMotorChanged()  
       {
-      CheckSave();
-
       var motorId = _Motor.val();
+
+      if( motorId >= 0 ) { CheckSave(); showMotorInfo(motorId); }
+      else               OnNewMotor();
+      }
+
+    // Se llama cuando selecciona 'Marca nueva' en la lista de marcas
+    function OnNewMarca()
+      {
+      ShowWidget("/admin/marca-edicion/0?Widget", (event, data )=>{          // Muestra un Widget con la pagina de modelos en modo add
+
+             if( event=="close" ) _Marca.val( EditVals.Marca );               // Atiende los eventos desde Widget
+        else if( event=="add"   ) RefreshMarcas( data );
+        });
+      }
+
+    // Se llama cuando selecciona 'modelo nuevo' en la lista de modelos
+    function OnNewModelo()
+      {
+      ShowWidget("/admin/modelo-edicion/0?Widget", (event, data )=>{          // Muestra un Widget con la pagina de modelos en modo add
+
+             if( event=="close" ) _Modelo.val( EditVals.Modelo );             // Atiende los eventos desde Widget
+        else if( event=="add"   ) RefreshModelos( data );
+        });
+      }
+
+    // Se llama cuando selecciona 'motor nuevo' en la lista de motores
+    function OnNewMotor()
+      {
+      ShowWidget("/admin/motor-edicion/0?Widget", (event, data )=>{          // Muestra un Widget con la pagina de modelos en modo add
+
+             if( event=="close" ) _Motor.val( EditVals.Motor );             // Atiende los eventos desde Widget
+        else if( event=="add"   ) RefreshMotores( data );
+        });
+      }
+
+    // Se llama cuando cambia la el motor, pone los datos del motor y el botón de guardar
+    function showMotorInfo( motorId )  
+      {
       if( motorId == dataMotor ) return;
 
-      dataMotor = motorId;
-
+      var html = "";
       for( let motor of Motores )
-        if( motor.Id == motorId )
+        if( motor.Id == motorId ) 
           {
           _MotorInfo.html( "<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Potencia:</b> " + motor.Potencia  +" HP<br/>"+
                            "<b>&nbsp;&nbsp;&nbsp;Capacidad:</b>                  " + motor.Capacidad +" Litros<br/>"+
                            "<b>Combustible:</b>                                  " + (motor.Combustible? "Petroleo" : "Gasolina") );
+
+          dataMotor = motorId;
           return;
           }
 
-      _MotorInfo.html("");
+      _MotorInfo.html( "" );
+      dataMotor = -1;
       }
-
 
     // Borra todos los datos que hay sobre el recambio actual
     function ClearItemDatos()
@@ -426,8 +550,7 @@
       _Motor.val( EditVals.Motor );
 
       FillModelos();
-      MotorChanged();
-      //FillMotores();
+      showMotorInfo( EditVals.Motor );
 
       _Caja.val( EditVals.Caja );
       _Carroceria.val( EditVals.Carroceria );
@@ -442,22 +565,6 @@
 
       btnCopy.style.display = disp;
       btnDel.style.display  = disp; 
-      }
-
-    // Llena el combo con los modelos de la marca seleccionada
-    function FillModelos()        
-      {
-      var marca = _Marca.val();
-
-      _Modelo.children().remove();
-
-      for( let modelo of Modelos )
-        {
-        if( modelo.Marca == marca )
-          _Modelo.append( '<option value="'+ modelo.Id +'">'+ modelo.Nombre + '</option>' );
-        }    
-
-      _Modelo.val( EditVals.Modelo );
       }
 
     // Verifica si se cambio algun dato desde el inicio de la edicción

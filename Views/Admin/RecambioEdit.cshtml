@@ -5,132 +5,128 @@
 
 <div class="main-frame">
   <div class="columns-for-edit">
+    <div id="show-lst-panel"> <img src="~/images/btn-tabla.png" title="Muestra/Oculta lista para selección de recambio a editar." /> </div>
 
-    <div style="position:relative;">
-      <span style="position: absolute; bottom: 3px;">Seleccione un recambio:</span>
-      <div class="btn-group filters-btn" style="width:100%;">
-        <button type="button" class="btn" style="background-color:transparent"></button>
-        <button type="button" class="btn dropdown-toggle show-popup" data-toggle="" aria-expanded="false" style="background-color:transparent; float:right;">
-           Filtrar: <span class="caret"></span>
-        </button>
-        <div class="dropdown-menu filters-popup" role="menu">
-          <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <div id="panelList">
+      <div id="headerList">
+        <span id="lb-sel-list">Seleccione un recambio:</span>
+        <div class="btn-group filters-btn" style="width:100%;">
+          <button type="button" class="btn" style="background-color:transparent"></button>
+          <button type="button" class="btn dropdown-toggle show-popup" data-toggle="" aria-expanded="false" style="background-color:transparent; float:right;">
+             Filtrar: <span class="caret"></span>
+          </button>
+          <div class="dropdown-menu filters-popup" role="menu">
+            <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 
-          <div class="flex-grid">
-            <div class="btn-group item" id="comboCategoria">
-              <button type="button" class="btn combo-txt no-close">&emsp;</button>
-              <button type="button" class="btn dropdown-toggle btn-primary no-close" data-toggle="dropdown" aria-expanded="false">
-                <span class="caret"></span><span class="sr-only">Toggle Dropdown</span>
-              </button>
-              <ul class="dropdown-menu no-close" role="menu"></ul>
+            <div class="flex-grid">
+              <div class="btn-group item" id="comboCategoria">
+                <button type="button" class="btn combo-txt no-close">&emsp;</button>
+                <button type="button" class="btn dropdown-toggle btn-primary no-close" data-toggle="dropdown" aria-expanded="false">
+                  <span class="caret"></span><span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu no-close" role="menu"></ul>
+              </div>
+
+              <div class="btn-group item" id="comboSubCategoria">
+                <button type="button" class="btn combo-txt">&emsp;</button>
+                <button type="button" class="btn dropdown-toggle btn-primary" data-toggle="dropdown" aria-expanded="false">
+                  <span class="caret"></span><span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu" role="menu"></ul>
+              </div>
+
+              <div class="btn-group item" id="comboFabricante">
+                <button type="button" class="btn combo-txt">&emsp;</button>
+                <button type="button" class="btn dropdown-toggle btn-primary" data-toggle="dropdown" aria-expanded="false">
+                  <span class="caret"></span><span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu" role="menu"></ul>
+              </div>
+
+              <div class="form-group item" id="FindForName">
+                <input type="text" id="findName" name="findName" placeholder="Texto que se desea buscar"/>
+              </div>
             </div>
 
-            <div class="btn-group item" id="comboSubCategoria">
-              <button type="button" class="btn combo-txt">&emsp;</button>
-              <button type="button" class="btn dropdown-toggle btn-primary" data-toggle="dropdown" aria-expanded="false">
-                <span class="caret"></span><span class="sr-only">Toggle Dropdown</span>
-              </button>
-              <ul class="dropdown-menu" role="menu"></ul>
-            </div>
-
-            <div class="btn-group item" id="comboFabricante">
-              <button type="button" class="btn combo-txt">&emsp;</button>
-              <button type="button" class="btn dropdown-toggle btn-primary" data-toggle="dropdown" aria-expanded="false">
-                <span class="caret"></span><span class="sr-only">Toggle Dropdown</span>
-              </button>
-              <ul class="dropdown-menu" role="menu"></ul>
-            </div>
-
-            <div class="form-group item" id="FindForName">
-              <input type="text" id="findName" name="findName" placeholder="Texto que se desea buscar"/>
+            <div class="btn-group" id="FindRecambio">
+              <button type="button" class="btn btn-primary">Buscar</button>
             </div>
           </div>
+        </div>
+      </div>
 
-          <div class="btn-group" id="FindRecambio">
-            <button type="button" class="btn btn-primary">Buscar</button>
-          </div>
+      <div id="list-rec" >
+        <div id="ErrorMsgItems" ></div>
+        <div class="table-responsive">
+          <table class="table table-bordered table-striped hidden" id="ItemsList">
+            <tbody></tbody>
+          </table>
         </div>
       </div>
     </div>
 
-    <div style="position:relative;">
-      <a id="lnkHome" href="/admin"              ><label>Home          </label></a>
-      <a id="lnkNew"  href="javascript:newItem()"><label>Nuevo Recambio</label></a>
-    </div>
+    <div id="panelDatos">
+      <div id="headerDatos">
+        <a id="lnkHome" href="/admin"              ><label>Home          </label></a>
+        <a id="lnkNew"  href="javascript:newItem()"><label>Nuevo Recambio</label></a>
+      </div>
 
-    <div id="list-rec" >
-      <div id="ErrorMsgItems" ></div>
-      <div class="table-responsive">
-        <table class="table table-bordered table-striped hidden" id="ItemsList">
-          <tbody></tbody>
-        </table>
+      <div id="edit-rec" >
+        <form id="edit-datos" name="datos" class="hidden" enctype="multipart/form-data" method="post" >
+          <div id="foto-datos" >
+            <div id="foto" >
+              <label>Foto:</label>
+              <div id="FotoFrame">
+                <img id="ImgFoto" onload="CenterImg(event)"/>
+              </div>
+              <input id="FileFoto" name="FileFoto" type="file" accept="image/*"/>
+              <label id="lbFileFoto" for="FileFoto">Seleccione <br/> un fichero</label>
+            </div>
+            <div id="datos">
+              <div class="label-val" id="dato-nombre">
+                <label>Nombre:&nbsp;</label><input type="text" id="Nombre" name="Nombre" size="10" placeholder="Escriba el nombre del recambio"/>
+              </div>
+              <div class="label-val medida">
+                <label>Precio:&nbsp;</label><input type="text" id="Precio" name="Precio" size="5" placeholder="Escriba el precio"/>
+                <label>Euros</label>
+              </div>
+              <div class="label-val">
+                <label>Código:&nbsp;</label><input type="text" id="Codigo" name="Codigo" size="5" placeholder="Escriba el código" />
+              </div>
+              <div class="label-val">
+                <label>Fabricante:&nbsp;</label>
+                <select id="Fabricante" name="Fabricante" placeholder="Seleccione un fabricante">
+                </select>
+              </div>
+              <div class="label-val">
+                <label>Categoria:&nbsp;</label>
+                <select id="Categoria" name="Categoria" placeholder="Seleccione una categoria">
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div style="width:100%">
+            <br />
+            <label>Descripcion: </label><textarea id="Descripcion" name="Descripcion"></textarea>
+          </div>
+
+          <div id="UpdateErrorMsg" ></div>
+
+          <div class="btn-group center-content">
+            <button id="btnDel"  type="button" class="btn btn-danger">Borrar</button>
+            <button id="btnCopy" type="button" class="btn btn-default">Duplicar</button>
+            <button id="btnSave" type="button" class="btn btn-primary">Guardar</button>
+          </div>
+
+        <input id="Id"   name="Id"   type="hidden"/>
+        <input id="Foto" name="Foto" type="hidden"/>
+
+        <label id="lbId" class="right-top"></label>
+        </form>
+
       </div>
     </div>
-
-    <div id="edit-rec" >
-      <form id="edit-datos" name="datos" class="hidden" enctype="multipart/form-data" method="post" >
-        <div id="foto-datos" >
-          <div id="foto" >
-            <label>Foto:</label>
-            <div id="FotoFrame">
-              <img id="ImgFoto" onload="CenterImg(event)"/>
-            </div>
-            <input id="FileFoto" name="FileFoto" type="file" accept="image/*"/>
-            <label id="lbFileFoto" for="FileFoto">Seleccione <br/> un fichero</label>
-          </div>
-          <div id="datos">
-            <div class="label-val" id="dato-nombre">
-              <label>Nombre:&nbsp;</label><input type="text" id="Nombre" name="Nombre" size="10" placeholder="Escriba el nombre del recambio"/>
-            </div>
-            <div class="label-val medida">
-              <label>Precio:&nbsp;</label><input type="text" id="Precio" name="Precio" size="5" placeholder="Escriba el precio"/>
-              <label>Euros</label>
-            </div>
-            <div class="label-val">
-              <label>Código:&nbsp;</label><input type="text" id="Codigo" name="Codigo" size="5" placeholder="Escriba el código" />
-            </div class="label-val">
-            <div class="label-val">
-              <label>Fabricante:&nbsp;</label>
-              <select id="Fabricante" name="Fabricante" placeholder="Seleccione un fabricante">
-                @foreach( var item in Model.Fabricantes )
-                  {
-                  <option value="@item.Id">@item.Name</option>
-                  }
-              </select>
-            </div>
-            <div class="label-val">
-              <label>Categoria:&nbsp;</label>
-              <select id="Categoria" name="Categoria" placeholder="Seleccione una categoria">
-                @foreach( var item in Model.Categorias )
-                  {
-                  <option value="@item.Id">@item.Name</option>
-                  }
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <div style="width:100%">
-          <br />
-          <label>Descripcion: </label><textarea id="Descripcion" name="Descripcion"></textarea>
-        </div>
-
-        <div id="UpdateErrorMsg" ></div>
-
-        <div class="btn-group center-content">
-          <button id="btnDel"  type="button" class="btn btn-danger">Borrar</button>
-          <button id="btnCopy" type="button" class="btn btn-default">Duplicar</button>
-          <button id="btnSave" type="button" class="btn btn-primary">Guardar</button>
-        </div>
-
-      <input id="Id"   name="Id"   type="hidden"/>
-      <input id="Foto" name="Foto" type="hidden"/>
-
-      <label id="lbId" class="right-top"></label>
-      </form>
-
-    </div>
-
 
   </div>
 </div>
@@ -144,9 +140,9 @@
 
     // Datos para todos los combos de seleccion de recamios
     var Datos = {
-                Categor: @Model.CategoriasToJson(),
+                Categor: [],
                 SubCate: @Model.SubCategoriasToJson(),
-                Fabric : @Model.FabricantesToJson(),
+                Fabric : [],
                 };
 
     // Identificadores de los combos para la seleccion de recambios
@@ -158,6 +154,8 @@
 
     // Lista de todos los items que hay en la base de datos
     var Items = [];     
+    var Categorias = [];
+    var Fabricantes = [];
 
     // Item actual que se esta modificando
     var nowItem;        // Datos del item
@@ -181,7 +179,7 @@
     var _Categoria;
     var _Descripcion;
 
-    var EditVals;       // Valores de todos los campos al empezar la edicción
+    var EditVals;         // Valores de todos los campos al empezar la edicción
 
     // Inicia manipuladores y variables, después de cargarse la página
     $( function()
@@ -197,7 +195,7 @@
       _Categoria   = $("#Categoria");
       _Descripcion = $("#Descripcion");
 
-      cbDats   = new UIFilters( Datos, CbIDs );
+      cbDats = new UIFilters( Datos, CbIDs );
 
       // Actualiza ultimo valor de la busqueda por nombre
       $("#findName").val( localStorage["lastFindName"] || "" );
@@ -210,16 +208,15 @@
       $("#btnCopy").on( 'click', DuplicarDatos );   
       $("#btnDel" ).on( 'click', DeleteItem    );   
 
+      $("#show-lst-panel" ).on( 'click', e =>{ e.stopPropagation(); AnimatePanel(); } );  
+      $("#panelDatos"     ).on( 'click', e =>{ AnimatePanel(true);} );
+
       // Pone/quita el la ventana flotante (popup) con los filtros
       $(".filters-btn > button").on( 'click', e => { $(e.currentTarget.parentElement).addClass("open"); e.stopPropagation(); } );  
       $("body").on( 'click', CheckClickOnPopup );  
 
       // Cierra el popup por el boton que aparece a la derecha
-      $(".filters-popup > .close").on( 'click', e => 
-        { 
-        $(e.currentTarget).parent().parent().removeClass("open"); 
-        e.stopPropagation();
-        } );  
+      $(".filters-popup > .close").on( 'click', HidePopUp ); 
 
       Msg1 = new MsgAlert( "#ErrorMsgItems" );
       Msg2 = new MsgAlert( "#UpdateErrorMsg" );
@@ -230,11 +227,13 @@
       _Nombre.keyup( CheckSave );
       _Precio.keyup( CheckSave );
       _Codigo.keyup( CheckSave );
-      _Fabricante.change( CheckSave );
-      _Categoria.change( CheckSave );
+      _Fabricante.change( OnFabricanteChanged );
+      _Categoria.change( OnCategoriaChanged );
       _Descripcion.keyup( CheckSave );
 
       RefreshRecambiosList( ItemId );
+      RefreshFabricantes();
+      RefreshCategorias();
       } );
 
     // Se llama cuando se selecciona un fichero de imagen para ponerlo como foto del recambio
@@ -257,21 +256,6 @@
       reader.readAsDataURL( files[0] );
       }
 
-    // Esta funcion chequea si el click se produjo dentro de una ventana popup
-    function CheckClickOnPopup( e )
-      {
-      var popups = $(".filters-popup");
-      for( var i=0; i < popups.length; i++ )
-        {
-        var rect = $(".filters-popup")[i].getBoundingClientRect();
-
-        if( e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom )
-          return;
-        }
-
-      $(".filters-btn").removeClass("open");
-      }
-
     // Actualiza la lista de coches con el contenido que hay en el servidor
     function RefreshRecambiosList( id )
       {
@@ -292,10 +276,52 @@
         }, "#list-rec" );
       }
 
+    // Actualiza la lista de fabricantes desde el servidor
+    function RefreshFabricantes( id )
+      {
+      var Conn = new ServerConnection( "GET", (s)=>ConnError(s,Msg2) );
+
+      Conn.Send( "/api/fabricantes", (datos) => 
+        {
+        Msg2.Hide();
+
+        Fabricantes = datos;
+
+        Datos.Fabric = datos;
+        cbDats.CreateCbFabricantes( CbIDs.Fabric )
+        cbDats.SelFabricante();
+
+        if( id != null ) EditVals.Fabricante = id;
+
+        FillFabricantes();
+        }, "#panelDatos" );
+      }
+
+    // Actualiza la lista de categoriad desde el servidor
+    function RefreshCategorias( id )
+      {
+      var Conn = new ServerConnection( "GET", (s)=>ConnError(s,Msg2) );
+
+      Conn.Send( "/api/categorias", (datos) => 
+        {
+        Msg2.Hide();
+
+        Categorias = datos;
+
+        Datos.Categor = datos;
+        cbDats.CreateCbCategorias( CbIDs.Categor )
+        cbDats.SelCategoria();
+
+        if( id != null ) EditVals.Categoria = id;
+
+        FillCategoria();
+        }, "#panelDatos" );
+      }
+
     // Llena la lista de Items con los recambios encontrados
     function FillRecambiosList( )
       {
-      $(".filters-btn").removeClass("open")       // Cierra el popup de filtrado
+      HidePopUp();                                   // Cierra el popup de filtrado
       $("#ItemsList").children().eq(0).empty();
 
       var fab = cbDats.GetSelFrabricante(); 
@@ -332,6 +358,30 @@
       ShowInfo();                    // Muestra/esconde información debajo de la tabla de items
       }
 
+    // Llena el combo con los fabricantes de recambios
+    function FillFabricantes()        
+      {
+      _Fabricante.children().remove();
+
+      for( let maker of Fabricantes )
+        _Fabricante.append( '<option value="'+ maker.id +'">'+ maker.nombre + '</option>' );
+
+      _Fabricante.append( '<option value="-1">'+ "*** Nuevo ***" + '</option>' );
+      _Fabricante.val( EditVals.Fabricante );
+      }
+
+    // Llena el combo con las categorias de los recambios
+    function FillCategoria()        
+      {
+      _Categoria.children().remove();
+
+      for( let categ of Categorias )
+        _Categoria.append( '<option value="'+ categ.id +'">'+ categ.nombre + '</option>' );
+
+      _Categoria.append( '<option value="-1">'+ "*** Nueva ***" + '</option>' );
+      _Categoria.val( EditVals.Categoria );
+      }
+
     // Busca los coches donde se usa el item dado por 'id'
     function FindDatosForItem( id )
       {
@@ -357,8 +407,43 @@
           }
 
         ShowPanelDatos();
+        AnimatePanel(true);
 
         }, "#edit-rec" );
+      }
+
+    // Se llama cuando cambia el fabricante de recambio
+    function OnFabricanteChanged()
+      {
+      if( _Fabricante.val() >= 0 ) CheckSave();
+      else                         OnNewFabricante();
+      }
+
+    // Se llama cuando cambia la categoria del recambio
+    function OnCategoriaChanged()
+      {
+      if( _Categoria.val() >= 0 ) CheckSave();
+      else                        OnNewCategoria();
+      }
+
+    // Se llama cuando selecciona fabricante  '*** Nuevo ***' en la lista de fabricantes
+    function OnNewFabricante()
+      {
+      ShowWidget("/admin/fabricante-edicion/0?Widget", (event, data )=>{         // Muestra un Widget con la pagina de modelos en modo add
+
+             if( event=="close" ) _Fabricante.val( EditVals.Fabricante );        // Atiende los eventos desde Widget
+        else if( event=="add"   ) RefreshFabricantes( data );
+        });
+      }
+
+    // Se llama cuando selecciona categoria  '*** Nueva ***' en la lista de categorias
+    function OnNewCategoria()
+      {
+      ShowWidget("/admin/categoria-edicion/0?Widget", (event, data )=>{          // Muestra un Widget con la pagina de modelos en modo add
+
+             if( event=="close" ) _Categoria.val( EditVals.Categoria );          // Atiende los eventos desde Widget
+        else if( event=="add"   ) RefreshCategorias( data );
+        });
       }
 
     // Muestra el panel de edicción de los datos

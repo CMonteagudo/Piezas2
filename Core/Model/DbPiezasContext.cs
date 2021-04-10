@@ -18,7 +18,6 @@ namespace Piezas2.Core.Model
       }
 
     public virtual DbSet<Categorium> Categorias { get; set; }
-    public virtual DbSet<SubCategoria> SubCategorias { get; set; }
     public virtual DbSet<Coche> Coches { get; set; }
     public virtual DbSet<Fabricante> Fabricantes { get; set; }
     public virtual DbSet<Item> Items { get; set; }
@@ -27,6 +26,9 @@ namespace Piezas2.Core.Model
     public virtual DbSet<Modelo> Modelos { get; set; }
     public virtual DbSet<Motor> Motors { get; set; }
     public virtual DbSet<MotorCoche> MotorCoches { get; set; }
+    public virtual DbSet<SubCategorium> SubCategorias { get; set; }
+    public virtual DbSet<Usuario> Usuarios { get; set; }
+    public virtual DbSet<Ventum> Venta { get; set; }
 
     protected override void OnConfiguring( DbContextOptionsBuilder optionsBuilder )
       {
@@ -45,21 +47,14 @@ namespace Piezas2.Core.Model
          entity.HasIndex( e => e.Nombre, "IX_Categoria" )
                   .IsUnique();
 
+         entity.Property( e => e.Id ).ValueGeneratedNever();
+
          entity.Property( e => e.Logo ).HasMaxLength( 50 );
 
          entity.Property( e => e.Nombre )
                   .IsRequired()
                   .HasMaxLength( 50 );
        } );
-
-      modelBuilder.Entity<SubCategoria>( entity =>
-      {
-        entity.ToTable( "SubCategoria" );
-
-        entity.Property( e => e.Nombre )
-                 .IsRequired()
-                 .HasMaxLength( 50 );
-      } );
 
       modelBuilder.Entity<Coche>( entity =>
        {
@@ -69,7 +64,7 @@ namespace Piezas2.Core.Model
 
          entity.Property( e => e.Carroceria ).HasMaxLength( 50 );
 
-         entity.Property( e => e.Foto ).HasMaxLength( 50 );
+         entity.Property( e => e.Foto ).HasMaxLength( 80 );
 
          entity.HasOne( d => d.MarcaNavigation )
                   .WithMany( p => p.Coches )
@@ -115,18 +110,14 @@ namespace Piezas2.Core.Model
          entity.Property( e => e.Codigo )
                   .IsRequired()
                   .HasMaxLength( 50 )
-                  .IsFixedLength( true )
                   .HasComment( "Código del Item" );
 
-         entity.Property( e => e.Descripcion )
-                  .HasColumnType( "ntext" )
-                  .HasComment( "Descripción del Item" );
+         entity.Property( e => e.Descripcion ).HasComment( "Descripción del Item" );
 
          entity.Property( e => e.Fabricante ).HasComment( "Codigo del fabricante" );
 
          entity.Property( e => e.Foto )
                   .HasMaxLength( 50 )
-                  .IsFixedLength( true )
                   .HasComment( "Nombre de la imagen con la foto" );
 
          entity.Property( e => e.Nombre )
@@ -135,7 +126,7 @@ namespace Piezas2.Core.Model
                   .HasComment( "Nombre del Item" );
 
          entity.Property( e => e.Precio )
-                  .HasColumnType( "decimal(18, 0)" )
+                  .HasColumnType( "decimal(18, 2)" )
                   .HasComment( "Precio del Item en euros" );
 
          entity.HasOne( d => d.CategoriaNavigation )
@@ -164,14 +155,12 @@ namespace Piezas2.Core.Model
          entity.HasOne( d => d.IdCocheNavigation )
                   .WithMany( p => p.ItemCoches )
                   .HasForeignKey( d => d.IdCoche )
-                  .OnDelete( DeleteBehavior.ClientSetNull )
                   .HasConstraintName( "FK_Coche" );
 
          entity.HasOne( d => d.IdItemNavigation )
                   .WithMany( p => p.ItemCoches )
                   .HasForeignKey( d => d.IdItem )
-                  .OnDelete( DeleteBehavior.ClientSetNull )
-                  .HasConstraintName( "FK_Item" );
+                  .HasConstraintName( "FK_IteM" );
        } );
 
       modelBuilder.Entity<Marca>( entity =>
@@ -227,28 +216,126 @@ namespace Piezas2.Core.Model
          entity.Property( e => e.Potencia ).HasComment( "Potencia en CV" );
        } );
 
-
       modelBuilder.Entity<MotorCoche>( entity =>
-      {
-        entity.HasKey( e => new { e.Id, e.Modelo, e.Nombre, e.Marca } );
+       {
+         entity.HasKey( e => new { e.Id, e.Modelo, e.Nombre, e.Marca } );
 
-        entity.ToTable( "MotorCoche" );
+         entity.ToTable( "MotorCoche" );
 
-        entity.Property( e => e.Nombre ).HasMaxLength( 50 );
+         entity.Property( e => e.Nombre ).HasMaxLength( 50 );
 
-        entity.HasOne( d => d.MarcaNavigation )
-            .WithMany( p => p.MotorCoches )
-            .HasForeignKey( d => d.Marca )
-            .OnDelete( DeleteBehavior.ClientSetNull )
-            .HasConstraintName( "FK_MC_Marca" );
+         entity.HasOne( d => d.MarcaNavigation )
+                  .WithMany( p => p.MotorCoches )
+                  .HasForeignKey( d => d.Marca )
+                  .OnDelete( DeleteBehavior.ClientSetNull )
+                  .HasConstraintName( "FK_MC_Marca" );
 
-        entity.HasOne( d => d.ModeloNavigation )
-            .WithMany( p => p.MotorCoches )
-            .HasForeignKey( d => d.Modelo )
-            .OnDelete( DeleteBehavior.ClientSetNull )
-            .HasConstraintName( "FK_MC_Modelo" );
-      } );
+         entity.HasOne( d => d.ModeloNavigation )
+                  .WithMany( p => p.MotorCoches )
+                  .HasForeignKey( d => d.Modelo )
+                  .OnDelete( DeleteBehavior.ClientSetNull )
+                  .HasConstraintName( "FK_MC_Modelo" );
+       } );
 
+      modelBuilder.Entity<SubCategorium>( entity =>
+       {
+         entity.ToTable( "SubCategoria" );
+
+         entity.Property( e => e.Id ).ValueGeneratedNever();
+
+         entity.Property( e => e.Nombre )
+                  .IsRequired()
+                  .HasMaxLength( 50 );
+       } );
+
+      modelBuilder.Entity<Usuario>( entity =>
+       {
+         entity.ToTable( "Usuario" );
+
+         entity.HasIndex( e => e.Correo, "IX_Usuario_Correo" )
+                  .IsUnique();
+
+         entity.Property( e => e.Id ).HasComment( "Identificador del usuario" );
+
+         entity.Property( e => e.Confirmado ).HasComment( "Indica que el correo fue confirmado" );
+
+         entity.Property( e => e.Correo )
+                  .IsRequired()
+                  .HasMaxLength( 30 )
+                  .HasComment( "Correo electronico (Unico)" );
+
+         entity.Property( e => e.NLogin )
+                  .HasColumnName( "nLogin" )
+                  .HasComment( "Número de veces que el usuario de ha logueado" );
+
+         entity.Property( e => e.Admin )
+                  .HasColumnName( "Admin" )
+                  .HasComment( "Usuario puede acceder a las página de administración" );
+
+         entity.Property( e => e.Nombre )
+                  .IsRequired()
+                  .HasMaxLength( 50 )
+                  .HasComment( "Nombre del Usuario" );
+
+         entity.Property( e => e.PassWord )
+                  .IsRequired()
+                  .HasMaxLength( 20 )
+                  .HasDefaultValueSql( "('')" )
+                  .HasComment( "Contraseña del usuario" );
+
+         entity.Property( e => e.Telefonos )
+                  .IsRequired()
+                  .HasMaxLength( 80 )
+                  .HasDefaultValueSql( "('')" )
+                  .HasComment( "Lista de telefono separados por ," );
+       } );
+
+      modelBuilder.Entity<Ventum>( entity =>
+       {
+         entity.ToTable( "Venta" );
+
+         entity.Property( e => e.Id ).HasComment( "Identificador de la venta" );
+
+         entity.Property( e => e.Cantidad )
+                  .HasDefaultValueSql( "((1))" )
+                  .HasComment( "Catidad de items del producto" );
+
+         entity.Property( e => e.Estado ).HasComment( "1- Pagado, 0- Sin pagar (carrito)" );
+
+         entity.Property( e => e.Fecha )
+                  .HasColumnType( "date" )
+                  .HasDefaultValueSql( "(getdate())" )
+                  .HasComment( "Fecha que se genero la venta" );
+
+         entity.Property( e => e.FechaPago )
+                  .HasColumnType( "date" )
+                  .HasComment( "Fecha cuando se efectua el pago" );
+
+         entity.Property( e => e.ItemId ).HasComment( "Identificador de producto a comprar" );
+
+         entity.Property( e => e.Monto )
+                  .HasColumnType( "decimal(29, 2)" )
+                  .HasComputedColumnSql( "([Cantidad]*[Precio])", true )
+                  .HasComment( "Monto del pago total" );
+
+         entity.Property( e => e.Precio )
+                  .HasColumnType( "decimal(18, 2)" )
+                  .HasComment( "Precio por items" );
+
+         entity.Property( e => e.UsuarioId ).HasComment( "Identificador del usuario que realiza el pago" );
+
+         entity.HasOne( d => d.Item )
+                  .WithMany( p => p.ItemVentas )
+                  .HasForeignKey( d => d.ItemId )
+                  .OnDelete( DeleteBehavior.ClientSetNull )
+                  .HasConstraintName( "FK_Venta_Item" );
+
+         entity.HasOne( d => d.Usuario )
+                  .WithMany( p => p.Venta )
+                  .HasForeignKey( d => d.UsuarioId )
+                  .OnDelete( DeleteBehavior.ClientSetNull )
+                  .HasConstraintName( "FK_Venta_Usuario" );
+       } );
 
       OnModelCreatingPartial( modelBuilder );
       }

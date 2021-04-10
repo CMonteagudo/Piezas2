@@ -40,7 +40,7 @@ namespace Piezas2.Models
         case 406: return "El servidor no puede dar una de las respuestas aceptadas";
         case 408: return "Se agotó el tiempo para responder a la solicitud";
         case 410: return "El recurso ya no esta disponible en el servidor";
-        case 500: return "Ocurrio un error intero en el servidor";
+        case 500: return "Ocurrio un error interno en el servidor";
         case 501: return "Al menos hay una funcionalidad que no esta implementada en el servidor";
         case 505: return "Versión de HTTP no soportada";
         case 507: return "No hay espacio sificiente en el servidor";
