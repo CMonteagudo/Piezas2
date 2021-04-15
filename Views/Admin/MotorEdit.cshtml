@@ -1,14 +1,13 @@
-﻿@using Piezas2.Core
+﻿@model Piezas2.Models.BaseModel
+@using Piezas2.Core
 
 @{
   ViewData["Title"] = "Modificación, Adición y Borrado de motores";
-  var  val = ViewData["Widget"];
-  bool modeWidget = (val!=null && (int)val == 1);
 }
 
 <div class="main-frame">
   <div class="columns-for-edit">
-  @if( !modeWidget )
+  @if( Model._Widget == 0 )
     {
     <div id="show-lst-panel"> <img src="~/images/btn-tabla.png" title="Muestra/Oculta lista para selección de recambio a editar." /> </div>
 
@@ -44,7 +43,7 @@
     }
 
     <div id="panelDatos">
-    @if( !modeWidget )
+    @if( Model._Widget == 0 )
       {
       <div id="headerDatos">
         <a id="lnkHome" href="/admin"               ><label>Home        </label></a>
@@ -128,9 +127,8 @@
     // Valores de todos los campos al empezar la edicción
     var EditVals = { Id:0, Nombre:"", Combustible:null, Capacidad:0, Potencia:0, Descripcion:"" };
 
-    var paramId      = @ViewData["Id"];                         // Identificador que se pasa como parametro a la página
-
-    var ModoWidget   = @ViewData["Widget"];                     // Establece el modo Widget, que se usa para llamar la página dentro de otras páginas
+    var paramId      = @Model.Id;                               // Identificador que se pasa como parametro a la página
+    var ModoWidget   = @Model._Widget;                          // Establece el modo Widget, que se usa para llamar la página dentro de otras páginas
     var WidgetNotify = null;                                    // Funcion para notificar al padre cuando esta en modo iFarme
 
     // Inicia manipuladores y variables, después de cargarse la página
@@ -227,14 +225,14 @@
         {
         var motor = Motors[i]; 
 
-        var comb  = motor.combustible? " Petroleo " : " Gasolina ";
-        var name  = motor.nombre + comb + motor.capacidad +"L "+ motor.potencia +"HP";
+        var comb  = motor.Combustible? " Petroleo " : " Gasolina ";
+        var name  = motor.Nombre + comb + motor.Capacidad +"L "+ motor.Potencia +"HP";
 
         if( txt.length>0 && name.toLowerCase().indexOf(txt)<0 ) continue;
 
-        var clss = motor.id == EditVals.Id? " class='row-selected'" : "";
+        var clss = motor.Id == EditVals.Id? " class='row-selected'" : "";
            
-        var itemHml = "<tr data-id="+ motor.id + clss + "><td>" + name + "</td></tr>";
+        var itemHml = "<tr data-id="+ motor.Id + clss + "><td>" + name + "</td></tr>";
 
         $("#ItemsList").append( itemHml );
         }
@@ -260,7 +258,7 @@
 
       for( let motor of Motors )
         {
-        if( motor.id==id )
+        if( motor.Id==id )
           {
           Msg2.Hide();
 
@@ -289,7 +287,7 @@
         Msg2.Hide();
 
         nowMotor = datos;
-        if( nowMotor.id<= 0 )
+        if( nowMotor.Id<= 0 )
           {
           Msg2.Show( "El motor con Id="+id+" no se encuentra en la base de datos", "danger" );
           return;
@@ -352,14 +350,14 @@
     // Pone los datos del motor actual
     function SetItemDatos( dupicate=false )        
       {
-      var IdMotor = dupicate? 0 : nowMotor.id;
+      var IdMotor = dupicate? 0 : nowMotor.Id;
 
       EditVals ={ Id          :IdMotor, 
-                  Nombre      :nowMotor.nombre,         
-                  Combustible :nowMotor.combustible, 
-                  Capacidad   :nowMotor.capacidad, 
-                  Potencia    :nowMotor.potencia, 
-                  Descripcion :nowMotor.descripcion? nowMotor.descripcion : "" };
+                  Nombre      :nowMotor.Nombre,         
+                  Combustible :nowMotor.Combustible, 
+                  Capacidad   :nowMotor.Capacidad, 
+                  Potencia    :nowMotor.Potencia, 
+                  Descripcion :nowMotor.Descripcion? nowMotor.Descripcion : "" };
 
       UpdateDatos();
       }
@@ -447,7 +445,7 @@
     // Borra la marca actual de la base de datos
     function DeleteMotor()
       {
-      if( !confirm("Esta seguro que desea borrar el motor:\n'" + nowMotor.nombre + "'" ) )
+      if( !confirm("Esta seguro que desea borrar el motor:\n'" + nowMotor.Nombre + "'" ) )
         return;
 
       var form = document.forms.namedItem("datos");

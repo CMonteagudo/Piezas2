@@ -84,11 +84,20 @@ namespace Piezas2.Controllers
       }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
+    ///<summary> Página página para manejar las compras pendientes (carrito) </summary>
+    [Route( "/ventas-pendientes" )]
+    public IActionResult VentasPendientes( )
+      {
+      return View( new BaseModel( HttpContext ) );
+      }
+
+
+    //---------------------------------------------------------------------------------------------------------------------------------------
     ///<summary> Página para mostrar el mapa del sitio </summary>
     [Route( "/mapa-del-sitio" )]
     public IActionResult MapaDelSitio( )
       {
-      return View();
+      return View( new BaseModel(HttpContext) );
       }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
@@ -96,7 +105,7 @@ namespace Piezas2.Controllers
     [Route( "/informacion-de-contacto" )]
     public IActionResult ContactInfo( )
       {
-      return View();
+      return View( new BaseModel( HttpContext ) );
       }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
@@ -104,7 +113,7 @@ namespace Piezas2.Controllers
     [Route( "/acerca-de" )]
     public IActionResult About( )
       {
-      return View();
+      return View( new BaseModel( HttpContext ) );
       }
                                                     
     //---------------------------------------------------------------------------------------------------------------------------------------

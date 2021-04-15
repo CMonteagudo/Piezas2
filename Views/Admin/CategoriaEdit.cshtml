@@ -1,13 +1,12 @@
-﻿@{
-  ViewData["Title"] = "Modificación, Adición y Borrado de Categorias de recambios";
+﻿@model Piezas2.Models.BaseModel
 
-  var  val = ViewData["Widget"];
-  bool modeWidget = (val!=null && (int)val == 1);
+@{
+  ViewData["Title"] = "Modificación, Adición y Borrado de Categorias de recambios";
 }
 
 <div class="main-frame">
   <div class="columns-for-edit">
-  @if( !modeWidget )
+  @if( Model._Widget == 0 )
     {
     <div id="show-lst-panel"> <img src="~/images/btn-tabla.png" title="Muestra/Oculta lista para selección de recambio a editar." /> </div>
 
@@ -28,7 +27,7 @@
     }
 
     <div id="panelDatos">
-    @if( !modeWidget )
+    @if( Model._Widget == 0 )
       {
       <div id="headerDatos">
         <a id="lnkHome" href="/admin"               ><label>Home       </label></a>
@@ -111,9 +110,9 @@
      // Valores de todos los campos al empezar la edicción
     var EditVals = { fotoSrc:"", fotoFile:"", Id:0, Nombre:"", Descripcion:"" };      
 
-    var paramId      = @ViewData["Id"];                         // Identificador que se pasa como parametro a la página
-    var ModoWidget   = @ViewData["Widget"];                     // Estable el modo Widget, que se usa para llamar la página dentro de otras páginas
-    var WidgetNotify = null;                                    // Funcion para notificar al padre cuando esta en modo iFarme
+    var paramId      = @Model.Id;                         // Identificador que se pasa como parametro a la página
+    var ModoWidget   = @Model._Widget;                    // Estable el modo Widget, que se usa para llamar la página dentro de otras páginas
+    var WidgetNotify = null;                              // Funcion para notificar al padre cuando esta en modo iFarme
 
     // Inicia manipuladores y variables, después de cargarse la página
     $( function()
@@ -209,9 +208,9 @@
         {
         var categoria = Categorias[i]; 
 
-        var clss = categoria.id == EditVals.Id? " class='row-selected'" : "";
+        var clss = categoria.Id == EditVals.Id? " class='row-selected'" : "";
            
-        var itemHml = "<tr data-id="+ categoria.id + clss + "><td>" + categoria.nombre + "</td></tr>";
+        var itemHml = "<tr data-id="+ categoria.Id + clss + "><td>" + categoria.Nombre + "</td></tr>";
 
         $("#ItemsList").append( itemHml );
         }
@@ -237,7 +236,7 @@
 
       for( let categoria of Categorias )
         {
-        if( categoria.id==id )
+        if( categoria.Id==id )
           {
           Msg2.Hide();
 
@@ -266,7 +265,7 @@
         Msg2.Hide();
 
         nowCategoria = datos;
-        if( nowCategoria.id<= 0 )
+        if( nowCategoria.Id<= 0 )
           {
           Msg2.Show( "El fabricante con Id="+id+" no se encuentra en la base de datos", "danger" );
           return;
@@ -332,13 +331,13 @@
     // Pone los datos del recambio actual
     function SetItemDatos( dupicate=false )        
       {
-      _edId.val( dupicate? 0 : nowCategoria.id ); 
+      _edId.val( dupicate? 0 : nowCategoria.Id ); 
 
-      EditVals ={ fotoSrc     :nowCategoria.logo, 
+      EditVals ={ fotoSrc     :nowCategoria.Logo, 
                   fotoFile    :"", 
-                  Id          :nowCategoria.id, 
-                  Nombre      :nowCategoria.nombre, 
-                  Descripcion :nowCategoria.descripcion? nowCategoria.descripcion : "" };
+                  Id          :nowCategoria.Id, 
+                  Nombre      :nowCategoria.Nombre, 
+                  Descripcion :nowCategoria.Descripcion? nowCategoria.Descripcion : "" };
 
       UpdateDatos();
       }
@@ -385,10 +384,11 @@
     // Verifica y obtiene los datos del recambio actual
     function ValidateDatos()        
       {
-      if( !ValidateStr( _Nombre, "El nombre de la Categoria", 1, 50) )
-        return false;
+      if( ValidateNum( _Id, "El código de la Categoria", 10000, 999999, true) &&
+          ValidateStr( _Nombre, "El nombre de la Categoria", 1, 50          )  )
+        return true;
 
-      return true;
+      return false;
       }
 
     // Determina cual es el modo de ediccion de los datos a utilizar
@@ -430,7 +430,7 @@
     // Borra la categoria actual de la base de datos
     function DeleteCategoria()
       {
-      if( !confirm("Esta seguro que desea borrar la categoria:\n'" + nowCategoria.nombre + "'" ) )
+      if( !confirm("Esta seguro que desea borrar la categoria:\n'" + nowCategoria.Nombre + "'" ) )
         return;
 
       var form = document.forms.namedItem("datos");

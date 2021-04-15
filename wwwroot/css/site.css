@@ -103,6 +103,17 @@ h1, h2, h3 {
   align-items: center;
 }
 
+.coche div:first-child {
+	width: 95px;
+	height: 95px;
+	flex-grow: 0;
+	flex-shrink: 0;
+}
+
+.coche div:first-child a {
+	line-height: 95px;
+}
+
 .coche img {                                            /* Imagen donde se pone la foto de coche*/
   width: 95px;
   height: 95px;
@@ -234,6 +245,7 @@ header {
   height: 50px;
 }
 
+header #btnBuy,
 header #btnLog {
 	cursor: pointer;
 	float: right;
@@ -242,11 +254,13 @@ header #btnLog {
   font-weight: bold;
 }
 
+header #btnBuy:hover,
 header #btnLog:hover {
 	cursor: pointer;
   background-color: #ddd !important;
 }
 
+header #btnBuy .icon,
 header #btnLog .icon {
 	width: 25px;
 	height: 25px;
@@ -282,7 +296,7 @@ header #btnLog .icon {
 	width: 100%;
 }
 
-.btnRight, .btnLeft {
+.btnRight, .btnLeft, .btnCenter {
 	border: 1px solid #808080;
 	padding: 5px;
 	margin-bottom: 10px;
@@ -293,6 +307,11 @@ header #btnLog .icon {
 	cursor: pointer;
 	border-radius: 5px;
 }
+
+.btnRight:hover, .btnLeft:hover, .btnCenter:hover {
+  cursor:pointer;
+  opacity:0.85;
+  }
 
 .btnLeft {
 	width: 30%;
@@ -341,16 +360,88 @@ header #btnLog .icon {
   cursor: pointer;
 }
 
+#LogoSitio {                                                  /* Recuadro donde aparece el logo del sitio */
+	display: inline-flex;
+	align-items: center;
+  cursor:pointer;
+}
 
+#LogoSitio img {                                              /* Donde aparece la icono del logo */
+	height: 40px;
+	margin: 0px 10px;
+}
 
+#LogoSitio>div {                                              /* Donde aparece el nombre del sitio */
+	position: relative;
+	top: -6px;
+	font-size: 30px;
+	font-weight: bold;
+	color: #286090;
+}
 
+#LogoSitio div:first-child {                                  /* Donde aparece la adicción al nombre*/
+	position: absolute;
+	right: 0px;
+	bottom: 0px;
+	line-height: 14px;
+	font-size: 14px;
+	font-weight: initial;
+}
 
+#BoxBuy {                                                     /* Recuadro donde salen los productos del carrito */
+	width: 340px;
+}
 
+.buy-count {                                                  /* Donde se muestra el número de items en el carrito */
+	background-color: green;
+	padding: 0px 4px;
+	color: white;
+	border-radius: 10px;
+}
 
+.buy-item {                                                   /* Fila de la tabla de productos */
+	display: grid;
+	grid-template-columns: auto 30px 50px 60px;
+	grid-column-gap: 3px;
+	align-items: center;
+	margin: 5px 0px;
+	font-size: 14px;
+}
 
+#BuyList > div:first-child {                                  /* Encabezamiento de la lista de porductos*/
+	font-weight: bold;
+	border-bottom: 1px #666 solid;
+}
 
+.buy-item div:nth-child(2),                                   /* Columna de cantidad de productos */
+.buy-item div:nth-child(3),                                   /* Columna de precio de productos */
+.buy-item div:nth-child(4)                                    /* Columna de monto de producto*/
+{
+	text-align:right;
+}
 
+#PendItems {
+	min-height: 80px;
+}
+.buy-total {                                                  /* Fila que muestra el total a pagar */
+	margin-bottom: 15px;
+	text-align: right;
+	border-top: 1px #666 solid;
+}
 
+.buy-total span:first-child {                                 /* Lugar donde aparece el precio total */
+	font-weight: bold;
+	color: darkgreen;
+}
+
+.buy-total select {                                           /* Para el combo de seleccionar la moneda*/
+	border: none;
+}
+
+.btnCenter {                                                  /* Boton para pagar */
+	width: 100px;
+	margin: auto;
+}
 
 
 
@@ -911,6 +1002,10 @@ header #btnLog .icon {
 @media (max-width: 490px) {
   #labelName {  width: 100%;  }                                   /* No cabe buscar por nombre, fuerza a dos lineas */
   #labelCode {  width: 100%;  }
+
+  #LogoSitio img { margin: 0px 4px; }                             /* Ajustes en el encabezamiento de la página */
+  #LogoSitio>div { font-size: 15px; }
+  header #btnBuy, header #btnLog {	margin-right: 10px; }
 }
 
 /*--------------------------------------------- Para las paginas de edicción -------------------------------------------------------*/

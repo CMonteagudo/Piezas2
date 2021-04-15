@@ -233,9 +233,9 @@
 
       Conn.Send( findUrl + "/Order-"+Orden, (datos) => 
         {
-        Items  = datos.items; 
-        Filter = datos.filters; 
-        nItems = datos.count; 
+        Items  = datos.Items; 
+        Filter = datos.Filters; 
+        nItems = datos.Count; 
         lastItem = Items.length;
 
         ShowItems();
@@ -251,7 +251,7 @@
 
       Conn.Send( Url, (datos) => 
         {
-        Items = datos.items; 
+        Items = datos.Items; 
         lastItem += Items.length;
 
         ShowItems( true );
@@ -272,9 +272,9 @@
 
       Conn.Send( Url, (datos) => 
         {
-        Items  = datos.items; 
-        Filter = datos.filters; 
-        nItems = datos.count; 
+        Items  = datos.Items; 
+        Filter = datos.Filters; 
+        nItems = datos.Count; 
         lastItem = Items.length;
 
         ShowItems();
@@ -320,13 +320,13 @@
       for( var i = 0; i < Items.length; ++i )
         {
         var item = Items[i]; 
-        var itemHml = "<tr data-id="+ item.id + ">" +
-                        "<td>"+ item.id         +"</td>" +
-                        "<td>"+ item.nombre     +"</td>" +
-                        "<td>"+ cbDats.CatName(item.categoria)  +"</td>" +
-                        "<td>"+ cbDats.FabName(item.fabricante) +"</td>" +
-                        "<td>"+ item.codigo     +"</td>" +
-                        "<td>"+ (item.precio? item.precio : "") +"</td>" +
+        var itemHml = "<tr data-id="+ item.Id + ">" +
+                        "<td>"+ item.Id         +"</td>" +
+                        "<td>"+ item.Nombre     +"</td>" +
+                        "<td>"+ cbDats.CatName(item.Categoria)  +"</td>" +
+                        "<td>"+ cbDats.FabName(item.Fabricante) +"</td>" +
+                        "<td>"+ item.Codigo     +"</td>" +
+                        "<td>"+ (item.Precio? item.Precio : "") +"</td>" +
                       "</tr>";
 
         $("#ItemsList").append( itemHml );
@@ -356,15 +356,15 @@
         {
         var item = Items[i]; 
 
-        var foto   = item.foto==null  ? "/images/Items/NoImagen.png" : item.foto;  
-        var precio = item.precio==null? "Sin definir"                : item.precio;  
+        var foto   = (item.Foto && item.Foto.length>0)?  item.Foto : "/images/Items/piezas.svg";  
+        var precio = item.Precio==null? "Sin definir"              : item.Precio;  
 
-        var itemHml = '<div class="item-box" data-id='+ item.id + ' onclick="location=\'/recambio/' + item.id + '/' + item.nombre + '\'">' +
+        var itemHml = '<div class="item-box" data-id='+ item.Id + ' onclick="location=\'/recambio/' + item.Id + '/' + item.Nombre + '\'">' +
                           '<div class="item-box-img" >' +
-                              '<img title="Recambio '+ item.nombre +'" src="'+ foto +'" alt="'+ item.nombre +'" onload="CenterImg(event)"/>' +
+                              '<img title="Recambio '+ item.Nombre +'" src="'+ foto +'" alt="'+ item.Nombre +'" onload="CenterImg(event)"/>' +
                           '</div>' +
                           '<div class="item-box-info">' +
-                            '<h3>' + item.nombre + '</h3>' +
+                            '<h3>' + item.Nombre + '</h3>' +
                             '<span>Precio: <strong> ' + precio + '</strong></span>' +
                           '</div>' +
                           '<div class="item-over"></div>' +

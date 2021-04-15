@@ -30,7 +30,7 @@ function ImgCenter(e)
         {
         <div class="item-box" data-id="@item.Id" onclick="location='/recambio/@item.Id/@item.Nombre'">
           <div class="item-box-img" >
-              @{var foto = item.Foto!=null? item.Foto : "/images/Items/NoImagen.png"; } 
+              @{var foto = string.IsNullOrWhiteSpace(item.Foto)? "/images/Items/piezas.svg" : item.Foto; } 
              <img title="Recambio @item.Nombre" src="@foto" alt="Foto de @item.Nombre" onload="ImgCenter(event)"/>
           </div>
           <div class="item-box-info">

@@ -303,14 +303,14 @@
         {
         var coche = Coches[i]; 
 
-        var cocheName = (coche.marca +" "+ coche.modelo +" motor "+ coche.motor).toLowerCase();
+        var cocheName = (coche.Marca +" "+ coche.Modelo +" motor "+ coche.Motor).toLowerCase();
         if( txt.length>0 && cocheName.indexOf(txt)<0 ) continue;
 
-        var name = "<strong> "+ coche.marca +" </strong><span> "+ coche.modelo +"<strong> motor </strong>"+ coche.motor + "</span>";
+        var name = "<strong> "+ coche.Marca +" </strong><span> "+ coche.Modelo +"<strong> motor </strong>"+ coche.Motor + "</span>";
 
-        var clss = coche.id == EditVals.Id? " class='row-selected'" : "";
+        var clss = coche.Id == EditVals.Id? " class='row-selected'" : "";
            
-        var itemHml = "<tr data-id="+ coche.id + clss + "><td>" + name + "</td></tr>";
+        var itemHml = "<tr data-id="+ coche.Id + clss + "><td>" + name + "</td></tr>";
 
         $("#ItemsList").append( itemHml );
         }
@@ -332,7 +332,7 @@
       _Marca.children().remove();
 
       for( let marca of Marcas )
-        _Marca.append( '<option value="'+ marca.id +'">'+ marca.nombre + '</option>' );
+        _Marca.append( '<option value="'+ marca.Id +'">'+ marca.Nombre + '</option>' );
 
       _Marca.append( '<option value="-1">'+ "*** Nueva ***" + '</option>' );
       _Marca.val( EditVals.Marca );
@@ -348,8 +348,8 @@
 
       for( let modelo of Modelos )
         {
-        if( modelo.marca == marca )
-          _Modelo.append( '<option value="'+ modelo.id +'">'+ modelo.nombre + '</option>' );
+        if( modelo.Marca == marca )
+          _Modelo.append( '<option value="'+ modelo.Id +'">'+ modelo.Nombre + '</option>' );
         }    
 
       _Modelo.append( '<option value="-1">'+ "*** Nuevo ***" + '</option>' );
@@ -362,7 +362,7 @@
       _Motor.children().remove();
 
       for( let motor of Motores )
-        _Motor.append( '<option value="'+ motor.id +'">'+ motor.nombre + '</option>' );
+        _Motor.append( '<option value="'+ motor.Id +'">'+ motor.Nombre + '</option>' );
 
       _Motor.append( '<option value="-1">'+ "*** Nuevo ***" + '</option>' );
       _Motor.val( EditVals.Motor );
@@ -381,7 +381,7 @@
         Msg2.Hide();
 
         nowCoche = datos;
-        if( nowCoche.id==0 )
+        if( nowCoche.Id==0 )
           {
           Msg2.Show( "El coche con Id="+id+" no se encuentra en la base de datos", "danger" );
           ClearItemDatos();
@@ -523,17 +523,17 @@
     // Pone los datos del recambio actual
     function SetItemDatos( dupicate=false )        
       {
-      var IdCoche = dupicate? 0 : nowCoche.id;
+      var IdCoche = dupicate? 0 : nowCoche.Id;
 
-      EditVals ={ fotoSrc     :nowCoche.foto, 
+      EditVals ={ fotoSrc     :nowCoche.Foto, 
                   fotoFile    :"", 
                   Id          :IdCoche, 
-                  Marca       :nowCoche.marca, 
-                  Modelo      :nowCoche.modelo, 
-                  Motor       :nowCoche.motor, 
-                  Caja        :nowCoche.caja? nowCoche.caja : "", 
-                  Carroceria  :nowCoche.carroceria? nowCoche.carroceria : "", 
-                  Descripcion :nowCoche.descripcion? nowCoche.descripcion : "" };
+                  Marca       :nowCoche.Marca, 
+                  Modelo      :nowCoche.Modelo, 
+                  Motor       :nowCoche.Motor, 
+                  Caja        :nowCoche.Caja? nowCoche.Caja : "", 
+                  Carroceria  :nowCoche.Carroceria? nowCoche.Carroceria : "", 
+                  Descripcion :nowCoche.Descripcion? nowCoche.Descripcion : "" };
 
       UpdateDatos();
       }
@@ -632,7 +632,7 @@
     // Borra la marca actual de la base de datos
     function DeleteCoche()
       {
-      var name = nowCoche.marcaNavigation.nombre + " " + nowCoche.modeloNavigation.nombre;
+      var name = nowCoche.MarcaNavigation.Nombre + " " + nowCoche.ModeloNavigation.Nombre;
       if( !confirm("Esta seguro que desea borrar el coche:\n'" + name + "'" ) )
         return;
 

@@ -14,9 +14,9 @@ namespace Piezas2.Core
   /// <summary> Obtiene los datos de un recammbio especifico desde la base de datos </summary>
   public class RecambioUsos
     {
-    DbPiezasContext DbCtx;
-    int             itemId;
-    HttpContext     HttpCtx;
+    readonly DbPiezasContext DbCtx;
+    readonly int             itemId;
+    readonly HttpContext     HttpCtx;
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Construye el objeto y obtiene los datos de la base de datos </summary>

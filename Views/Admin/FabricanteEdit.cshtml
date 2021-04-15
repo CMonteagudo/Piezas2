@@ -1,13 +1,11 @@
-﻿@{
+﻿@model Piezas2.Models.BaseModel
+@{
   ViewData["Title"] = "Modificación, Adición y Borrado de fabricantes de recambios de coches";
-
-  var  val = ViewData["Widget"];
-  bool modeWidget = (val!=null && (int)val == 1);
 }
 
 <div class="main-frame">
   <div class="columns-for-edit">
-  @if( !modeWidget )
+  @if( Model._Widget == 0 )
     {
     <div id="show-lst-panel"> <img src="~/images/btn-tabla.png" title="Muestra/Oculta lista para selección de recambio a editar." /> </div>
 
@@ -28,7 +26,7 @@
     }
 
     <div id="panelDatos">
-    @if( !modeWidget )
+    @if( Model._Widget == 0 )
       {
       <div id="headerDatos">
         <a id="lnkHome" href="/admin"               ><label>Home            </label></a>
@@ -104,8 +102,8 @@
      // Valores de todos los campos al empezar la edicción
     var EditVals = { fotoSrc:"", fotoFile:"", Id:0, Nombre:"", Descripcion:"" };      
 
-    var paramId      = @ViewData["Id"];                         // Identificador que se pasa como parametro a la página
-    var ModoWidget   = @ViewData["Widget"];                     // Estable el modo Widget, que se usa para llamar la página dentro de otras páginas
+    var paramId      = @Model.Id;                               // Identificador que se pasa como parametro a la página
+    var ModoWidget   = @Model._Widget;                          // Estable el modo Widget, que se usa para llamar la página dentro de otras páginas
     var WidgetNotify = null;                                    // Funcion para notificar al padre cuando esta en modo iFarme
 
     // Inicia manipuladores y variables, después de cargarse la página
@@ -199,7 +197,7 @@
 
       for( let maker of Makers )
         {
-        if( maker.id==id )
+        if( maker.Id==id )
           {
           Msg2.Hide();
 
@@ -228,7 +226,7 @@
         Msg2.Hide();
 
         nowMaker = datos;
-        if( nowMaker.id<= 0 )
+        if( nowMaker.Id<= 0 )
           {
           Msg2.Show( "El fabricante con Id="+id+" no se encuentra en la base de datos", "danger" );
           return;
@@ -247,9 +245,9 @@
         {
         var maker = Makers[i]; 
 
-        var clss = maker.id == EditVals.Id? " class='row-selected'" : "";
+        var clss = maker.Id == EditVals.Id? " class='row-selected'" : "";
            
-        var itemHml = "<tr data-id="+ maker.id + clss + "><td>" + maker.nombre + "</td></tr>";
+        var itemHml = "<tr data-id="+ maker.Id + clss + "><td>" + maker.Nombre + "</td></tr>";
 
         $("#ItemsList").append( itemHml );
         }
@@ -320,13 +318,13 @@
     // Pone los datos del recambio actual
     function SetItemDatos( dupicate=false )        
       {
-      var IdMaker = dupicate? 0 : nowMaker.id;
+      var IdMaker = dupicate? 0 : nowMaker.Id;
 
-      EditVals ={ fotoSrc     :nowMaker.logo, 
+      EditVals ={ fotoSrc     :nowMaker.Logo, 
                   fotoFile    :"", 
                   Id          :IdMaker, 
-                  Nombre      :nowMaker.nombre, 
-                  Descripcion :nowMaker.descripcion? nowMaker.descripcion : "" };
+                  Nombre      :nowMaker.Nombre, 
+                  Descripcion :nowMaker.Descripcion? nowMaker.Descripcion : "" };
 
       UpdateDatos();
       }
@@ -414,7 +412,7 @@
     // Borra el fabricante actual de la base de datos
     function DeleteMaker()
       {
-      if( !confirm("Esta seguro que desea borrar el fabricante:\n'" + nowMaker.nombre + "'" ) )
+      if( !confirm("Esta seguro que desea borrar el fabricante:\n'" + nowMaker.Nombre + "'" ) )
         return;
 
       var form = document.forms.namedItem("datos");

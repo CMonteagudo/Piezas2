@@ -7,18 +7,18 @@ namespace Piezas2.Models
   {
   //=======================================================================================================================================
   /// <summary> Obtiene todos los datos de un recambio en especifico  </summary>
-  public class RecambioModel
+  public class RecambioModel : BaseModel
     {
     private Recambio Item { get; }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Construye el objeto y obtiene los datos de la base de datos </summary>
-    public RecambioModel( int id, HttpContext HttpCtx )
+    public RecambioModel( int id, HttpContext HttpCtx ) : base( HttpCtx )
       {
       Item = new Recambio( id, HttpCtx, 1 );
       }
 
-    public int Id { get { return Item.IdItem; } }
+    public int itemId { get { return Item.IdItem; } }
     public int IdFab { get { return Item.IdFabricante; } }
     public string NameFab { get { return Item.Fabricante; } }
     public int IdCat { get { return Item.IdCategoria; } }

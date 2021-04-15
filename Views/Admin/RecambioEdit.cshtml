@@ -267,7 +267,7 @@
         {
         Msg1.Hide();
 
-        Items = datos.items;
+        Items = datos.Items;
 
         FillRecambiosList();
 
@@ -337,13 +337,13 @@
         {
         var item = Items[i]; 
 
-        if( fab>0 && fab!=item.fabricante ) continue;
-        if( cat>0 && cat!=item.categoria  ) continue;
-        if( sub>0 && sub!= parseInt(item.codigo/1000)*1000  ) continue;
-        if( txt.length >0 && item.nombre.toLowerCase().indexOf(txt)<0 ) continue;
+        if( fab>0 && fab!=item.Fabricante ) continue;
+        if( cat>0 && cat!=item.Categoria  ) continue;
+        if( sub>0 && sub!= parseInt(item.Codigo/1000)*1000  ) continue;
+        if( txt.length >0 && item.Nombre.toLowerCase().indexOf(txt)<0 ) continue;
 
-        var selCls = item.id == ItemId? " class='row-selected'" : ""
-        var itemHml = "<tr data-id="+ item.id + selCls + "><td>"+ item.nombre +"</td></tr>";
+        var selCls = item.Id == ItemId? " class='row-selected'" : ""
+        var itemHml = "<tr data-id="+ item.Id + selCls + "><td>"+ item.Nombre +"</td></tr>";
         $("#ItemsList").append( itemHml );
         }
 
@@ -364,7 +364,7 @@
       _Fabricante.children().remove();
 
       for( let maker of Fabricantes )
-        _Fabricante.append( '<option value="'+ maker.id +'">'+ maker.nombre + '</option>' );
+        _Fabricante.append( '<option value="'+ maker.Id +'">'+ maker.Nombre + '</option>' );
 
       _Fabricante.append( '<option value="-1">'+ "*** Nuevo ***" + '</option>' );
       _Fabricante.val( EditVals.Fabricante );
@@ -376,7 +376,7 @@
       _Categoria.children().remove();
 
       for( let categ of Categorias )
-        _Categoria.append( '<option value="'+ categ.id +'">'+ categ.nombre + '</option>' );
+        _Categoria.append( '<option value="'+ categ.Id +'">'+ categ.Nombre + '</option>' );
 
       _Categoria.append( '<option value="-1">'+ "*** Nueva ***" + '</option>' );
       _Categoria.val( EditVals.Categoria );
@@ -395,7 +395,7 @@
         Msg2.Hide();
 
         nowItem = datos;
-        if( nowItem.idItem == 0 )
+        if( nowItem.IdItem == 0 )
           {
           Msg2.Show( "El recambio con Id="+id+" no se encuentra en la base de datos", "danger" );
           ClearItemDatos();
@@ -501,17 +501,17 @@
     // Pone los datos del recambio actual
     function SetItemDatos( dupicate=false )        
       {
-      var IdItem = dupicate? 0 : nowItem.idItem;
+      var IdItem = dupicate? 0 : nowItem.IdItem;
 
-      EditVals ={ fotoSrc:nowItem.foto, 
+      EditVals ={ fotoSrc:nowItem.Foto, 
                   fotoFile:"", 
                   Id:IdItem, 
-                  Nombre:nowItem.nombre, 
-                  Precio:nowItem.precio, 
-                  Codigo:nowItem.codigo, 
-                  Fabricante:nowItem.idFabricante, 
-                  Categoria:nowItem.idCategoria, 
-                  Descripcion:nowItem.descripcion };
+                  Nombre:nowItem.Nombre, 
+                  Precio:nowItem.Precio, 
+                  Codigo:nowItem.Codigo, 
+                  Fabricante:nowItem.IdFabricante, 
+                  Categoria:nowItem.IdCategoria, 
+                  Descripcion:nowItem.Descripcion };
 
       UpdateDatos();
       }
@@ -531,7 +531,7 @@
       _Descripcion.val( EditVals.Descripcion );
 
       $("#Foto").val( EditVals.fotoSrc );
-      $("#lbId").text( EditVals.Id>0? "ID: " + nowItem.idItem  : "" );
+      $("#lbId").text( EditVals.Id>0? "ID: " + nowItem.IdItem  : "" );
 
       btnSave.style.display = "none";
 
@@ -607,7 +607,7 @@
     // Borra la marca actual de la base de datos
     function DeleteItem()
       {
-      if( !confirm("Esta seguro que desea borrar el coche:\n'" + nowItem.nombre + "'" ) )
+      if( !confirm("Esta seguro que desea borrar el coche:\n'" + nowItem.Nombre + "'" ) )
         return;
 
       var form = document.forms.namedItem("datos");

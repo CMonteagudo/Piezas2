@@ -326,12 +326,14 @@
       {
       Conn.Send( "/api/coches-con-recambio/" + id , (datos) => 
         {
+        ItemId = id;
+
         SelectTableRow( id, "#ItemsList", "#list-rec" );
-        $("#ItemName").text( datos.nombre + " (uso=" + datos.coches.length + ')' );
+        $("#ItemName").text( datos.Nombre + " (uso=" + datos.Coches.length + ')' );
 
         var cochesSet = new Set();
-        for( let coche of datos.coches )
-          cochesSet.add( coche.id );  
+        for( let coche of datos.Coches )
+          cochesSet.add( coche.Id );  
 
         for( let coche of Coches )
           {
@@ -396,7 +398,7 @@
       Conn.Send( "/api/recambios-no-usados", (datos) => 
         {
         var Ids = new Set();
-        for( let item of datos ) Ids.add( item.id );
+        for( let item of datos ) Ids.add( item.Id );
 
         FillItemsListInSet( Ids )
         }, "#list-rec" );
@@ -410,7 +412,7 @@
       Conn.Send( "/api/recambios-usados", (datos) => 
         {
         var Ids = new Set();
-        for( let item of datos ) Ids.add( item.id );
+        for( let item of datos ) Ids.add( item.Id );
 
         FillItemsListInSet( Ids )
         }, "#list-rec" );

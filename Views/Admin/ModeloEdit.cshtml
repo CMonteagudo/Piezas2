@@ -1,14 +1,13 @@
-﻿@using Piezas2.Core
+﻿@model Piezas2.Models.BaseModel
+@using Piezas2.Core
 
 @{
   ViewData["Title"] = "Modificación, Adición y Borrado de modelos";
-  var  val = ViewData["Widget"];
-  bool modeWidget = (val!=null && (int)val == 1);
 }
 
 <div class="main-frame">
   <div class="columns-for-edit">
-  @if( !modeWidget )
+  @if( Model._Widget == 0 )
     {
     <div id="show-lst-panel"> <img src="~/images/btn-tabla.png" title="Muestra/Oculta lista para selección de recambio a editar." /> </div>
 
@@ -45,7 +44,7 @@
     }
 
     <div id="panelDatos">
-    @if( !modeWidget )
+    @if( Model._Widget == 0 )
       {
       <div id="headerDatos">
         <a id="lnkHome" href="/admin"               ><label>Home        </label></a>
@@ -128,8 +127,8 @@
       @: Marcas.set( @marca.Id , "@marca.Name" );
       }
 
-    var paramId      = @ViewData["Id"];                         // Identificador que se pasa como parametro a la página
-    var ModoWidget   = @ViewData["Widget"];                     // Estable el modo Widget, que se usa para llamar la página dentro de otras páginas
+    var paramId      = @Model.Id;                               // Identificador que se pasa como parametro a la página
+    var ModoWidget   = @Model._Widget;                          // Estable el modo Widget, que se usa para llamar la página dentro de otras páginas
     var WidgetNotify = null;                                    // Funcion para notificar al padre cuando esta en modo iFarme
 
     // Inicia manipuladores y variables, después de cargarse la página
@@ -223,13 +222,13 @@
       for( var i = 0; i < Modelos.length; ++i )
         {
         var modelo = Modelos[i]; 
-        var name   = Marcas.get(modelo.marca) + " " + modelo.nombre;
+        var name   = Marcas.get(modelo.Marca) + " " + modelo.Nombre;
 
         if( txt.length>0 && name.toLowerCase().indexOf(txt)<0 ) continue;
 
-        var clss = modelo.id == EditVals.Id? " class='row-selected'" : "";
+        var clss = modelo.Id == EditVals.Id? " class='row-selected'" : "";
            
-        var itemHml = "<tr data-id="+ modelo.id + clss + "><td>" + name + "</td></tr>";
+        var itemHml = "<tr data-id="+ modelo.Id + clss + "><td>" + name + "</td></tr>";
 
         $("#ItemsList").append( itemHml );
         }
@@ -255,7 +254,7 @@
 
       for( let modelo of Modelos )
         {
-        if( modelo.id==id )
+        if( modelo.Id==id )
           {
           Msg2.Hide();
 
@@ -284,7 +283,7 @@
         Msg2.Hide();
 
         nowModelo = datos;
-        if( nowModelo.id<= 0 )
+        if( nowModelo.Id<= 0 )
           {
           Msg2.Show( "El modelo con Id="+id+" no se encuentra en la base de datos", "danger" );
           return;
@@ -346,12 +345,12 @@
     // Pone los datos del modelo actual
     function SetItemDatos( dupicate=false )        
       {
-      var IdModelo = dupicate? 0 : nowModelo.id;
+      var IdModelo = dupicate? 0 : nowModelo.Id;
 
       EditVals ={ Id          :IdModelo, 
-                  Nombre      :nowModelo.nombre, 
-                  Marca       :nowModelo.marca, 
-                  Descripcion :nowModelo.descripcion? nowModelo.descripcion : "" };
+                  Nombre      :nowModelo.Nombre, 
+                  Marca       :nowModelo.Marca, 
+                  Descripcion :nowModelo.Descripcion? nowModelo.Descripcion : "" };
 
       UpdateDatos();
       }
@@ -434,7 +433,7 @@
     // Borra la marca actual de la base de datos
     function DeleteModelo()
       {
-      var name = Marcas.get(nowModelo.marca) + " " + nowModelo.nombre;
+      var name = Marcas.get(nowModelo.Marca) + " " + nowModelo.Nombre;
       if( !confirm("Esta seguro que desea borrar el modelo:\n'" + name + "'" ) )
         return;
 

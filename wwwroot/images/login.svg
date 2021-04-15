@@ -1,13 +1,1 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Generator: Adobe Illustrator 17.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="68.116px" height="68.116px" viewBox="0 0 68.116 68.116" enable-background="new 0 0 68.116 68.116" xml:space="preserve">
-<g id="Capa_x0020_1">
-	<circle fill="#BDBFC1" cx="34.044" cy="34.044" r="34.044"/>
-	<path fill="#FEFEFF" d="M17.198,48.944h33.125c-0.054-1.677,0.352-5.165-0.433-6.382c-2.217-3.407-12.25-4.164-16.089-4.164
-		c-3.813,0-14.115,0.838-16.17,4.083C16.819,43.752,17.225,47.159,17.198,48.944z"/>
-	<path fill="#FEFEFF" d="M33.287,19.226c-3.921,0.487-7.247,4.164-6.652,8.68c0.514,3.948,4.164,7.355,8.707,6.706
-		c3.894-0.595,7.139-4.11,6.598-8.707C41.454,21.93,37.803,18.658,33.287,19.226z"/>
-</g>
-</svg>
+<svg id="Capa_1" data-name="Capa 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 68.09 68.09"><defs><style>.cls-1{fill:#286090;}.cls-2{fill:#fefeff;}</style></defs><title>login</title><g id="Capa_1-2" data-name="Capa_1"><circle class="cls-1" cx="34.04" cy="34.04" r="34.04"/><path class="cls-2" d="M17.2,48.94H50.32c-.05-1.68.35-5.17-.43-6.38C47.67,39.15,37.64,38.4,33.8,38.4s-14.11.84-16.17,4.08C16.82,43.75,17.23,47.16,17.2,48.94Z"/><path class="cls-2" d="M33.29,19.23a7.76,7.76,0,1,0,8.65,6.68A7.73,7.73,0,0,0,33.29,19.23Z"/></g></svg>

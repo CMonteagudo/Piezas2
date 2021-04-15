@@ -15,9 +15,8 @@ namespace Piezas2.Models
 
   //=======================================================================================================================================
   /// <summary> Obtiene todos los datos necesarios para el cuadro de busqueda de recambios </summary>
-  public class RecambiosDatosModel
+  public class RecambiosDatosModel : BaseModel
     {
-    public int Id { set; get; }
     public List<IdName> Fabricantes { set; get; }
     public List<IdName> Categorias { set; get; }
     public List<IdName> SubCategorias { set; get; }
@@ -32,10 +31,8 @@ namespace Piezas2.Models
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Construye el objeto y obtiene los datos de la base de datos </summary>
-    public RecambiosDatosModel( int id, HttpContext HttpCtx, DataInfo tipo )
+    public RecambiosDatosModel( int id, HttpContext HttpCtx, DataInfo tipo ) : base(HttpCtx, id)
       {
-      this.Id = id;
-
       if( tipo == DataInfo.All || tipo == DataInfo.Items )                      // Obtiene datos sobre los Items
         {
         Fabricantes = new Fabricantes( HttpCtx ).ListIdName();

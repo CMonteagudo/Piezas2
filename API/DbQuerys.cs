@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -253,6 +254,52 @@ namespace Piezas2
     public ActionResult<List<Usuario>> GetUsuarios()
       {
       return new Usuarios( HttpContext ).ListUsarios();
+      }
+
+    #endregion
+
+    #region ======================================================    VENTAS     ==============================================================
+    //-----------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary> Obtiene los datos de la venta con identificador 'id', si no existe retorna una venta vacia, con id=0  </summary>
+    [HttpGet( "/api/venta/{id:int?}" )]
+    public ActionResult<Ventum> FindVenta( int id )
+      {
+      return new Ventas( HttpContext ).Find( id );
+      }
+
+    //-----------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary> Obtiene el listado de las ventas de acuerdo a los parametros dados </summary>
+    [HttpGet( "/api/ventas/{UserId:int?}/{Estado:int?}" )]
+    public JsonResult GetVentas( int UserId=-1, int Estado=-1 )
+      {
+      try
+        { 
+        var lst = new Ventas( HttpContext ).ListVentas( UserId, Estado ); 
+        return new JsonResult( lst );
+        }
+      catch( Exception e) { return retJson.NoVentas(UserId, e); }
+      }
+
+    //-----------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary> Obtiene la cantidad de productos que hay en el carrito para el usuario dado </summary>
+    [HttpGet( "/api/carrito-count/{UserId:int}" )]
+    public JsonResult GetCarritoCount( int UserId = -1 )
+      {
+      int count = 0;
+
+      try { count = new Ventas( HttpContext ).CarritoCount( UserId ); }
+      catch( Exception ) {}
+
+      return new JsonResult( count );
+      }
+
+    //-----------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary> Obtiene los datos de los productos que hay en el carrito para el usuario dado </summary>
+    [HttpGet( "/api/carrito-datos/{UserId:int}" )]
+    public JsonResult GetVentasCount( int UserId )
+      {
+      try                 { return new JsonResult( new Ventas( HttpContext ).CarritoDatos( UserId ) ); }
+      catch( Exception e) { return retJson.NoPendVentas( UserId, e ); }
       }
 
     #endregion

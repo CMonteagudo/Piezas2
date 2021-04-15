@@ -10,7 +10,7 @@
   <div class="row">
       <div class="col-md-4">
         <picture> 
-          @{ var foto = string.IsNullOrWhiteSpace(@Model.Foto)? "/images/NoImagen.png" : @Model.Foto; }
+          @{ var foto = string.IsNullOrWhiteSpace(Model.Foto)? "/images/piezas.svg" : Model.Foto; }
           <img style="min-height: 200px" src="@foto" alt="Imagen de @Model.Nombre"> 
         </picture>
       </div>
@@ -57,7 +57,7 @@
                      <span>No se usa en ningún Coche.</span>
                      }
                     <div class="center-block">
-                      <a href="~/admin/recambio-coche/@Model.Id">
+                      <a href="~/admin/recambio-coche/@Model.itemId">
                         <div class="center-block coche-name" style="width:160px; background-color:ButtonFace; margin:10px auto; font-weight:600; text-align:center">
                           Seleccionar Coches
                         </div> 

@@ -12,7 +12,7 @@ namespace Piezas2.Models
   {
   //=======================================================================================================================================
   /// <summary> Obtiene todos los datos necesarios para el cuadro de busqueda de recambios </summary>
-  public class FindRecambioModel
+  public class FindRecambioModel : BaseModel
     {
     public List<IdName> Marcas { set; get; }
     public List<Modelo> Modelos { set; get; }
@@ -23,7 +23,7 @@ namespace Piezas2.Models
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Construye el objeto y obtiene los datos de la base de datos </summary>
-    public FindRecambioModel( HttpContext HttpCtx )
+    public FindRecambioModel( HttpContext HttpCtx ) : base( HttpCtx )
       {
       Marcas  = new Marcas( HttpCtx ).ListIdName();
       Modelos = new Modelos( HttpCtx ).ListModelos();

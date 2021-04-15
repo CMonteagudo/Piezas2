@@ -40,14 +40,15 @@ namespace Piezas2
     /// <summary>Se llama para establecer todos los servicios que se van a utilizar</summary>
     public void ConfigureServices( IServiceCollection services )
       {
-      services.AddDistributedMemoryCache();
+      services.AddDistributedMemoryCache();                                                   // Para habilitar el uso se sessiones
       services.AddSession();
 
-      services.Configure<MailSettings>( Configuration.GetSection( "MailSettings" ) );
+      services.Configure<MailSettings>( Configuration.GetSection( "MailSettings" ) );         // Servico para enviar correos
       services.AddTransient<IMailService, MailService>();
 
-      services.AddControllersWithViews();
-      services.AddEntityFrameworkSqlServer().AddDbContext<DbPiezasContext>( 
+      services.AddControllersWithViews().AddJsonOptions( o=>o.JsonSerializerOptions.PropertyNamingPolicy=null );                                                     // Para usar controladores con vistas Razor
+
+      services.AddEntityFrameworkSqlServer().AddDbContext<DbPiezasContext>(                   // Para usar Entity Framework con SQL
         ( serviceProvider, options ) => options.UseSqlServer( conneStr ).UseInternalServiceProvider( serviceProvider ) );
 
       }

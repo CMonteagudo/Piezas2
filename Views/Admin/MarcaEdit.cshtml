@@ -1,13 +1,11 @@
-﻿@{
+﻿@model Piezas2.Models.BaseModel
+@{
   ViewData["Title"] = "Modificación, Adición y Borrado de marcas de coches";
-
-  var  val = ViewData["Widget"];
-  bool modeWidget = (val!=null && (int)val == 1);
 }
 
 <div class="main-frame">
   <div class="columns-for-edit">
-  @if( !modeWidget )
+  @if( Model._Widget == 0 )
     {
     <div id="show-lst-panel"> <img src="~/images/btn-tabla.png" title="Muestra/Oculta lista para selección de recambio a editar." /> </div>
 
@@ -28,7 +26,7 @@
     }
 
     <div id="panelDatos">
-    @if( !modeWidget )
+    @if( Model._Widget == 0 )
       {
       <div  id="headerDatos">
         <a id="lnkHome" href="/admin"               ><label>Home       </label></a>
@@ -104,8 +102,8 @@
      // Valores de todos los campos al empezar la edicción
     var EditVals = { fotoSrc:"", fotoFile:"", Id:0, Nombre:"", Descripcion:"" };      
 
-    var paramId      = @ViewData["Id"];                         // Identificador que se pasa como parametro a la página
-    var ModoWidget   = @ViewData["Widget"];                     // Estable el modo Widget, que se usa para llamar la página dentro de otras páginas
+    var paramId      = @Model.Id;                               // Identificador que se pasa como parametro a la página
+    var ModoWidget   = @Model._Widget;                          // Estable el modo Widget, que se usa para llamar la página dentro de otras páginas
     var WidgetNotify = null;                                    // Funcion para notificar al padre cuando esta en modo iFarme
 
     // Inicia manipuladores y variables, después de cargarse la página
@@ -200,9 +198,9 @@
         {
         var marca = Marcas[i]; 
 
-        var clss = marca.id == EditVals.Id? " class='row-selected'" : "";
+        var clss = marca.Id == EditVals.Id? " class='row-selected'" : "";
            
-        var itemHml = "<tr data-id="+ marca.id + clss + "><td>" + marca.nombre + "</td></tr>";
+        var itemHml = "<tr data-id="+ marca.Id + clss + "><td>" + marca.Nombre + "</td></tr>";
 
         $("#ItemsList").append( itemHml );
         }
@@ -228,7 +226,7 @@
 
       for( let marca of Marcas )
         {
-        if( marca.id==id )
+        if( marca.Id==id )
           {
           Msg2.Hide();
 
@@ -257,7 +255,7 @@
         Msg2.Hide();
 
         nowMarca = datos;
-        if( nowMarca.id<= 0 )
+        if( nowMarca.Id<= 0 )
           {
           Msg2.Show( "La marca con Id="+id+" no se encuentra en la base de datos", "danger" );
           return;
@@ -322,13 +320,13 @@
     // Pone los datos del recambio actual
     function SetItemDatos( dupicate=false )        
       {
-      var IdMarca = dupicate? 0 : nowMarca.id;
+      var IdMarca = dupicate? 0 : nowMarca.Id;
 
-      EditVals ={ fotoSrc     :nowMarca.logo, 
+      EditVals ={ fotoSrc     :nowMarca.Logo, 
                   fotoFile    :"", 
                   Id          :IdMarca, 
-                  Nombre      :nowMarca.nombre, 
-                  Descripcion :nowMarca.descripcion? nowMarca.descripcion : "" };
+                  Nombre      :nowMarca.Nombre, 
+                  Descripcion :nowMarca.Descripcion? nowMarca.Descripcion : "" };
 
       UpdateDatos();
       }
@@ -415,7 +413,7 @@
     // Borra la marca actual de la base de datos
     function DeleteMarca()
       {
-      if( !confirm("Esta seguro que desea borrar la marca:\n'" + nowMarca.nombre + "'" ) )
+      if( !confirm("Esta seguro que desea borrar la marca:\n'" + nowMarca.Nombre + "'" ) )
         return;
 
       var form = document.forms.namedItem("datos");

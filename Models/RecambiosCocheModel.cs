@@ -12,7 +12,7 @@ namespace Piezas2.Models
   {
   //=======================================================================================================================================
   /// <summary> Obtiene todos los datos necesarios para el cuadro de busqueda de recambios </summary>
-  public class RecambiosCocheModel
+  public class RecambiosCocheModel : BaseModel
     {
     public List<GrupoItems> Grupos { set; get; } = new List<GrupoItems>();
     public string Marca { set; get; }
@@ -24,7 +24,7 @@ namespace Piezas2.Models
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Construye el objeto y obtiene los datos de la base de datos </summary>
-    public RecambiosCocheModel( int cocheId, HttpContext HttpCtx )
+    public RecambiosCocheModel( int cocheId, HttpContext HttpCtx ) : base( HttpCtx )
       {
       if( ! fillCocheDatos( cocheId, HttpCtx ) ) return;
 

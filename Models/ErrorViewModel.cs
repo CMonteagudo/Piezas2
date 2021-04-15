@@ -6,7 +6,7 @@ namespace Piezas2.Models
   {
   //=======================================================================================================================================
   // Datos que se utilizan en la vista de error en el sistema
-  public class ErrorViewModel
+  public class ErrorViewModel : BaseModel
     {
     public string LocalIp { get; private set; }
     public string RemoteIp { get; private set; }
@@ -15,7 +15,7 @@ namespace Piezas2.Models
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Construlle el objeto con el codigo del error y el contexto de la conección </summary>
-    public ErrorViewModel( string errorCode, HttpContext httpContext )
+    public ErrorViewModel( string errorCode, HttpContext httpContext ) : base( httpContext )
       {
       LocalIp  = httpContext.Connection.LocalIpAddress.ToString();
       RemoteIp = httpContext.Connection.LocalIpAddress.ToString();

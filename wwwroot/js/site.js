@@ -251,8 +251,8 @@ class UIFilters
 
     for( let item of this.Datos.Categor )
       {
-      if( item.Id>0 ) this.cbCategoria.AddItem( item.Id, item.Name );
-      else            this.cbCategoria.AddItem( item.id, item.nombre );
+      if( item.Name ) this.cbCategoria.AddItem( item.Id, item.Name );
+      else            this.cbCategoria.AddItem( item.Id, item.Nombre );
       }
     }
 
@@ -298,8 +298,8 @@ class UIFilters
 
     for( let item of this.Datos.Fabric )
       {
-      if( item.Id>0 ) this.cbFabricante.AddItem( item.Id, item.Name );
-      else            this.cbFabricante.AddItem( item.id, item.nombre );
+      if( item.Name ) this.cbFabricante.AddItem( item.Id, item.Name );
+      else            this.cbFabricante.AddItem( item.Id, item.Nombre );
       }
     }
 
@@ -436,15 +436,15 @@ class ServerConnection
       url: Url, data:this.data, method:this.metodo, 
       complete: (xhr) =>
         {
-        //setTimeout( ()=>                        // Para emular una demora en la carga de los datos
-        //  {
+        setTimeout( ()=>                        // Para emular una demora en la carga de los datos
+          {
           if( cur ) cur.Hide();
 
           var json = this.checkReturn( xhr );
 
           if( json.Error == 0 ) funResult( json );
           else                  this.fError( json );
-          //}, 3000 );
+          }, 5000 );
         }
       } );
     }
@@ -775,7 +775,7 @@ function PopUp( clickElem, opciones )
   {
   "use strict";  
   var box;                                       // Cuadro que se va a mostrar
-  var clkElem = $(clickElem);                    // Elemento que el hacer click sale el cuadro de dialogo
+  var clkElem = $(clickElem);                    // Elemento que al hacer click sale el cuadro de dialogo
   var posElem = clkElem;
   var opt = opciones || {};
   var $this = this;
@@ -1000,61 +1000,40 @@ function PopUp( clickElem, opciones )
 
   }
 
-// Obtine los datos del usuario logueado, u objeto vacio
-function GetLogUser()
-  {
-  "use strict";  
-  if( sessionStorage.User ) 
-    return JSON.parse(sessionStorage.User);  
-    
-  return {};
-  }
-  
-// Pone el usuario logueado
-function SetLogUser()
-  {
-  var txt = "Entrar";
-  if( sessionStorage.User ) 
-    txt = JSON.parse(sessionStorage.User).nombre;  
-
-  $("#btnLog span").text(txt) 
-  }
-  
 
 // Maneja todas la opciones del menú principal
 function UsersMenu()
   {
   "use strict";  
   var $this = this;
-  this.ChangeUser = SetLogUser;
+  this.ChangeUser = (user)=>{};                           // Funcion que se llama cuando cambia el usuario
+  this.GetLogUser = ()=>{};                               // Se llama para obtener cual es el usuario que esta logueado
 
-  var reCode = /^[0-9]{6,6}$/;
-  var reTelf = /^\+?([0-9 \-]{7,}[,; ]*)+$/;
-  var reMail = /^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/i;
+  var reCode = /^[0-9]{6,6}$/;                                                          // Patrón re para el codigo de confirmación
+  var reTelf = /^\+?([0-9 \-]{7,}[,; ]*)+$/;                                            // Patron re para los telefonos
+  var reMail = /^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/i;     // Patron re para el correo
       
-  var bntLog = $("#btnLog");
+  //var bntLog = $("#btnLog");
    
-  var mnuLogIn = new PopUp( bntLog );
-  mnuLogIn.SetBox("#BoxUser");
+  var mnuLogIn = new PopUp( "#btnLog" );              // Crea objeto para manejar el usuario
+  mnuLogIn.SetBox("#BoxUser");                        // Establece html que aparece en el cuadro deslizante
   
-  SetLogUser();
-
-  $("#LogIn input").eq(1).val("");
+  $("#BoxUser input"   ).keyup( function(){$("#BoxUser .MsgError").hide();} );     // Ocualta los errores cuando se oprime una tecla
+  $("#BoxUser .btnLeft").click(function() { return showUserMnu(); });              // Pone el menú de opciones a oprimir el boton de la derecha
   
   // Llama cada vez que sale el dialogo de usuario 
   mnuLogIn.OnShowPopUp = function()
     { 
-    var User = GetLogUser();
+    var User = $this.GetLogUser();
     
-    if( (User.id) ) showUserMnu();
+    if( (User.Id) ) showUserMnu();
     else            showLogIn();
     };
   
   // Se llama cuando se va ha loguear un usuario y contrasña
   $("#LogIn .btnRight").click(function() 
     {
-    var Msg = $("#LogIn .MsgError");
-    Msg.hide();
+    setMsgErr("#LogIn");
     
     var UserIn = $("#LogIn input");
 
@@ -1064,25 +1043,23 @@ function UsersMenu()
     var name = UserIn.eq(0).val();
     Data += '&Nombre='+encodeURIComponent( name );  
     
-    var Conn = new ServerConnection( "POST", (r)=>{ Msg.html(r.sError); Msg.show(); } );
+    var Conn = new ServerConnection( "POST", (r)=>{ showMsgErr(r.sError); } );
     Conn.data = Data;
 
     Conn.Send( "/api/login", (user) => 
       {
-      if( user.id > 0 )
+      if( user.Id > 0 )
         {
-        if( user.confirmado ) LoginOk( user );
-        else                  ConfirmCode( user.id );
+        if( user.Confirmado ) LoginOk( user );
+        else                  ConfirmCode( user.Id );
         }
       else
         {
         var sErr = "Usuario y/o Contraseñas incorrecto." +
                    "<br/><br/><span style='color:#555'>Si olvido la contraseñas, oprima <a href=''style='font-weight: bold;'>aqui</a> para enviarsela por correo</span>";
                     
-        Msg.html( sErr );
-        Msg.find("a").click(function() {return EnviaPassWord(Data);} );
-                  
-        Msg.show();
+        showMsgErr( sErr );
+        MsgErr.find("a").click(function() {return EnviaPassWord(Data);} );
         }  
 
       }, "#BoxUser" );
@@ -1091,25 +1068,22 @@ function UsersMenu()
   // Termina el proceso de registro para el usuario dado
   function LoginOk( user )
     {
-    sessionStorage.User = JSON.stringify(user);         // Guarda datos del usuario en la sección
-                
     mnuLogIn.ClosePopUp(null, function()                // Cierra la ventana flotante
       {
+      $this.ChangeUser( user );                         // Notifica a la página 
       showUserMnu();                                    // Para la proxima utilización
-      $this.ChangeUser();                               // Notifica a la página 
       });
     }
 
   // Envia la contraseñas al correo del usuario
   function EnviaPassWord( Data )
     {
-    var Msg = $("#LogIn .MsgError");
-    Msg.hide();
+    setMsgErr("#LogIn");
     
-    var Conn = new ServerConnection( "POST", (r)=>{ Msg.html(r.sError); Msg.show(); } );
+    var Conn = new ServerConnection( "POST", (r)=>{ showMsgErr(r.sError); } );
     Conn.data = Data;
 
-    Conn.Send( "/api/send-password", () => { showMsgPassWord(); }, "#BoxUser" );
+    Conn.Send( "/api/send-password", () => { ShowPage("#MsgPassWord"); }, "#BoxUser" );
       
     return false;  
     }
@@ -1117,40 +1091,43 @@ function UsersMenu()
   // Muestra dialogo para validar el código de confirmacion del correo
   function ConfirmCode( userId )
     {
-    var Msg = $("#ConfirmCode .MsgError");                          // Para poner mensajes de errores
-    Msg.hide();
+    setMsgErr("#ConfirmCode");                                      // Para poner mensajes de errores
+
+    var edCode = $("#ConfirmCode input").eq(0);                     // Cuadro para edicción del código
+    edCode.val("")                                                  // Pone el recuadro vacio
+    edCode.focus();                                                 // Pone el foco para comenzar la edicción
 
     $("#ConfirmCode input").eq(1).val( userId );                    // Pone el identificador en un campo oculto
-    
-    showConfirmCode();                                              // Muestra pantalla para pone código de confirmación
 
-    $("#ConfirmCode span").click( ()=>                              // Click para re-enviar el código
-      {
-      var Conn = new ServerConnection( "POST", (r)=>{ Msg.html(r.sError); Msg.show(); } );
-      Conn.data = 'Id=' + userId;
-
-      Conn.Send( "/api/send-code", (user) =>                        
-        { 
-        var msg = $("<div>Código enviado al correo ...</div>");
-
-        $("#ConfirmCode .link-bottom").append(msg);                 // Pone un mensaje
-        $("#ConfirmCode span").hide();                              // Quita el link para re-enviar
-
-        setTimeout( ()=>                                            // Pone un intervalo de tiempo de 3 seg
-          {
-          msg.remove();                                             // Quita el mensaje
-          $("#ConfirmCode span").show();                            // Muestra el link de re-enviar otra vez
-          }, 5000 );
-        
-        }, "#BoxUser" );
-      });
+    ShowPage("#ConfirmCode");                                       // Muestra el panel de verificar el código
     }
-  
+
   // Se llama para re-enviar el código de verificación
+  $("#ConfirmCode span").click( ()=>                             
+    {
+    var Conn = new ServerConnection( "POST", (r)=>{ showMsgErr(r.sError); } );
+    Conn.data = 'Id=' + $("#ConfirmCode input").eq(1).val();      // Toma el Id del usuario del campo oculato 
+
+    Conn.Send( "/api/send-code", (user) =>                        
+      { 
+      var msg = $("<div>Código enviado al correo ...</div>");
+
+      $("#ConfirmCode .link-bottom").append(msg);                 // Pone un mensaje
+      $("#ConfirmCode span").hide();                              // Quita el link para re-enviar
+
+      setTimeout( ()=>                                            // Pone un intervalo de tiempo de 3 seg
+        {
+        msg.remove();                                             // Quita el mensaje
+        $("#ConfirmCode span").show();                            // Muestra el link de re-enviar otra vez
+        }, 5000 );
+        
+      }, "#BoxUser" );
+    });
+  
+  // Se llama para verificar el código de verificación
   $("#ConfirmCode .btnRight").click(function() 
     {
-    var Msg = $("#ConfirmCode .MsgError");
-    Msg.hide();
+    setMsgErr("#ConfirmCode");
     
     var entries = $("#ConfirmCode input"); 
     
@@ -1159,25 +1136,21 @@ function UsersMenu()
     
     if( !reCode.test(code) ) 
       { 
-      Msg.text( "El código de validación son 6 digitos numéricos");
-      Msg.show();
-      entries.eq(0).focus();
+      showMsgErr( "El código de validación son 6 digitos numéricos", entries.eq(0) );
       return;
       }
       
     var Data ='Code='+code+'&Id='+userId;
 
-    var Conn = new ServerConnection( "POST", (r)=>{ Msg.html(r.sError); Msg.show(); } );
+    var Conn = new ServerConnection( "POST", (r)=>{ showMsgErr(r.sError); } );
     Conn.data = Data;
 
     Conn.Send( "/api/veryfy-code", (user) => 
       { 
-      if( user.confirmado ) LoginOk( user );
+      if( user.Confirmado ) LoginOk( user );
       else
         {
-        Msg.text( "El código de validación es incorrecto");
-        Msg.show();
-        entries.eq(0).focus();
+        showMsgErr( "El código de validación es incorrecto", entries.eq(0) );
         }
       }, "#BoxUser" );
     });    
@@ -1185,17 +1158,15 @@ function UsersMenu()
   // Desloguea al usuario actual      
   function OnLogOut()
     {
-    var Msg = $("#mnuUser .MsgError");
-    Msg.hide();
+    setMsgErr("#mnuUser");
 
-    var Conn = new ServerConnection( "POST", (r)=>{ Msg.html(r.sError); Msg.show(); } );
+    var Conn = new ServerConnection( "POST", (r)=>{ showMsgErr(r.sError); } );
 
     Conn.Send( "/api/logout", (user) => 
       {
       mnuLogIn.ClosePopUp( null, function() 
         {
-        delete sessionStorage.User;
-        $this.ChangeUser();
+        $this.ChangeUser( {Id:0, nBuy:0} );
         });
       }, "#BoxUser" );
     }
@@ -1205,20 +1176,18 @@ function UsersMenu()
     {
     var Ctrs = $("#EditUser input");
     
-    Ctrs.eq(0).val( User.correo );
-    Ctrs.eq(1).val( User.nombre);
+    Ctrs.eq(0).val( User.Correo );
+    Ctrs.eq(1).val( User.Nombre);
     
-    Ctrs.eq(2).val(User.passWord);
-    Ctrs.eq(3).val(User.passWord);
+    Ctrs.eq(2).val("");
+    Ctrs.eq(3).val("");
     
-    Ctrs.eq(4).val( User.telefonos );
+    Ctrs.eq(4).val( User.Telefonos );
     }
    
   // Obtiene y valida los datos del usuario
-  function GetUserData( Msg, box ) 
+  function GetUserData( box ) 
     {
-    Msg.hide();
-    
     var mail   = box.eq(0).val();
     var name   = box.eq(1).val();
     var pwd1   = box.eq(2).val();
@@ -1232,7 +1201,7 @@ function UsersMenu()
     else if( pwd1 !== pwd2       ) { txt="Las contraseñas no coinciden";    foco = box.eq(3); }
     else if( !reTelf.test(telef) ) { txt="El teléfono es erroneo";          foco = box.eq(4); }
       
-    if( txt.length>0 ) { Msg.text(txt); Msg.show();  foco.focus(); return false; }
+    if( txt.length>0 ) { showMsgErr( txt, foco ); return false; }
       
     return 'Correo='+encodeURIComponent(mail)+'&Nombre='+encodeURIComponent(name)+'&PassWord='+encodeURIComponent(pwd1)+'&Telefonos='+encodeURIComponent(telef);
     }
@@ -1240,14 +1209,14 @@ function UsersMenu()
   // Se llama para crear un usuario nuevo
   $("#NewUser .btnRight").click(function() 
     {
-    var Msg = $("#NewUser .MsgError");
+    setMsgErr("#NewUser");
     
-    var Data = GetUserData( Msg, $("#NewUser input") );
+    var Data = GetUserData( $("#NewUser input") );
     if( !Data ) {return;}
 
     Data +='&Id=0';
     
-    var Conn = new ServerConnection( "POST", (r)=>{ Msg.html(r.sError); Msg.show(); } );
+    var Conn = new ServerConnection( "POST", (r)=>{ showMsgErr(r.sError); } );
     Conn.data = Data;
 
     Conn.Send( "/api/add-usuario", (r) => { ConfirmCode( r.Id ); }, "#BoxUser"  );
@@ -1256,32 +1225,31 @@ function UsersMenu()
   // Se llama para editar los datos del usuario actual
   $("#EditUser .btnRight").click(function() 
     {
-    var Msg = $("#EditUser .MsgError");
+    setMsgErr("#EditUser");
     
-    var Data = GetUserData( Msg, $("#EditUser input") );
+    var Data = GetUserData( $("#EditUser input") );
     if( !Data ) {return;}
 
-    var User = GetLogUser();
-    if( !User.id ) 
+    var User = $this.GetLogUser();
+    if( !User.Id ) 
       {
-      Msg.text("Para modificar sus datos, el usuario debe estar logueado."); 
-      Msg.show();  
+      showMsgErr("Para modificar sus datos, el usuario debe estar logueado."); 
       return false;
       }
 
-    Data +='&Id='+User.id;
+    Data +='&Id='+User.Id;
     
-    var Conn = new ServerConnection( "POST", (r)=>{ Msg.html(r.sError); Msg.show(); } );
+    var Conn = new ServerConnection( "POST", (r)=>{ showMsgErr(r.sError); } );
     Conn.data = Data;
 
     Conn.Send( "/api/modify-usuario", (r) => 
       { 
-      if( r.confirm ) showMsgUpdate(); 
+      if( r.Confirm ) ShowPage("#MsgUpdate"); 
       else            ConfirmCode( r.Id ); 
       }, "#BoxUser"  );
     });    
 
-  // Atiende los comados para los dialogos de usuario
+  // Atiende las opciones del menu de usuario
   $("#BoxUser .item-pu").click(function() 
     {
     var cmd = +$(this).attr("cmd");
@@ -1295,84 +1263,185 @@ function UsersMenu()
       }
     });  
   
-  // Pone el menú de inicio
-  $("#BoxUser input").keyup( function(){$("#BoxUser .MsgError").hide();} );
-
-  // Pone el menú de inicio
-  $("#BoxUser .btnLeft").click(function() { return showUserMnu(); });  
-
-  // Oculta todos los paneles
-  function hideAll()
+  // Muestra el panel con el identificador especificado
+  function ShowPage( showPg )
     {
-    $("#LogIn"      ).hide();
-    $("#NewUser"    ).hide();
-    $("#ConfirmCode").hide();
-    $("#mnuUser"    ).hide();
-    $("#EditUser"   ).hide();
-    $("#MsgPassWord").hide();
-    $("#MsgUpdate"  ).hide();
+    for( let pg of ["#LogIn","#NewUser","#ConfirmCode","#mnuUser","#EditUser","#MsgPassWord","#MsgUpdate"] )
+      if( pg==showPg ) $(pg).show();
+      else             $(pg).hide();
     }
 
   // Muestra el panel para registrase como un usuario
-  function showLogIn()      // OnSwUser(0)
+  function showLogIn()
     {
-    hideAll();
-    $("#LogIn").css("display", "block" );           // Muestra el panel de registro de usuario
-    $("#LogIn input").eq(0).focus();                // Pone el foco en la primera entrada
+    ShowPage("#LogIn");                         // Muestra el panel de registro de usuario
+    $("#LogIn input").eq(0).focus();            // Pone el foco en la primera entrada
     }
 
   // Muestra el panel para registrase como un usuario
-  function showNewUser()      // OnSwUser(1)
+  function showNewUser()
     {
-    hideAll();
-    $("#NewUser").css("display", "block" );         // Muestra el panel con datos de nuevo usuario
-    $("#NewUser input").eq(0).focus();              // Pone el foco en la primera entrada
-    }
-
-  // Muestra el panel para poner el código de activación
-  function showConfirmCode()      // OnSwUser(2)
-    {
-    hideAll();
-    $("#ConfirmCode").css("display", "block" );     // Muestra el panel de verificar el código
-    $("#ConfirmCode input").eq(0).focus();          // Pone el foco en la primera entrada
+    ShowPage("#NewUser");                       // Muestra el panel con datos de nuevo usuario
+    $("#NewUser input").eq(0).focus();          // Pone el foco en la primera entrada
     }
 
   // Muestra el menú con las opciones a realizar con los usuarios
-  function showUserMnu()    // OnSwUser(3)
+  function showUserMnu()
     {
-    hideAll();
+    var mnu = $("#mnuUser .item-pu");                                     // Items del menú de usuarios
+    if( $this.GetLogUser().Id ) { mnu.eq(0).show(); mnu.eq(3).show(); }   // Si logueado, muestra Salir y Modificar
+    else                        { mnu.eq(0).hide(); mnu.eq(3).hide(); }   // Oculta Salir y Modificar
 
-    var mnu = $("#mnuUser .item-pu");                                 // Items del menú de usuarios
-    if( GetLogUser().id ) { mnu.eq(0).show(); mnu.eq(3).show(); }     // Si logueado, muestra Salir y Modificar
-    else                  { mnu.eq(0).hide(); mnu.eq(3).hide(); }     // Oculta Salir y Modificar
-
-    $("#mnuUser").css("display", "block" );           // Muestra el panel con el menú de usuario
+    ShowPage("#mnuUser");                                                 // Muestra el panel con el menú de usuario
     }
 
   // Muestra el panel para editar los datos del usuario
-  function showEditUser()      // OnSwUser(4)
+  function showEditUser()
     {
-    hideAll();
-    $("#EditUser").css("display", "block" );          // Muestra el panel de registro de usuario
-    $("#EditUser input").eq(0).focus();               // Pone el foco en la primera entrada
+    ShowPage("#EditUser");                      // Muestra el panel de registro de usuario
+    $("#EditUser input").eq(0).focus();         // Pone el foco en la primera entrada
 
-    FillDatos( GetLogUser() );                        // Llena los datos del usuario
+    FillDatos( $this.GetLogUser() );            // Llena los datos del usuario
     }
 
-  // Muestra un mensaje del envio de la contraseñas por correo
-  function showMsgPassWord()      // OnSwUser(5)
-    {
-    hideAll();
-    $("#MsgPassWord").css("display", "block" );       // Muestra el panel con el mensaje
-    }
+  var MsgErr;                                   // Div donde se debe mostrar los errores
 
-  // Muestra un mensaje que para actualizar los datos hay que salir
-  function showMsgUpdate()      // OnSwUser(6)
-    {
-    hideAll();
-    $("#MsgUpdate").css("display", "block" );         // Muestra el panel con el mensaje
-    }
+  // Establece donde se deben mostrar los errores dentro del panel 
+  function setMsgErr( panel )  {  MsgErr = $( panel + " .MsgError"); MsgErr.hide(); }
+
+  // Muestra un mensaje de error 
+  function showMsgErr( msg, foco ) { MsgErr.html(msg); MsgErr.show(); if(foco) $(foco).focus() }
 
   } // Fin de la clase UsersMenu
 
+// Maneja un elemento HTML donde mostrar los errores
+function ErrorElem( errElem  )
+  {
+  var MsgErr = $( errElem );                    // Estable donde mostrar el error y lo oculta
+  MsgErr.hide();
 
+  // Muestra un mensaje en el elemento establecido y opcionalmente pone el foco en el elemento indicado
+  this.showMsg = ( msg, foco ) =>
+    { 
+    MsgErr.html(msg); 
+    MsgErr.show(); 
+    
+    if(foco) $(foco).focus() 
+    }
+
+  // Oculta el mensaje de error
+  this.Hide = ()=> 
+    {
+    MsgErr.hide();
+    }
+  }
+
+// Maneja la interfaz para el carrito de compras y para las compras dentro de la pagina
+function Compras( btnBuyCar, boxBuy  )
+  {
+  var mnuBuy = new PopUp( btnBuyCar );                // Crea objeto para manejar el usuario
+      mnuBuy.SetBox(boxBuy);                          // Establece html que aparece en el cuadro deslizante
+   
+      mnuBuy.OnShowPopUp  = OnShowPopUp;              // Se llama cuando se abre el menú
+      mnuBuy.OnClosePopUp = OnClosePopUp;             // Se llama cuando se cierre el menú
+
+  var $this = this;
+  this.getUserId = ()=>{};                            // Funcion para obtener el identificador del usuario
+  this.UpdateUI  = ()=>{};                            // Funcion para notificar que se realicen cambios en la IU
+
+  var err = new ErrorElem("#BuyList > .MsgError");    // Elementos donde se ponen los mensajes de errores
+  var lst = $("#PendItems");                          // Lista donde se ponen los items
+  var bnt = $("#BuyList > .btnCenter");               // Boton para ir pagar
+  var total = $(".buy-total span:first-child")        // Donde se pone el monto tatol de todos los productos
+
+  bnt.click( ()=>location = "/ventas-pendientes" );   // Botón para ir a revisar al detalle las ventas pendientes
+
+  // Se llama cuando se va a mostrar la ventana flotante
+  function OnShowPopUp()
+    {
+    var userId = $this.getUserId();
+
+    if( userId >0 ) GetItemsList( userId );
+    else            ShowPage( "#MsgLogin" );
+    }
+
+  // Se llama cuando se va a cerrar la ventana flotante
+  function OnClosePopUp()
+    {
+    }
+
+  // Muestra el panel con el identificador especificado
+  function ShowPage( showPg )
+    {
+    for( let pg of ["#MsgLogin","#BuyList", "#MsgNoBuy"]  )
+      if( pg==showPg ) $(pg).show();
+      else             $(pg).hide();
+    }
+
+  // Obtiene la lista de articulos que el usuario tiene pendientes de pagar
+  function GetItemsList( userId )
+    {
+    InitBuyList();
+
+    var Conn = new ServerConnection( "GET", (r)=>{ BuyError(r); } );
+    
+    Conn.Send( "/api/carrito-datos/" + userId, (lstBuy) => 
+      { 
+      if( lstBuy.length == 0  ) ShowPage( "#MsgNoBuy" );
+      else                      FillBuyList( lstBuy );
+      }, "#BoxBuy"  );
+    }
+
+  // Llena la lista de compras que estan pendientes y la muestra
+  function FillBuyList( list )
+    {
+    var suma = 0;
+
+    list.length
+
+    for( let prod of list )
+      {
+      var monto = prod.Cant * prod.Prec;
+      suma += monto;
+
+      var html = '<div class="buy-item">' +
+                    '<div>'+ prod.Item +'</div>' +
+                    '<div>'+ prod.Cant +'</div>' +
+                    '<div>'+ prod.Prec +'</div>' +
+                    '<div>'+ monto +'</div>' +
+                  '</div>';
+
+        lst.append( html );
+        }
+
+    bnt.show();
+    total.text( suma );
+
+    $this.UpdateUI( "nBuy", list.length );
+    }
+
+  // Llena la lista de compras que estan pendientes y la muestra
+  function BuyError( error )
+    {
+    total.text(0);
+
+    if( error.Error==2005 ) 
+      {
+      $this.UpdateUI( "LogOut" );
+      err.showMsg( "La seccion de usurio ha expirado." );
+      }
+    else
+      error.showMsg( err.sError );
+    }
+
+  // Inicializa la página que muestra la lista de compras
+  function InitBuyList()
+    {
+    lst.empty();
+    bnt.hide();
+    total.text(0);
+    err.Hide();
+    ShowPage( "#BuyList"  );
+    }
+
+  }

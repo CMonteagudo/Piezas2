@@ -1,0 +1,206 @@
+﻿@model Piezas2.Models.BaseModel
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>@ViewData["Title"] - Piezas2</title>
+  <link href="~/css/bootstrap.css" rel="stylesheet" />
+  <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <header>
+       <div id="LogoSitio"> <img src="~/images/logo.svg" alt=""><div>Recambios<div>en Cuba</div></div></div>
+       <div id="btnBuy"> <img class="icon" src="~/images/carrito.svg" alt=""><span id="Count">0</span></div>
+       <div id="btnLog"> <img class="icon" src="~/images/login.svg" alt=""><span id="User">Entrar</span></div>
+
+        <div id="HidedBoxs" style="display:none">
+          <!-- Cuadro para loguearse o crear usuario nuevo -->
+          <div id="BoxUser" class="BoxFloat" style="position: absolute; left: -102.6px; top: 38px; display: none;">
+            <div id="LogIn" style="display: block;">
+              <div><input class="LineInput" type="text"     placeholder="Usuario"      autocomplete="off"></div>
+              <div><input class="LineInput" type="password" placeholder="Contraseñas"  autocomplete="off"></div>
+              <div class="MsgError"></div>
+              <div class="btnRight">Entrar</div>
+              <div class="btnLeft">&lt;&lt;</div>
+            </div>
+  
+            <div id="NewUser" style="display: none;">
+              <div><input class="LineInput" type="text" placeholder="Correo electrónico"></div>
+              <div><input class="LineInput" type="text" placeholder="Usuario"></div>
+              <div><input class="LineInput" type="password" placeholder="Contraseñas"></div>
+              <div><input class="LineInput" type="password" placeholder="Confirmar contraseñas"></div>
+              <div><input class="LineInput Telef" type="text" placeholder="Teléfono"></div>
+              <div class="MsgError"></div>
+              <div class="btnRight">Crear</div>
+              <div class="btnLeft">&lt;&lt;</div>
+            </div>
+  
+            <div id="EditUser" style="display: none;">
+              <div><input class="LineInput" type="text" placeholder="Correo electrónico"></div>
+              <div><input class="LineInput" type="text" placeholder="Usuario"></div>
+              <div><input class="LineInput" type="password" placeholder="Contraseñas"></div>
+              <div><input class="LineInput" type="password" placeholder="Confirmar contraseñas"></div>
+              <div><input class="LineInput Telef" type="text" placeholder="Teléfono"></div>
+              <div class="MsgError"></div>
+              <div class="btnRight">Modificar</div>
+              <div class="btnLeft">&lt;&lt;</div>
+            </div>
+  
+            <div id="ConfirmCode" style="display: none;">
+              <p>Hemos enviado un código de validación al correo del usuario.</p>
+              <p>Escriba el código en el cuadro y oprima validar para completar el proceso.</p>
+              <div><input class="LineInput" type="text"   placeholder="Código"></div>
+              <div><input class="LineInput" type="hidden" placeholder="User Id"></div>
+              <div class="MsgError"></div>
+              <div>
+                <div class="btnRight">Validar</div>
+                <div class="btnLeft">&lt;&lt;</div>
+              </div>
+              <div class="link-bottom">
+                <span>Re-Enviar el código.</span>
+              </div>
+            </div>
+  
+            <div id="MsgPassWord" style="display: none;">
+              <p>Le hemos enviado la contraseña a la dirección de correo electrónico asociada al nombre de usuario.</p>
+              <div class="btnLeft">&lt;&lt;</div>
+            </div>
+  
+            <div id="MsgUpdate" style="display: none;">
+              <p>Los datos del usuario actual, fueron actualizados satisfactoriamente .</p>
+              <p>Para que los cambios tengan efecto, debe que salir y volver a entrar</p>
+              <div class="btnLeft">&lt;&lt;</div>
+            </div>
+  
+            <div id="mnuUser" class="list" style="display: none;">
+              <div class="item-pu" cmd="1" style="display: none;">Salir</div>
+              <div class="item-pu" cmd="2">Entrar como Usuario</div>
+              <div class="item-pu" cmd="3">Crear nuevo Usuario</div>
+              <div class="item-pu" cmd="4" style="display: none;">Editar datos de Usuario</div>
+              <div class="item-pu" cmd="5" style="display: none;">Inscribir propiedad</div>
+              <div class="MsgError"></div>
+            </div>
+          </div>
+
+          <div id="BoxBuy" class="BoxFloat" style="position: absolute; left: -102.6px; top: 38px; display: none;">
+            <div id="BuyList" style="display: none;">
+              <div class="buy-item">
+                <div>Artículo</div>
+                <div>Cant.</div>
+                <div>Precio</div>
+                <div>Monto</div>
+              </div>
+              <div id="PendItems"> </div>
+
+              <div class="buy-total">
+                Total a pagar: <span>250.02</span><span><select>
+                    <option value="0">usd</option>
+                    <option value="2">euro</option>
+                    <option value="3">cup</option>
+                </select>
+                </span>
+              </div>
+
+              <div class="MsgError" ></div>
+              <div class="btnCenter">Pagar</div>
+            </div>
+
+            <div id="MsgLogin" style="display: none;">
+              <p>Para tener acceso a la lista de compra hay que regístrarse primero como un usuario del sistema</p>
+            </div>
+
+            <div id="MsgNoBuy" style="display: none;">
+              <p>No hay ningún producto pendiente de compra, localice un producto y oprima el botón comprar para adicionarlo a esta lista</p>
+            </div>
+
+        </div>
+
+        </div>
+
+    </header>
+
+  @RenderBody()
+
+    <footer class="border-top footer text-muted">
+      <div class="footer-row">
+        <div><a title="Mapa del sitio web de venta de recambios de coche para autos del Grupo VAG" href="/mapa-del-sitio">Mapa del sitio</a></div>
+        <div><span >|</span></div>
+        <div><a title="Información de Contacto" href="/informacion-de-contacto">Contacto</a></div>
+        <div><span >|</span></div>
+        <div><a title="Información sobre nuestra empresa" href="/acerca-de">Sobre nuestro sitio</a></div>
+      </div>
+
+      <div class="footer-row">
+        <div> <a title="Follow us on Google+" rel="nofollow" href="https://plus.google.com/+pamicarro">Google+</a></div>
+        <div><span class="separator">|</span></div>
+        <div> <a title="Follow us on Facebook" rel="nofollow" href="https://www.facebook.com/pamicarro/">Facebook</a></div>
+        <div><span class="separator">|</span></div>
+        <div> <a title="Follow us on Twitter" rel="nofollow" href="https://twitter.com/Pamicarro">Twitter</a></div>
+      </div>
+
+      <div class="copyright">
+        <span>© 2021 Pa'mi carro.</span>
+      </div>
+    </footer>
+
+  <script src="~/lib/jquery/dist/jquery.min.js"></script>
+  <script src="~/js/bootstrap.js"></script>
+  <script src="~/js/site.js" asp-append-version="true"></script>
+
+  <script type="text/javascript">
+    @{ var user = new Microsoft.AspNetCore.Html.HtmlString( Model._User ); }
+
+    var _User = @user;                                                  // Usuario logueado en el momento de abrir la página
+    var _nBuy = 0                                                       // Número de compras en el momento de abrir la página
+
+    var mnuUser = new UsersMenu();                                      // Crea objeto para manejar el menú de usuario
+    var mnuBuy  = new Compras( "#btnBuy", "#BoxBuy", _User.Id );        // Maneja el carrito de compras
+
+    mnuUser.ChangeUser = SetUser;                                       // Se llama cade vez que se cambia el usuario
+    mnuUser.GetLogUser = ()=>{ return _User; }                          // Suministra los datos del usuario al objeto
+
+    mnuBuy.getUserId = ()=>{ return _User.Id; }                       // Para recuperar el usuario en el menú de compras  
+    mnuBuy.UpdateUI  = (t,n)=>
+      {
+            if( t=="nBuy"   ) SetBuyCount( n );
+      else if( t=="LogOut" ) { SetUser({Id:0}); SetBuyCount(0); }
+      }
+
+    // Guarda lo datos del usuario y pone el nombre o no al lado de botón
+    function SetUser( user )
+      {
+      if( user ) _User = user;
+
+      if( _User.nBuy != undefined )
+        {
+        _nBuy = _User.nBuy;
+        SetBuyCount( _nBuy );
+        }
+
+      $("#btnLog>span").text( _User.Id? _User.Nombre : "Entrar" ); 
+      }
+
+    // Muestra el número de compras en el carrito
+    function SetBuyCount( n )
+      {
+      var num = $("#btnBuy > span");
+      num.text(n);
+
+      if( n > 0 ) num.addClass("buy-count");
+      else        num.removeClass ("buy-count");
+      }
+
+    SetUser( _User );                                                   // Pone el nombre del usuario la primera vez
+    SetBuyCount(_nBuy);
+
+    $("#LogoSitio").click( ()=>{ location="/"; });                      //  Cuando se oprime el logo del sitio va la pagina principal
+
+  </script>
+
+
+  @RenderSection( "Scripts", required: false )
+
+</body>
+</html >

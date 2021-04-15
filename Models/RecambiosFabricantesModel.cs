@@ -12,7 +12,7 @@ namespace Piezas2.Models
   {
   //=======================================================================================================================================
   /// <summary> Obtiene todos los datos necesarios para el cuadro de busqueda de recambios </summary>
-  public class RecambiosFabricantesModel
+  public class RecambiosFabricantesModel : BaseModel
     {
     public List<GrupoItems> Grupos { set; get; } = new List<GrupoItems>();
     public string Maker { set; get; }
@@ -20,7 +20,7 @@ namespace Piezas2.Models
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Construye el objeto y obtiene los datos de la base de datos </summary>
-    public RecambiosFabricantesModel( string maker, HttpContext HttpCtx )
+    public RecambiosFabricantesModel( string maker, HttpContext HttpCtx ) : base( HttpCtx )
       {
       Maker = maker.Replace('-',' ') .ToUpper();
 

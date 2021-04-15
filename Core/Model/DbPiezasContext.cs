@@ -28,7 +28,7 @@ namespace Piezas2.Core.Model
     public virtual DbSet<MotorCoche> MotorCoches { get; set; }
     public virtual DbSet<SubCategorium> SubCategorias { get; set; }
     public virtual DbSet<Usuario> Usuarios { get; set; }
-    public virtual DbSet<Ventum> Venta { get; set; }
+    public virtual DbSet<Ventum> Ventas { get; set; }
 
     protected override void OnConfiguring( DbContextOptionsBuilder optionsBuilder )
       {
@@ -312,11 +312,6 @@ namespace Piezas2.Core.Model
                   .HasComment( "Fecha cuando se efectua el pago" );
 
          entity.Property( e => e.ItemId ).HasComment( "Identificador de producto a comprar" );
-
-         entity.Property( e => e.Monto )
-                  .HasColumnType( "decimal(29, 2)" )
-                  .HasComputedColumnSql( "([Cantidad]*[Precio])", true )
-                  .HasComment( "Monto del pago total" );
 
          entity.Property( e => e.Precio )
                   .HasColumnType( "decimal(18, 2)" )

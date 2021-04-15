@@ -6,8 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
+using System.Text.Json;
 
-namespace Piezas2
+namespace Piezas2.Core
   {
   //=======================================================================================================================================
   /// <summary> Maneja todas las acciones relacionadas con los usuarios del sistema </summary>
@@ -16,11 +17,14 @@ namespace Piezas2
     readonly DbPiezasContext DbCtx;            // Conecto para acceder a la base de datos
     readonly IMailService    Mail;
     readonly ISession        Session;
+    readonly HttpContext     HttpCtx;
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Construye el objeto con informacion se la conexion </summary>
-    public Usuarios( HttpContext HttpCtx )
+    public Usuarios( HttpContext httpCtx )
       {
+      HttpCtx = httpCtx;
+
       DbCtx = (DbPiezasContext)HttpCtx.RequestServices.GetService( typeof( DbPiezasContext ) );         // Obtiene contexto a la BD
       Mail  = (IMailService)HttpCtx.RequestServices.GetService( typeof( IMailService ) );               // Obtiene el servicio para enviar correos
 
@@ -29,23 +33,22 @@ namespace Piezas2
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Encuentra si existe un usuario con el nombre y la contraseña dado </summary>
-    internal Usuario LogIn( string user, string pass )
+    internal userData LogIn( string user, string pass )
       {
       var logUser = DbCtx.Usuarios.Where( u=> u.Nombre==user && u.PassWord==pass ).FirstOrDefault();
-      if( logUser == null ) return new Usuario { Id = 0 };
 
-      if( logUser.Confirmado != 0 )  SetLogin( logUser );                 // Si ya esta confirmado, se loguea
-      else                           SendCode( logUser.Id );              // Envia un código de confirmación al correo del usuario
+      if( logUser == null         ) return new userData();
+      if( logUser.Confirmado == 1 ) return SetLogin( logUser );           // Si ya esta confirmado, se loguea
 
-      return logUser;
+      SendCode( logUser.Id );                                             // Envia un código de confirmación al correo del usuario
+      return new userData( logUser );                                     // Retorna datos del usuario
       }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Si hay un usuario registrado lo desregitra </summary>
     internal void LogOut()
       {
-      Session.Remove( "UserId" );
-      Session.Remove( "Admin" );
+      Session.Clear();
       }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
@@ -78,14 +81,14 @@ namespace Piezas2
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Encuentra el usuario con el Id dado y retorna sus datos, sino un objeto usuario vacio </summary>
-    internal Usuario VeryfyCode( int idUser, string sCode )
+    internal userData VeryfyCode( int idUser, string sCode )
       {
       var user = Find( idUser );
       var Code = GetVerifyCode( user.Correo );
 
-      if( Code == sCode ) SetLogin( user );
+      if( Code == sCode ) return SetLogin( user );
 
-      return user;
+      return new userData( user );
       }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
@@ -178,40 +181,59 @@ namespace Piezas2
       }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
-    /// <summary> Chequea exite un usuario con el mismo nombre o correo, se ser cierto emite una excepción </summary>
+    /// <summary> Chequea exite un usuario con el mismo nombre o correo, de ser cierto emite una excepción </summary>
     private void chkNameEmail( Usuario user )
       {
-      if( user.Id == 0 )
-        { 
-        if( DbCtx.Usuarios.Where( u=>u.Nombre==user.Nombre).FirstOrDefault() != null )
-          throw new Exception( "UserExist" );
+      if( DbCtx.Usuarios.Where( u=>u.Nombre==user.Nombre).FirstOrDefault() != null )
+        throw new Exception( "UserExist" );
 
-        if( DbCtx.Usuarios.Where( u => u.Correo == user.Correo ).FirstOrDefault() != null )
-          throw new Exception( "MailExist" );
-        }
-      else
-        {
-        if( DbCtx.Usuarios.Where( u => u.Nombre == user.Nombre && u.Id != user.Id ).FirstOrDefault() != null )
-          throw new Exception( "UserExist" );
-
-        if( DbCtx.Usuarios.Where( u => u.Correo == user.Correo && u.Id != user.Id ).FirstOrDefault() != null )
-          throw new Exception( "MailExist" );
-        }
+      if( DbCtx.Usuarios.Where( u => u.Correo == user.Correo ).FirstOrDefault() != null )
+        throw new Exception( "MailExist" );
       }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Establece al usuario 'user' como loguedo en el servidor </summary>
-    private void SetLogin( Usuario user )
+    private userData SetLogin( Usuario user )
       {
-      Session.SetInt32( "UserId", user.Id );                  // Inicia la sección para el usuario
-      Session.SetInt32( "Admin", user.Admin );                // Pone la sección para el modo administrador
+      user.NLogin    += 1;                                                // Incrementa la cantidad de veces que el usuario se registra
+      user.Confirmado = 1;                                                // Datos confirmado
+      DbCtx.SaveChanges();                                                // Lo quarda en la base de datos
 
-      user.NLogin += 1;                                      // Incrementa la cantidad de veces que el usuario se registra
-      user.Confirmado = 1;
-      DbCtx.SaveChanges();
+      Session.SetInt32( "UserId", user.Id );                              // El identificador del usuario como un entero
+      Session.SetInt32( "Admin", user.Admin );                            // Si es administrador o no
+
+      int nBuy = new Ventas( HttpCtx ).CarritoCount( user.Id );           // Número de compra en el carrito para el usuario
+      var uDat = new userData( user, nBuy );                              // Solo toma los datos relevantes para la interfaz
+
+      Session.SetString( "User", JsonSerializer.Serialize( uDat ) );      // Todos los datos del usuario en formato json
+
+      return uDat;                                                        // Retorna los datos del usuario
       }
 
-
-
     }
+
+  //=======================================================================================================================================
+  /// <summary> Clase para almacenar los datos del usuario que se menejan en el cliente </summary>
+  public class userData
+    {
+    public int    Id { get; set; } = 0;                     // Identificador del usuario
+    public string Nombre { get; set; } = "";                // Nombre del usuario
+    public string Correo { get; set; } = "";                // Correo electronico del usuario
+    public string Telefonos { get; set; } = "";             // Telefono del usuario
+    public int    nBuy { get; set; } = 0;                   // Número de productos que tiene el usuario en el carrito
+    public int    Confirmado { get; set; } = 0;             // Si el usuario esta comfirmado o no
+
+    public userData() {}                                    // Crea un objeto vacio
+
+    public userData( Usuario user, int numBuy=0 )
+      {
+      Id         = user.Id;
+      Nombre     = user.Nombre;
+      Correo     = user.Correo;
+      Telefonos  = user.Telefonos;
+      Confirmado = user.Confirmado;
+      nBuy       = numBuy;
+      }
+    }
+
   }

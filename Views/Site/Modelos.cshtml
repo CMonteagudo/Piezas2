@@ -5,6 +5,18 @@
   ViewData["Title"] = "Modelos de coches de la marca " + Model.Marca;
 }
 
+<script type="text/javascript">
+function ImgCenter(e)
+  {
+  var img = e.currentTarget;
+
+  if( img.naturalWidth > img.naturalHeight )
+    { img.style.width = "100%"; img.style.height = "auto"; }
+  else
+    { img.style.width = "auto"; img.style.height = "100%"; }
+  };
+</script>
+
 <div class="main-frame">
 
   <h1> Recambios para coches <strong> @Model.Marca </strong> al alcance de tu bolsillo.</h1>
@@ -16,8 +28,9 @@
       {
       <div class="coche">
         <div>
+          @{ var foto = string.IsNullOrWhiteSpace(coche.Foto)? "/images/coches/sedan-car.svg" : coche.Foto; }
           <a title="Piezas de repuesto para @coche.Marca @coche.Modelo" alttext="Piezas de repuesto para @coche.Marca @coche.Modelo" href="/recambios-del-coche/@coche.Id/@coche.Marca @coche.Modelo">
-            <img title="Piezas de repuesto para @coche.Marca @coche.Modelo" src="@coche.Foto" alt="" onload="CenterImg(event)"/>
+            <img title="Piezas de repuesto para @coche.Marca @coche.Modelo" src="@foto" alt="" onload="ImgCenter(event)"/>
           </a>
         </div>
         <div>
