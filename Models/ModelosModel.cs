@@ -1,12 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Piezas2.Core;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Text.Json;
-using Microsoft.AspNetCore.Html;
-using static Piezas2.Core.Coches;
 
 namespace Piezas2.Models
   {

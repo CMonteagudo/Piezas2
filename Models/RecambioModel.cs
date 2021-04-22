@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Piezas2.Core;
 using System.Collections.Generic;
-using static Piezas2.Core.Coches;
 
 namespace Piezas2.Models
   {
@@ -13,7 +12,7 @@ namespace Piezas2.Models
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Construye el objeto y obtiene los datos de la base de datos </summary>
-    public RecambioModel( int id, HttpContext HttpCtx ) : base( HttpCtx )
+    public RecambioModel( int id, HttpContext HttpCtx ) : base( HttpCtx, id )
       {
       Item = new Recambio( id, HttpCtx, 1 );
       }

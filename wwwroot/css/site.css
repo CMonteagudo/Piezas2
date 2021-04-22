@@ -25,8 +25,9 @@ body {                                                  /* Definiciones generale
 }
 
 h1, .title1 {
-  font: 36px/48px 'Segoe UI Light',Arial;
+  font: bold 36px/48px 'Segoe UI Light',Arial;
   color: #333;
+
 }
 
 h2, .title2 {
@@ -202,6 +203,64 @@ h1, h2, h3 {
   margin-top: 4px;
 }
 
+#view-item-datos {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	border: 1px #aaa solid;
+	border-radius: 10px;
+	margin-bottom: 15px;
+}
+
+#view-item-datos .item-name{                            /* Donde se pone el nombre del recambio */
+	grid-column: 2/4;
+  text-align: center;
+ }
+
+#view-item-datos .item-name h3 {
+	font-weight: bold;
+	margin: 12px 0px;
+}
+
+#view-item-datos .item-desc {
+	width: 100%;
+	grid-column: 1/4;
+	padding: 10px;
+	border-top: 1px #aaa solid;
+	margin-top: 15px;
+}
+
+#view-item-datos .item-dato {
+	display: flex;
+	align-items: center;
+	min-height: 30px;
+}
+
+#view-item-datos .item-dato div:first-child{
+	width:150px;
+  text-align:right;
+  font-weight:bold;
+  margin-right:5px;
+  flex-shrink:0;
+  flex-grow:0;
+}
+
+#buy-zone .buy-line {
+	display: flex;
+	align-items: center;
+}
+
+#in_uso_coches h4:first-child {
+	font-weight: bold;
+}
+
+#in_uso_coches {
+	margin-bottom: 15px;
+}
+
+.width-auto {
+	width: auto !important;
+}
+
 /* --------------------------------------------------------------------------------------------------------------------------------------*/
 
 
@@ -316,11 +375,13 @@ header #btnLog .icon {
 .btnLeft {
 	width: 30%;
 	float: left;
+  margin-right: 10px;
 }
 
 .btnRight {
-	width: 65%;
+	width: 60%;
 	float: right;
+  margin-left:10px;
 }
 
 .MsgError {
@@ -399,30 +460,86 @@ header #btnLog .icon {
 	border-radius: 10px;
 }
 
-.buy-item {                                                   /* Fila de la tabla de productos */
+.buy-item {
 	display: grid;
-	grid-template-columns: auto 30px 50px 60px;
+	grid-template-columns: 60px auto 40px 50px 60px;
 	grid-column-gap: 3px;
 	align-items: center;
-	margin: 5px 0px;
+	margin-bottom: 5px;
 	font-size: 14px;
+	position: relative;
 }
 
-#BuyList > div:first-child {                                  /* Encabezamiento de la lista de porductos*/
+.buy-remove {                                                 /* Boton para quitar una compra */
+	font-weight: bolder;
+	color: darkred;
+	text-align: center;
+	line-height: 24px;
+	cursor: pointer;
+	height: 40px;
+	line-height: 38px;
+}
+
+.buy-remove:hover {
+	background-color: #ddd;
+}
+
+#BuyList > div:first-child {                              /* Encabezamiento de la lista de porductos*/
 	font-weight: bold;
 	border-bottom: 1px #666 solid;
 }
 
-.buy-item div:nth-child(2),                                   /* Columna de cantidad de productos */
-.buy-item div:nth-child(3),                                   /* Columna de precio de productos */
-.buy-item div:nth-child(4)                                    /* Columna de monto de producto*/
+.buy-item-count,                                          /* Columna de cantidad de productos */
+.buy-item-precio,                                         /* Columna de precio de productos */
+.buy-item-monto                                           /* Columna de precio de productos */
 {
 	text-align:right;
 }
 
-#PendItems {
-	min-height: 80px;
+.buy-item-name {
+	cursor: pointer;
+	height: 100%;
+	display: flex;
+	align-items: center;
 }
+
+.buy-item-name:hover{
+  background-color: #f0f0f0;
+}
+
+#ventas-items {
+	overflow:hidden;
+}
+
+#ventas-items, #PendItems {
+	min-height: 175px;
+}
+
+.menu-desl {
+	position: absolute;
+	left: -150px;
+	display: flex;
+	align-items: center;
+	background-color: #e1edf4;
+	padding: 10px;
+	border-radius: 5px;
+	border: 1px solid aqua;
+}
+
+.menu-desl.show-desl {
+	left: 10px;
+  transition-property: left;
+  transition-duration: 0.5s;
+  transition-timing-function: linear;
+}
+
+.menu-desl.hide-desl {
+	left: -150px;
+  transition-property: left;
+  transition-duration: 0.5s;
+  transition-timing-function: linear;
+  }
+
 .buy-total {                                                  /* Fila que muestra el total a pagar */
 	margin-bottom: 15px;
 	text-align: right;
@@ -441,6 +558,11 @@ header #btnLog .icon {
 .btnCenter {                                                  /* Boton para pagar */
 	width: 100px;
 	margin: auto;
+}
+
+.div-error {
+	display: none;
+	margin-bottom: 10px;
 }
 
 
@@ -591,7 +713,7 @@ header #btnLog .icon {
 }
 
 .show-tipo > .show-btn:hover,
-.coche-name:hover,
+.boton-neutral:hover,
 #CochesList > tbody > tr:hover,
 #ItemsList > tbody > tr:hover {                       /* Pone cursor cuando se pasa por arriba de las filas*/
   background-color: #f0f0f0;
@@ -603,16 +725,23 @@ header #btnLog .icon {
   flex-wrap: wrap;
 }
 
-.coche-name {                                         /* Aspecto como se muestra un nombre de un coche */
+.boton-neutral {                                         /* Aspecto como se muestra un nombre de un coche */
   border-radius: 8px;
   margin: 3px;
   padding: 1px 10px;
   border: gray 1px solid;
 }
+.boton-neutral {
+	border-radius: 4px;
+	margin: 3px;
+	padding: 1px 10px;
+	border: gray 1px solid;
+	background-color: white;
+}
 
-.coche-name a,
-.coche-name a:hover,
-.coche-name a:focus {                                 /* Controla la rayita y el color que sale en los links */
+.boton-neutral a,
+.boton-neutral a:hover,
+.boton-neutral a:focus {                                 /* Controla la rayita y el color que sale en los links */
   text-decoration: none;
   color: darkslategray;
 }
@@ -856,9 +985,27 @@ header #btnLog .icon {
   grid-column: 1/3;
 }
 
-#FotoFrame {
+#foto-frame200 {
+	width: 200px;
+	height: 200px;
+	grid-row: 1/7;
+	margin: auto;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+#foto-frame120 {
   width: 120px;
   height: 120px;
+}
+
+#foto-frame60 {
+  width: 60px;
+  height: 60px;
+}
+
+#foto-frame120, #foto-frame60 {
   border: 1px solid #aaa;
   display: flex;
   align-items: center;
@@ -936,22 +1083,38 @@ header #btnLog .icon {
 	font-size: 24px;
 }
 
-#NewRec{
+#Widget{
 	width: 100%;
 	height: 100%;
 	z-index: 500;
-	position: fixed;
+	position: absolute;
 	top: 0px;
 }
 
-#NewRec iframe {
-	width: 350px;
-	border: 0px;
+#Widget iframe {
 	margin-left: auto;
 	margin-right: auto;
-  margin-top: 20px;
-  display: block;
+	margin-top: 50px;
+	display: block;
 }
+
+#Widget .ifrm-default {
+	width: 350px;
+	border: 0px;
+	padding: 3px;
+}
+
+#Widget .buy-car {
+  width:700px;
+	border: 1px solid #AAA;
+	background-color: #FFF;
+	z-index: 3500;
+	padding: 10px;
+	box-shadow: 5px 5px 30px #808080;
+	box-sizing: border-box;
+}
+
+
 /*----------------------------------------------------- Media Querys --------------------------------------------------------------*/
 @media (max-width: 1100px) {
   .marcas { grid-template-columns: 1fr 1fr; }                     /* No caben las marcas en 4 columnas, las pone en 2 */
@@ -959,7 +1122,7 @@ header #btnLog .icon {
   .marca h5 {  display: none; }                                   /* Oculta el nombre de la marca, con el logo es sufiente */
   .marcas > div { text-align: left; }
 
-  .main-frame { margin-left: 5px; margin-right: 5px; }            /* Pone bordes fijos y pequeños al marco de las paginas*/
+  .main-frame { margin-left: 15px; margin-right: 15px; }          /* Pone bordes fijos y pequeños al marco de las paginas*/
 
   .tab-content .btn-group { margin-bottom: 6px; }                 /* Pone separación vertical a los combos de selección de filtros*/
 
@@ -976,6 +1139,27 @@ header #btnLog .icon {
   #ItemsGrid.item-boxs { grid-template-columns: 1fr 1fr 1fr; }    /* Si esta en busqueda pasa a 3 */
   }
 
+@media (max-width: 950px) {                                       
+  #view-item-datos { grid-template-columns: 1fr 1fr; }            /* Pone los datos de la vista de recambio en 2 columnas */
+  #view-item-datos .item-name { grid-column-end: 3; }
+  #view-item-datos .item-desc { grid-column-end: 3; }
+}
+
+@media (max-width: 900px) {                                       /* Las páginas de edicción de datos, pasan tener un solo panel*/
+  #show-lst-panel { display: block; }                             /* Muestra el botón para sacar la lista*/
+  .columns-for-edit {  display: block; }                          /* Quita el layout para las 2 columnas*/
+  #lb-sel-list { left: 35px; }                                    /* Corre el lable de la primera columna para con interfiera con el botón*/
+
+  #panelList {                                                    /* Oculta la lista y pone animación*/
+    position: absolute;
+    width: 300px;
+    left: -320px;
+    transition-property: left;
+    transition-duration: 0.5s;
+    transition-timing-function: linear;
+  }
+}
+
 
 @media (max-width: 825px) {
   .coches { grid-column-gap: 15px; }                              /* Pone separación entre comnas mas pequeña*/
@@ -989,8 +1173,27 @@ header #btnLog .icon {
   }
 }
 
+@media (max-width: 750px) {
+  h1 { font: bold 30px/34px 'Segoe UI Light',Arial; }             /* Los titulos se hacen mas pequeños */
+}
+
 @media (max-width: 700px) {
   .coches, .makers { grid-template-columns: 1fr; }                /* No caben los fabricantes en 2 columnas, los pone en 1 */
+  #Widget .buy-car { width: 100%; }                               /* En ancho de los pagos pendientes cambia según el tamaño disponible*/
+}
+
+@media (max-width: 650px) {
+  #view-item-datos { grid-template-columns: 1fr; }                /* Pone los datos de la vista de recambio en 1 columna */
+  #view-item-datos .item-name { grid-column: 1/2; }
+  #view-item-datos .item-desc { grid-column: 1/2; }
+  #view-item-datos .item-dato div:first-child { width: 50%; }
+  #view-item-datos #foto-frame200 { grid-row: 2; }
+  }
+
+@media (max-width: 600px) {
+#foto-datos #datos { grid-template-columns: 1fr; }                /* Pone los datos en una sola columna*/
+#dato-nombre { grid-column: initial; }                            /* El nombre pasa a ocupar una columna en lugar de 2*/
+.main-frame {margin:0px; padding:10px; }                          /* Pega mas a los bordes el marco de la página*/
 }
 
 @media (max-width: 570px) {
@@ -1006,33 +1209,17 @@ header #btnLog .icon {
   #LogoSitio img { margin: 0px 4px; }                             /* Ajustes en el encabezamiento de la página */
   #LogoSitio>div { font-size: 15px; }
   header #btnBuy, header #btnLog {	margin-right: 10px; }
-}
-
-/*--------------------------------------------- Para las paginas de edicción -------------------------------------------------------*/
-
-@media (max-width: 900px) {                                       /* Las páginas de edicción de datos, pasan tener un solo panel*/
-  #show-lst-panel { display: block; }                             /* Muestra el botón para sacar la lista*/
-  .columns-for-edit {  display: block; }                          /* Quita el layout para las 2 columnas*/
-  #lb-sel-list { left: 35px; }                                    /* Corre el lable de la primera columna para con interfiera con el botón*/
-
-  #panelList {                                                    /* Oculta la lista y pone animación*/
-    position: absolute;
-    width: 300px;
-    left: -310px;
-    transition-property: left;
-    transition-duration: 0.5s;
-    transition-timing-function: linear;
-  }
-}
-
-@media (max-width: 600px) {
-#foto-datos #datos { grid-template-columns: 1fr; }                /* Pone los datos en una sola columna*/
-#dato-nombre { grid-column: initial; }                            /* El nombre pasa a ocupar una columna en lugar de 2*/
+  h1 { font: bold 25px/28px 'Segoe UI Light',Arial; }
 }
 
 @media (max-width: 400px) {
-#foto-datos { grid-template-columns: 1fr; }                       /* Pone la foto en la parte de arriba*/
-#foto-datos #foto { margin: auto; }                               /* Centra la foto */  
-#foto-datos #datos { grid-template-rows: initial; }               /* Quita la altura de las filas*/ 
+  #foto-datos { grid-template-columns: 1fr; }                       /* Pone la foto en la parte de arriba*/
+  #foto-datos #foto { margin: auto; }                               /* Centra la foto */  
+  #foto-datos #datos { grid-template-rows: initial; }               /* Quita la altura de las filas*/ 
+
+  .buy-item { grid-template-columns: 60px auto 40px 50px 0;}       /* Quita la columna de monto en la lista de articulos*/
+  .buy-item-monto { width:0px; overflow:hidden; }
+
+  #Widget .ifrm-default {	width: 100%;}
 }
 

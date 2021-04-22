@@ -84,38 +84,11 @@
             </div>
           </div>
 
-          <div id="BoxBuy" class="BoxFloat" style="position: absolute; left: -102.6px; top: 38px; display: none;">
-            <div id="BuyList" style="display: none;">
-              <div class="buy-item">
-                <div>Artículo</div>
-                <div>Cant.</div>
-                <div>Precio</div>
-                <div>Monto</div>
-              </div>
-              <div id="PendItems"> </div>
-
-              <div class="buy-total">
-                Total a pagar: <span>250.02</span><span><select>
-                    <option value="0">usd</option>
-                    <option value="2">euro</option>
-                    <option value="3">cup</option>
-                </select>
-                </span>
-              </div>
-
-              <div class="MsgError" ></div>
-              <div class="btnCenter">Pagar</div>
-            </div>
-
-            <div id="MsgLogin" style="display: none;">
+          <div id="BoxBuy" class="BoxFloat" style="position: absolute; left: -102.6px; top: 38px;">
+            <div id="MsgLogin">
               <p>Para tener acceso a la lista de compra hay que regístrarse primero como un usuario del sistema</p>
             </div>
-
-            <div id="MsgNoBuy" style="display: none;">
-              <p>No hay ningún producto pendiente de compra, localice un producto y oprima el botón comprar para adicionarlo a esta lista</p>
-            </div>
-
-        </div>
+          </div>
 
         </div>
 
@@ -125,11 +98,11 @@
 
     <footer class="border-top footer text-muted">
       <div class="footer-row">
-        <div><a title="Mapa del sitio web de venta de recambios de coche para autos del Grupo VAG" href="/mapa-del-sitio">Mapa del sitio</a></div>
+        <div><a title="Mapa del sitio web de venta de recambios de coche para autos del Grupo VAG" href="~/mapa-del-sitio">Mapa del sitio</a></div>
         <div><span >|</span></div>
-        <div><a title="Información de Contacto" href="/informacion-de-contacto">Contacto</a></div>
+        <div><a title="Información de Contacto" href="~/informacion-de-contacto">Contacto</a></div>
         <div><span >|</span></div>
-        <div><a title="Información sobre nuestra empresa" href="/acerca-de">Sobre nuestro sitio</a></div>
+        <div><a title="Información sobre nuestra empresa" href="~/acerca-de">Sobre nuestro sitio</a></div>
       </div>
 
       <div class="footer-row">
@@ -138,6 +111,11 @@
         <div> <a title="Follow us on Facebook" rel="nofollow" href="https://www.facebook.com/pamicarro/">Facebook</a></div>
         <div><span class="separator">|</span></div>
         <div> <a title="Follow us on Twitter" rel="nofollow" href="https://twitter.com/Pamicarro">Twitter</a></div>
+        @if( Model._Admin==1 )
+          {
+          <div><span class="separator">|</span></div>
+          <div> <a title="Follow us on Twitter" rel="nofollow" href="~/admin">Administrar</a></div>
+          }
       </div>
 
       <div class="copyright">
@@ -153,7 +131,6 @@
     @{ var user = new Microsoft.AspNetCore.Html.HtmlString( Model._User ); }
 
     var _User = @user;                                                  // Usuario logueado en el momento de abrir la página
-    var _nBuy = 0                                                       // Número de compras en el momento de abrir la página
 
     var mnuUser = new UsersMenu();                                      // Crea objeto para manejar el menú de usuario
     var mnuBuy  = new Compras( "#btnBuy", "#BoxBuy", _User.Id );        // Maneja el carrito de compras
@@ -161,25 +138,19 @@
     mnuUser.ChangeUser = SetUser;                                       // Se llama cade vez que se cambia el usuario
     mnuUser.GetLogUser = ()=>{ return _User; }                          // Suministra los datos del usuario al objeto
 
-    mnuBuy.getUserId = ()=>{ return _User.Id; }                       // Para recuperar el usuario en el menú de compras  
-    mnuBuy.UpdateUI  = (t,n)=>
-      {
-            if( t=="nBuy"   ) SetBuyCount( n );
-      else if( t=="LogOut" ) { SetUser({Id:0}); SetBuyCount(0); }
-      }
+    mnuBuy.getUserId = ()=>{ return _User.Id; }                         // Para recuperar el usuario en el menú de compras  
+    mnuBuy.SetNBuy   = (n )=>{ SetBuyCount(n)   };                      // Pone el usuario en la interfase principal
+    mnuBuy.SetUser   = (id)=>{ SetUser({Id:id}) };                      // Pone el numero de items en el carrito de compras en la interfase principal
 
     // Guarda lo datos del usuario y pone el nombre o no al lado de botón
     function SetUser( user )
       {
       if( user ) _User = user;
-
-      if( _User.nBuy != undefined )
-        {
-        _nBuy = _User.nBuy;
-        SetBuyCount( _nBuy );
-        }
-
       $("#btnLog>span").text( _User.Id? _User.Nombre : "Entrar" ); 
+
+      if( !_User.Id ) _User.nBuy = 0;
+
+      SetBuyCount( _User.nBuy );
       }
 
     // Muestra el número de compras en el carrito
@@ -190,10 +161,11 @@
 
       if( n > 0 ) num.addClass("buy-count");
       else        num.removeClass ("buy-count");
+
+      _User.nBuy = n;
       }
 
     SetUser( _User );                                                   // Pone el nombre del usuario la primera vez
-    SetBuyCount(_nBuy);
 
     $("#LogoSitio").click( ()=>{ location="/"; });                      //  Cuando se oprime el logo del sitio va la pagina principal
 

@@ -210,6 +210,21 @@ namespace Piezas2.Core
       return uDat;                                                        // Retorna los datos del usuario
       }
 
+    //---------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary> Actualiza la cantidad de ventas que tiene el usuario dado </summary>
+    public int RefreshBuysCount( int idUser )
+      {
+      var user = DbCtx.Usuarios.Find( idUser );
+      if( user == null ) return 0;
+
+      int nBuy = new Ventas( HttpCtx ).CarritoCount( user.Id );           // Número de compra en el carrito para el usuario
+      var uDat = new userData( user, nBuy );                              // Solo toma los datos relevantes para la interfaz
+
+      Session.SetString( "User", JsonSerializer.Serialize( uDat ) );      // Todos los datos del usuario en formato json
+
+      return nBuy;                                                        // Retorna los datos del usuario
+      }
+
     }
 
   //=======================================================================================================================================

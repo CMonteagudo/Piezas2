@@ -38,12 +38,24 @@ namespace Piezas2
       return new JsonResult( new { Error=0, Count } );
       }
 
+    public static JsonResult OkIdCount( int Id, int Count )
+      {
+      return new JsonResult( new { Error = 0, Id, Count } );
+      }
+
     //---------------------------------------------------------------------------------------------------------------------------------------
     ///<summary> Retorna una cadena JSON con el código y el mensaje de cuando un record no se puede modificar o adicionar  </summary>
     public static JsonResult NoModify( int id, string name, Exception e = null )
       {
-      if( id == 0 ) return ErrorObj( 1008, $"Error al adicionar el regístro con nombre '{name}'", e );
-      else          return ErrorObj( 1007, $"Error al modificar el regístro con Id={id} y nombre '{name}'", e );
+      if( id == 0 ) return ErrorJson( 1001, $"Error al adicionar el regístro con nombre '{name}'", e );
+      else          return ErrorJson( 1002, $"Error al modificar el regístro con Id={id} y nombre '{name}'", e );
+      }
+
+    //---------------------------------------------------------------------------------------------------------------------------------------
+    ///<summary> Retorna una cadena JSON con un mensaje de que no se puede adicionar una venta </summary>
+    internal static JsonResult NoAddVenta( int id, int cant, Exception e )
+      {
+      return ErrorJson( 1003, $"Error al adicionar una venta de {cant} árticulo/s con Id={id}", e );
       }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
@@ -51,7 +63,7 @@ namespace Piezas2
     public static JsonResult NoSendMail( Exception e = null )
       {
       var sErr = "Hubo un problema al enviar el correo.";
-      return ErrorObj( 1006, sErr, e );
+      return ErrorJson( 1004, sErr, e );
       }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
@@ -62,14 +74,14 @@ namespace Piezas2
 
       if( e?.GetType().Name == "DbUpdateException" ) sErr += $", porque se esta utlizando.";
 
-      return ErrorObj( 1005, sErr );
+      return ErrorJson( 1005, sErr );
       }
 
     ///<summary> Retorna el error de acceso denegado  </summary>
     public static JsonResult NoAccess()
       {
       var sErr = $"Acceso denegado para el usuario actual.";
-      return ErrorObj( 1004, sErr );
+      return ErrorJson( 1006, sErr );
       }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
@@ -77,7 +89,7 @@ namespace Piezas2
     public static JsonResult NoExist( int id, string name )
       {
       var sErr = $"No se encontro en la base de datos, el registro con Id={id} y nombre '{name}'.";
-      return ErrorObj( 1003, sErr );
+      return ErrorJson( 1007, sErr );
       }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
@@ -85,7 +97,7 @@ namespace Piezas2
     internal static JsonResult NoVentas( int userId, Exception e )
       {
       var sErr = $"Error al obtener el listado de ventas para el usuario '{userId}'";
-      return ErrorObj( 1002, sErr, e );
+      return ErrorJson( 1008, sErr, e );
       }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
@@ -93,25 +105,55 @@ namespace Piezas2
     internal static JsonResult NoPendVentas( int userId, Exception e )
       {
       var sErr = $"Error al obtener las compras pendientes para el usuario '{userId}'";
-      return ErrorObj( 1001, sErr, e );
+      return ErrorJson( 1009, sErr, e );
       }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
+    ///<summary> Retorna un error al tratar de modificar una venta </summary>
+    internal static JsonResult NoVentaModify( int id, Exception e )
+      {
+      var sErr = $"Error al tratar de modificar la venta con identificador '{id}'";
+      return ErrorJson( 1010, sErr, e );
+      }
+
+    internal static JsonResult NoVentaModify( Exception e )
+      {
+      var sErr = $"Error al tratar de modificar la cantidad de articulos de una venta";
+      return ErrorJson( 1010, sErr, e );
+      }
+
+    //---------------------------------------------------------------------------------------------------------------------------------------
+    ///<summary> Retorna un error al tratar de borrar una venta </summary>
+    internal static JsonResult NoDelVenta( int id , Exception e )
+      {
+      var sErr = $"Error al tratar de borrar la venta con identificador '{id}'";
+      return ErrorJson( 1011, sErr, e );
+      }
+
+    //=======================================================================================================================================
     ///<summary> Retorna un error al tratar de obtener las ventas perndientes del usuario  </summary>
-    internal static JsonResult ErrorObj( int Error, string sError, Exception e=null )
+    public static JsonResult ErrorJson( int Err, string sErr, Exception e=null )
+      {
+      var (Error, sError) = ErrorDatos( Err, sErr, e );
+      return new JsonResult( new{ Error, sError } );
+      }
+
+    //---------------------------------------------------------------------------------------------------------------------------------------
+    ///<summary> Revisa la excepcion y retorna un mesaje de error de acuerdo al valor encontrado  </summary>
+    public static (int, string) ErrorDatos( int Error, string sError, Exception e )
       {
       if( e != null )
-        { 
+        {
         var (Err, Msg) = ExceptionError( e );
 
-        if( Error != 0 )
-          { 
-          Error   = Err;
+        if( Err != 0 )
+          {
+          Error = Err;
           sError += "; " + Msg;
           }
         }
 
-      return new JsonResult( new { Error, sError } );
+      return( Error , sError );
       }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
@@ -122,11 +164,13 @@ namespace Piezas2
 
       switch( e.Message )
         {
-        case "UserExist": return (2001, $"Ya exite un usuario con ese nombre.");
-        case "MailExist": return (2002, $"Ya exite un usuario con ese correo.");
-        case "UserNoExist": return (2003, $"El usuario indicado no existe.");
-        case "AdminAccess": return (2004, $"Solo es accesible por administradore.");
-        case "UserAccess": return (2005, $"Solo es accesible para el usuario logueado.");
+        case "UserExist"   : return (2001, $"Ya exite un usuario con ese nombre.");
+        case "MailExist"   : return (2002, $"Ya exite un usuario con ese correo.");
+        case "UserNoExist" : return (2003, $"El usuario indicado no existe.");
+        case "AdminAccess" : return (2004, $"Solo es accesible por administradore.");
+        case "UserAccess"  : return (2005, $"Solo es accesible para el usuario logueado.");
+        case "NoItemExist" : return (2006, $"El artículo solicitado no existe.");
+        case "NoVentaExist": return (2007, $"La venta solicitada no existe.");
         }
 
       return (0, "");

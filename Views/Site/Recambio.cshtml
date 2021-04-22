@@ -3,72 +3,275 @@
   ViewData["Title"] = "Datos del recambio de coche";
 }
 
-<div class="container main-frame">
+<script type="text/javascript">
+  function ImgCenter(e)
+    {
+    var img = e.currentTarget;
 
-  <h3 style="text-align: center;"> Datos del recambio de coche </h3>
+    if( img.naturalWidth > img.naturalHeight )
+      { img.style.width = "100%"; img.style.height = "auto"; }
+    else
+      { img.style.width = "auto"; img.style.height = "100%"; }
+    };
+</script>
 
-  <div class="row">
-      <div class="col-md-4">
-        <picture> 
-          @{ var foto = string.IsNullOrWhiteSpace(Model.Foto)? "/images/piezas.svg" : Model.Foto; }
-          <img style="min-height: 200px" src="@foto" alt="Imagen de @Model.Nombre"> 
-        </picture>
+<div class="main-frame">
+
+  <h1> Datos del recambio de coche </h1>
+
+  <div id="view-item-datos">
+    <div id="foto-frame200">
+      @{ var foto = string.IsNullOrWhiteSpace(Model.Foto)? "/images/items/piezas.svg" : Model.Foto; }
+      <img src="@foto" alt="Imagen de @Model.Nombre" onload="ImgCenter(event)"> 
+    </div>
+
+    <div class="item-name">
+      <h3>@Model.Nombre</h3>
+    </div>
+
+    <div class="item-dato">
+      <div>Precio:</div><div>@Model.Precio</div>
+    </div>
+
+    <div class="item-dato">
+      <div>Fabricante:</div><div>@Model.NameFab</div>
+    </div>
+
+    <div class="item-dato">
+      <div>Categoría:</div><div>@Model.NameCat</div>
+    </div>
+
+    <div class="item-dato">
+      <div>Código:</div><div>@Model.Codigo</div>
+    </div>
+
+    <div class="item-dato">
+      <div>Precio:</div><div>@Model.Precio</div>
+    </div>
+
+    <div class="item-dato">
+      <div>Fabricante:</div><div>@Model.NameFab</div>
+    </div>
+
+    <div class="item-dato">
+      <div>Categoría:</div><div>@Model.NameCat</div>
+    </div>
+
+    <div class="item-dato">
+      <div>Código:</div><div>@Model.Codigo</div>
+    </div>
+
+    <div class="item-dato">
+      <div>Precio:</div><div>@Model.Precio</div>
+    </div>
+
+    <div class="item-dato">
+      <div>Fabricante:</div><div>@Model.NameFab</div>
+    </div>
+
+    <div class="item-dato">
+      <div>Categoría:</div><div>@Model.NameCat</div>
+    </div>
+
+    <div class="item-dato">
+      <div>Código:</div><div>@Model.Codigo</div>
+    </div>
+
+    <div class="item-dato">
+      <div>Precio:</div><div>@Model.Precio</div>
+    </div>
+
+    <div class="item-dato">
+      <div>Fabricante:</div><div>@Model.NameFab</div>
+    </div>
+
+    <div class="item-dato">
+      <div>Categoría:</div><div>@Model.NameCat</div>
+    </div>
+
+    <div class="item-dato">
+      <div>Código:</div><div>@Model.Codigo</div>
+    </div>
+
+    <div class="item-dato">
+      <div>Precio:</div><div>@Model.Precio</div>
+    </div>
+
+    <div class="item-dato">
+      <div>Fabricante:</div><div>@Model.NameFab</div>
+    </div>
+
+    <div class="item-dato">
+      <div>Categoría:</div><div>@Model.NameCat</div>
+    </div>
+
+    <div class="item-dato">
+      <div>Código:</div><div>@Model.Codigo</div>
+    </div>
+
+    <div class="item-dato">
+      <div>Precio:</div><div>@Model.Precio</div>
+    </div>
+
+    <div class="item-dato">
+      <div>Fabricante:</div><div>@Model.NameFab</div>
+    </div>
+
+    <div class="item-dato">
+      <div>Categoría:</div><div>@Model.NameCat</div>
+    </div>
+
+    <div class="item-dato">
+      <div>Código:</div><div>@Model.Codigo</div>
+    </div>
+
+    <div class="item-dato">
+      <div>Precio:</div><div>@Model.Precio</div>
+    </div>
+
+    <div class="item-dato">
+      <div>Fabricante:</div><div>@Model.NameFab</div>
+    </div>
+
+    <div class="item-dato">
+      <div>Categoría:</div><div>@Model.NameCat</div>
+    </div>
+
+    <div class="item-dato">
+      <div>Código:</div><div>@Model.Codigo</div>
+    </div>
+
+    <div class="item-dato">
+      <div>Precio:</div><div>@Model.Precio</div>
+    </div>
+
+    <div class="item-dato">
+      <div>Fabricante:</div><div>@Model.NameFab</div>
+    </div>
+
+    <div class="item-dato">
+      <div>Categoría:</div><div>@Model.NameCat</div>
+    </div>
+
+    <div class="item-dato">
+      <div>Código:</div><div>@Model.Codigo</div>
+    </div>
+
+    @if( !string.IsNullOrWhiteSpace(Model.Descripcion) )
+      {
+      <div class="item-desc">
+        <div></div><div>@Model.Descripcion</div>
       </div>
-      <div class="col-md-8 table-responsive">
-        <table class="table">
-            <tbody>
-                <tr>
-                    <td colspan="2" style="text-align: left"><h4>@Model.Nombre</h4></td>
-                </tr>
-                <tr>
-                    <td>Precio:</td><td style="width: 100%">@Model.Precio</td>
-                </tr>
-                <tr>
-                    <td>Fabricante:</td><td style="width: 100%">@Model.NameFab</td>
-                </tr>
-                <tr>
-                    <td>Categoria:</td><td>@Model.NameCat</td>
-                </tr>
-                <tr>
-                    <td>Codigo:</td><td>@Model.Codigo</td>
-                </tr>
-                <tr>
-                    <td colspan="2" style="text-align: left">@Model.Descripcion</td>
-                </tr>
-                <tr>
-                  <td colspan="2" style="text-align: left">
-                   <h4>Coches donde se utiliza:</h4>
-                   @if( Model.Coches.Count > 0 )
-                     {
-                     <div class="coche-list">
-                     @foreach( var coche in Model.Coches )
-                      {
-                      <div class="coche-name">
-                        <a href="~/coche/@coche.Id">
-                          <strong>@coche.Marca</strong>
-                          <span> @coche.Modelo <strong>/</strong> @coche.Motor</span>
-                        </a>
-                      </div>
-                      }
-                     </div>
-                     }
-                   else
-                     {
-                     <span>No se usa en ningún Coche.</span>
-                     }
-                    <div class="center-block">
-                      <a href="~/admin/recambio-coche/@Model.itemId">
-                        <div class="center-block coche-name" style="width:160px; background-color:ButtonFace; margin:10px auto; font-weight:600; text-align:center">
-                          Seleccionar Coches
-                        </div> 
-                      </a>
-                    </div>
-                  </td>
-                </tr>
-            </tbody>
-        </table>
-      </div>
+      }
   </div>
-  
+
+  <div id="buy-zone">
+    <div id="ErrPago"></div>
+    <form class="buy-line">
+      <div id="bntCompar" class="btnCenter">Comprar</div>
+      <div>
+        <label for="NumItems">Número de artículos:</label>
+        <input id="NumItems" class="buy-num" type="number" size="2" value="1" min="1" max="100" required/>
+      </div>
+    </form>
+  </div>
+
+  <div id="in_uso_coches">
+    <h4>Coches donde se utiliza:</h4>
+    @if( Model.Coches.Count > 0 )
+      {
+      <div class="coche-list">
+      @foreach( var coche in Model.Coches )
+      {
+      <div class="boton-neutral">
+        <a href="~/recambios-del-coche/@coche.Id/@coche.Marca @coche.Modelo">
+          <strong>@coche.Marca</strong>
+          <span> @coche.Modelo <strong>/</strong> @coche.Motor</span>
+        </a>
+      </div>
+      }
+      </div>
+      }
+    else
+      {
+      <span>No se usa en ningún Coche.</span>
+      }
+  </div>
+
+  @if( Model._Admin==1 )
+    {
+    <a href="~/admin/recambio-coche/@Model.itemId">
+      <div class="btnLeft width-auto"> Seleccionar Coches </div> 
+    </a>
+    <a href="~/admin/recambio-edicion/@Model.Id">
+      <div class="btnLeft width-auto"> Editar Recambio </div> 
+    </a>
+    }
 
 </div>
+
+
+@section Scripts{
+  <script type="text/javascript">
+    var ItemId =  @Model.itemId;
+
+    var Msg = new MsgAlert( "#ErrPago", "danger", "strong" );
+    var bntCompar = $("#bntCompar");
+    var NumItems  = $("#NumItems");
+
+    // Se llama después de cargarse la página completamente
+    $( function()
+      {
+      bntCompar.click( OnComprar );
+      NumItems.on( "input", ChangeCount );        
+      });
+
+    // Cambia el número de articulos a compar
+    function ChangeCount( ev )
+      {
+      if( !ev.currentTarget.reportValidity() ) return;
+
+      Msg.Hide();
+      }
+
+    // Cuando se oprime el botón para ir a pagar
+    function OnComprar( )
+      {
+      var frm = $("#buy-zone > .buy-line")[0];
+      if( !frm.reportValidity() )
+        {
+        Msg.Show( "Escriba correctamente el número de articulos que desee compar." );
+        return;
+        }
+
+      var Conn = new ServerConnection( "POST", (err)=>ShowError(err) );
+      Conn.data = 'itemId='+ ItemId + '&UserId=' + _User.Id + '&cant=' + NumItems.val();
+
+      Conn.Send( "/api/add-venta", (r) => 
+        { 
+        SetBuyCount( r.Count );
+
+        Msg.Show( "La compra a sido adicionada, para pagar oprima el icono del carrito que esta en la parte superior derecha de la página", "info" );
+        }, frm  );
+      }
+
+    // Muestra un mensaje de error
+    function ShowError( err )
+      {
+      if( err.Error==2005 )
+        {
+        err.sError = "La seccion de usurio no se ha inicializado o ha expirado.";
+        setUserLogout();
+        }
+
+      ConnError( err, Msg );  // Lo muestra en la forma de error de conexion a traves de Msg
+      }
+
+    // Hace que el usuario se muestre desloguedo en la página actual
+    function setUserLogout()
+      {
+      if( SetUser != undefined ) SetUser({Id:0});
+      }
+
+  </script>
+}

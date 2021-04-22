@@ -104,7 +104,7 @@ namespace Piezas2
       catch( Exception e ) { return retJson.NoDelete( Id, pza.Nombre, e ); }
 
       DeleteFile( pza.Foto );
-      return retJson.OkId( Id );
+      return retJson.Ok();
       }
     #endregion
 
@@ -152,7 +152,7 @@ namespace Piezas2
       catch( Exception e ) { return retJson.NoDelete( Id, maker.Nombre, e ); }
 
       DeleteFile( maker.Logo );
-      return retJson.OkId( Id );
+      return retJson.Ok();
       }
     #endregion
 
@@ -200,7 +200,7 @@ namespace Piezas2
       catch( Exception e ) { return retJson.NoDelete( Id, marca.Nombre, e ); }
 
       DeleteFile( marca.Logo );
-      return retJson.OkId( Id );
+      return retJson.Ok();
       }
     #endregion
 
@@ -236,7 +236,7 @@ namespace Piezas2
       catch( Exception e ) { return retJson.NoDelete( edId, cat.Nombre, e ); }
 
       DeleteFile( cat.Logo );
-      return retJson.OkId( edId );
+      return retJson.Ok();
       }
     #endregion
 
@@ -287,7 +287,7 @@ namespace Piezas2
       catch( Exception e ) { return retJson.NoDelete( Id, coches.CocheName(coche), e ); }
 
       DeleteFile( coche.Foto );
-      return retJson.OkId( Id );
+      return retJson.Ok();
       }
     #endregion
 
@@ -333,7 +333,7 @@ namespace Piezas2
       try                  { new Modelos(HttpContext).Delete( modelo.Id );   }
       catch( Exception e ) { return retJson.NoDelete( modelo.Id, modelo.Nombre, e ); }
 
-      return retJson.OkId( modelo.Id );
+      return retJson.Ok();
       }
     #endregion
 
@@ -379,10 +379,9 @@ namespace Piezas2
       try                  { new Motores( HttpContext ).Delete( motor.Id ); }
       catch( Exception e ) { return retJson.NoDelete( motor.Id, motor.Nombre, e );  } 
 
-      return retJson.OkId( motor.Id );
+      return retJson.Ok();
       }
     #endregion
-
 
     #region ======================================================    USUARIO      ============================================================
     //-----------------------------------------------------------------------------------------------------------------------------------------
@@ -483,8 +482,67 @@ namespace Piezas2
       try { new Usuarios( HttpContext ).Delete( user.Id ); }
       catch( Exception e ) { return retJson.NoDelete( user.Id, user.Nombre, e ); }
 
-      return retJson.OkId( user.Id );
+      return retJson.Ok();
       }
+    #endregion
+
+    #region ======================================================    VENTAS     ==============================================================
+    //-----------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary> Adiciona una venta en la base de datos  </summary>
+    [HttpPost( "/api/add-venta" )]
+    public JsonResult AddVenta( [FromForm] int cant, [FromForm] int itemId,  [FromForm] int UserId )
+      {
+      try
+        {
+        int idVent = new Ventas(HttpContext).Add( cant, itemId, UserId );
+        int nBuy   = new Usuarios(HttpContext).RefreshBuysCount( UserId );
+
+        return retJson.OkIdCount( idVent, nBuy );
+        }
+      catch( Exception e ) { return retJson.NoAddVenta( itemId, cant, e ); }
+      }
+
+    //-----------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary> Modifica los datos de una venta ya existente </summary>
+    [HttpPost( "/api/modify-venta" )]
+    public JsonResult ModifyVenta( [FromForm] Ventum venta )
+      {
+      try
+        {
+        int Id = new Ventas(HttpContext).Modify( venta );
+        return retJson.OkId( Id );
+        }
+      catch( Exception e ) { return retJson.NoVentaModify( venta.Id, e ); }
+      }
+
+    //-----------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary> Modifica las cantidades de articulos para ventas ya existente </summary>
+    [HttpPost( "/api/modify-ventas-counts" )]
+    public JsonResult ModifyVentaCounts( [FromForm] string jsonVentas, [FromForm] int UserId )
+      {
+      try
+        {
+        int count = new Ventas(HttpContext).ModifyCounts( jsonVentas, UserId );
+        return retJson.OkCount( count );
+        }
+      catch( Exception e ) { return retJson.NoVentaModify(e); }
+      }
+
+    //-----------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary>Borra el motor de coche especificado </summary>
+    [HttpDelete( "/api/delete-venta" )]
+    public JsonResult DeleteVenta( [FromForm] int ventaId, [FromForm] int UserId )
+      {
+      try 
+        { 
+        new Ventas( HttpContext ).Delete( ventaId, UserId );
+        int nBuy   = new Usuarios(HttpContext).RefreshBuysCount( UserId );
+
+        return retJson.OkCount( nBuy  );
+        }
+      catch( Exception e ) { return retJson.NoDelVenta( ventaId, e ); }
+      }
+
     #endregion
 
     #region ===================================    CREACION DE OBJETOS A PARTIR DE LOS DATOS ENVIADOS    ======================================

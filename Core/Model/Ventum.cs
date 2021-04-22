@@ -17,9 +17,7 @@ namespace Piezas2.Core.Model
     public DateTime Fecha { get; set; }
     public DateTime? FechaPago { get; set; }
 
-    [JsonIgnore]
     public virtual Item Item { get; set; }
-    [JsonIgnore]
     public virtual Usuario Usuario { get; set; }
     }
   }

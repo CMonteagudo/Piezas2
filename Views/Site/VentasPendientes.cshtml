@@ -1,12 +1,331 @@
-﻿@model BaseModel
+﻿@model VentasModel
 @{
-  ViewData["Title"] = "Ventas pendientes";
+  ViewData["Title"] = "Artículos pendientes de pago";
 }
 
-<div class="container main-frame">
+<div class="main-frame">
 
-  <h1 style="text-align:center"> Lista de ventas que estan en el carrito. </h1>
+  <h1 style="text-align:center"> Lista de artículos pendientes de pago. </h1>
 
-  poner todas la compras aqui
+  <div id="BuyList">
+    <div class="buy-item">
+      <div></div>
+      <div>Artículo</div>
+      <div class="buy-item-count">Cant.</div>
+      <div class="buy-item-precio">Precio</div>
+      <div class="buy-item-monto">Monto</div>
+      <div></div>
+    </div>
+    <form id="ventas-items">
+    </form>
+
+    <div class="buy-total">
+      Total a pagar: <span></span><span><select>
+          <option value="0">usd</option>
+          <option value="2">euro</option>
+          <option value="3">cup</option>
+      </select>
+      </span>
+    </div>
+
+    <div id="ErrPago"></div>
+    <div id="bntPagar" class="btnCenter">Pagar</div>
+
+    <button id="btnClose" type="button" class="right-top" title="Cierra la ventana." ><span aria-hidden="true">&times;</span></button>
+  </div>
+
 
 </div>
+
+@section Scripts{
+  <script type="text/javascript">
+    var UserId =  @Model._UserId;
+    var Ventas = [];
+
+    var Msg = new MsgAlert( "#ErrPago", "danger", "strong" );
+    var bntPagar = $("#bntPagar");
+
+    var ModoWidget   = @Model._Widget;                          // Estable el modo Widget, que se usa para llamar la página dentro de otras páginas
+    var WidgetNotify = null;                                    // Funcion para notificar al padre cuando esta en modo iFarme
+
+    // Se llama después de cargarse la página completamente
+    $( function()
+      {
+      bntPagar.click( OnPagar );
+      bntPagar.hide();
+
+      if( ModoWidget )
+        {
+        $(".main-frame").css( "min-height", "0" );                          /* No se exige una altura minima*/
+
+        $("#btnClose").css( "display", "block" );                           // Maneja boton cerrar del Widget
+        $("#btnClose").on( 'click', ()=>{WidgetNotify( "close");} );   
+        }
+
+      RefreshVentasList();
+      });
+
+    // Si esta en modo Widget notifica el cambio de tamaño para ajustar el tamño del frame
+    $(document).ready( function() { ModoWidgetConfig( $(".main-frame")[0] ); } );
+
+    // Quita una compra de la lista de compras
+    function RemoveCompra( ev )
+      {
+      var row = $(ev.currentTarget);
+      var id  = row.data("id");
+
+      var Conn = new ServerConnection( "DELETE", (err)=>ShowError(err) );
+      Conn.data = 'ventaId='+ id + '&UserId=' + UserId;
+
+      Conn.Send( "/api/delete-venta", (r) => 
+        { 
+        RefreshVentasList();
+        refreshBuyCount( r.Count );
+        }, "#ventas-items"  );
+      }
+
+    // Cambia el número de articulos a compar
+    function ChangeCount( ev )
+      {
+      if( !ev.currentTarget.reportValidity() ) return;
+
+      Msg.Hide();
+
+      CalculaTotal();
+      }
+
+    // Cuando se oprime el botón para ir a pagar
+    function OnPagar( )
+      {
+      if( Ventas.length == 0)
+        {
+        Msg.Show( "No hay ningún artículo para pagar, localice el articulo que desee y oprima comprar." );
+        return;
+        }
+
+      var frm = $("#ventas-items")[0];
+      if( !frm.reportValidity() )
+        {
+        Msg.Show( "Debe rellenar correctamente todos datos." );
+        return;
+        }
+
+      var changes = chckChanges();
+      if( changes.length==0 ) { GoToPayPage(); return; }
+
+      var Conn = new ServerConnection( "POST", (err)=>ShowError(err) );
+      Conn.data = 'jsonVentas='+ JSON.stringify(changes) + '&UserId=' + UserId;;
+
+      Conn.Send( "/api/modify-ventas-counts", (r) => 
+        { 
+        if( r.Count != changes.length )
+          {
+          Msg.Show( "No se guardaron todos los cambios en le base de datos" );
+          return;
+          }
+
+        GoToPayPage();
+        }, "#ventas-items"  );
+      }
+
+    // Recalcula en total a pagar cuando de cambia algún valor
+    function CalculaTotal()
+      {
+      var _lst   = $("#ventas-items .buy-item");
+      var _total = $(".buy-total span:first-child");
+
+      var total = 0;
+      for( var i=0; i<_lst.length; i++ )
+        {
+        var item = _lst.eq(i).children();
+        var num  = +item.eq(3).children().eq(0).val();
+        var prec = +item.eq(4).text();
+
+        var monto = num * prec;
+        item.eq(5).text( monto.toFixed(2) );
+
+        total += monto;
+        }
+
+      _total.text( total.toFixed(2) );
+      }
+
+    // Actualiza la lista de ventas con el contenido que hay en el servidor
+    function RefreshVentasList()
+      {
+      var Conn = new ServerConnection( "GET", (err)=>ShowError(err) );
+
+      var lst = $("#ventas-items");
+      lst.empty();
+
+      Conn.Send( "/api/ventas/"+UserId+"/0", (datos) => 
+        {
+        Msg.Hide();
+
+        Ventas = datos;
+        if( Ventas.length>0 ) FillPagosList(lst);
+        else                  ShowNoPagos(lst);
+
+        }, "#ventas-items" );
+      }
+
+    // Muestra un mensaje de error
+    function ShowError( err )
+      {
+      if( err.Error==2005 )
+        {
+        err.sError = "La seccion de usurio no se ha inicializado o ha expirado.";
+        setUserLogout();
+        }
+
+      ConnError( err, Msg );  // Lo muestra en la forma de error de conexion a traves de Msg
+      }
+
+    // Llena la lista de pagos con los datos obtenisdos desde el servidor
+    function FillPagosList(lst)
+      {
+      for( let venta of Ventas )
+        AddVentaToList( lst, venta );
+
+      CalculaTotal();                                             // Calula el monto de cada venta y el total
+
+      $(".menu-desl div:first-child").click( viewItem );          // Pone manipuladores para el boton borrar
+      $(".menu-desl div:last-child" ).click( RemoveCompra );      // Pone manipuladores para el boton borrar
+      $(".buy-item-name"            ).click( ShowHideMenu );      // Muestra/Oculta el menú de opciones
+
+      $(".buy-item-count > .buy-num" ).on( "input", ChangeCount );         // Pone manipuladores para cambiar número de items
+      $("body").click( ()=>ShowHideMenu() );                      // Oculta el menú de opciones
+
+      bntPagar.show();
+      }
+
+    // Adiciona una fila en la lista de ventas y retorna el monto adicionado
+    function AddVentaToList( lst, venta )
+      {
+      var foto = venta.Item.Foto;
+      if( !foto || foto.length==0 ) foto = "/images/Items/piezas.svg";
+      var html =  '<div class="buy-item">' +
+                    '<div class="menu-desl">'+
+                      '<div class="boton-neutral" data-iditem="'+venta.ItemId+'">Ver</div>' +
+                      '<div class="boton-neutral" data-id="'+venta.Id+'">Quitar</div>' +
+                    '</div>' +  
+                    '<div id="foto-frame60">' +
+                      '<img src="'+ foto +'" onload="CenterImg(event)"/>' +
+                    '</div>' +
+                    '<div class="buy-item-name"><div>'+ venta.Item.Nombre +'</div></div>' +
+                    '<div class="buy-item-count">'+
+                      '<input class="buy-num" type="number" size="2" value="' + venta.Cantidad +'" min="1" max="100" data-id="'+venta.Id+'" required/>'+
+                    '</div>' +
+                    '<div class="buy-item-precio">'+venta.Precio.toFixed(2)+'</div>' +
+                    '<div class="buy-item-monto"></div>' +
+                  '</div>';
+      lst.append( html );
+      }
+
+    // Pone un cartel que no pagos que realizar en el medio de la lista
+    function ShowNoPagos(lst)
+      {
+      var html = '<div>No hay ningún artículo pendiente de pago para el usuario actual.</div>' +
+                 '<div id="GoFindItem" class="btnCenter">Ir a Comprar</div>';
+
+      lst.append( html );
+
+      $("#GoFindItem").click( GoFindItem );             // Pone manipulador para ir a buscar artículos
+      bntPagar.hide();
+      }
+
+    // Chequea si la cantidad de ha sido cambiada en alguno de los articulos
+    function chckChanges()
+      {
+      var chngs = [];
+      var lst = $("#ventas-items > .buy-item .buy-num");
+
+      for( var i=0; i<lst.length; i++ )
+        {
+        var elm = lst.eq(i);
+        var val = +elm.val();
+
+        if( val != Ventas[i].Cantidad )
+          {
+          var id = elm.data("id");
+          chngs.push( {id:id, cant:val} );
+          }
+        }
+
+      return chngs;
+      }
+
+    // Muestra oculta el menú de opciones
+    function ShowHideMenu( ev )
+      {
+      var hide = true;
+      var menu = null;
+
+      if( ev )
+        {
+        menu = $(ev.currentTarget).parent().find(".menu-desl");
+        hide = menu.hasClass( "show-desl" );
+
+        ev.stopPropagation();
+        }
+
+      var inShow = $(".show-desl");
+      if( inShow.length>0 )
+        {
+        inShow.removeClass( "show-desl" );
+        inShow.addClass( "hide-desl" );
+        }
+
+      if( !hide ) 
+        {
+        menu.removeClass( "hide-desl" );
+        menu.addClass( "show-desl" );
+        }
+      }
+
+    // Hace que el usuario se muestre desloguedo en la página actual
+    function setUserLogout()
+      {
+      if( WidgetNotify ) WidgetNotify( "chgUser", 0, true );
+      else
+        {
+        if( SetUser != undefined ) SetUser({Id:0});
+        }
+      }
+
+    function refreshBuyCount( count )
+      {
+      if( WidgetNotify ) WidgetNotify( "chgNBuy", count, true );
+      else
+        {
+        if( SetBuyCount != undefined ) SetBuyCount( count );
+        }
+      }
+
+    // Muestra el recambio con todos sus datos
+    function viewItem( ev )
+      {
+      var itemId = $(ev.currentTarget).data("iditem");
+      var url    = "/recambio/" + itemId;
+      
+      if( WidgetNotify ) WidgetNotify( "location", url );
+      else location = url;
+      }
+
+    // Muestra la pagina para buscar articulos
+    function GoFindItem()
+      {
+      var url = "/buscar-recambio/info";
+      
+      if( WidgetNotify ) WidgetNotify( "location", url );
+      else location = url;
+      }
+
+    // Muestra la pagina para la realizacion del pago
+    function GoToPayPage()
+      {
+      alert("Toca realizar el pago");
+      }
+    
+  </script>
+}

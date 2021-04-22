@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Text.Json;
 using Microsoft.AspNetCore.Html;
-using static Piezas2.Core.Coches;
 
 namespace Piezas2.Models
   {
@@ -17,7 +16,7 @@ namespace Piezas2.Models
     public string _User   { set; get; } = "{\"Id\":0, \"nBuy\":0}";       // Una cadena Json con los datos del usuario activo
     public int    _UserId { set; get; } = 0;                              // Identificador del usuario activo
     public int    _Widget { set; get; } = 0;                              // Indica si la página se va a mostrar en modo Widget
-    //public int     _nBuy  { set; get; } = 0;                            // Número de compras que hay para el usuario actual
+    public int     _Admin { set; get; } = 0;                              // Número de compras que hay para el usuario actual
     public int     Id     { set; get; } = 0;                              // Identificador del objeto que se muestra en la vista
 
     //---------------------------------------------------------------------------------------------------------------------------------------
@@ -32,8 +31,7 @@ namespace Piezas2.Models
         {
         _User   = sVal;
         _UserId = (int) HttpCtx.Session.GetInt32( "UserId" );
-
-        //_nBuy   = new Ventas(HttpCtx).CarritoCount(_UserId);
+        _Admin  = (int) HttpCtx.Session.GetInt32( "Admin" );
         }
 
       _Widget = HttpCtx.Request.Query.ContainsKey( "Widget" )? 1: 0;    //  Si la página se llamo en modo Widget

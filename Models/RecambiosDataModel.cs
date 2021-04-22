@@ -1,13 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Http;
 using Piezas2.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Text.Json;
-using Microsoft.AspNetCore.Html;
 using Piezas2.Core.Model;
-using static Piezas2.Core.Coches;
+using System.Collections.Generic;
+using System.Text.Json;
 
 namespace Piezas2.Models
   {

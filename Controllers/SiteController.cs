@@ -85,10 +85,10 @@ namespace Piezas2.Controllers
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     ///<summary> Página página para manejar las compras pendientes (carrito) </summary>
-    [Route( "/ventas-pendientes" )]
+    [Route( "/pagos-pendientes" )]
     public IActionResult VentasPendientes( )
       {
-      return View( new BaseModel( HttpContext ) );
+      return View( new VentasModel( HttpContext ) );
       }
 
 

@@ -383,37 +383,63 @@ class UIFilters
 class MsgAlert
   {
   // Construye el objeto y configura el elemento para mostrar la alerta
-  constructor( elem  )
+  // elem - Elemento donde se va a poner el mensaje, el contenido debe estar vacio, si no lo esta se borrará
+  // tipo - Tipo de mensaje según booptrap (info, warning, danger, success)
+  // msgTag - Tab html dentro del elemento que se utilizará para poner el mensaje.
+  // Los dos últimos parametros son opciones, se útilizará 'info' y 'msg' respectivamente si no son suministrados
+  constructor( elem, tipo, msgTag  )
     {
-    this.msg = $(elem);                        // Elemento donde se va a mostrar el mensaje (generalmente un div)
-    this.tipo = "alert-info";                  // Tipo de mensaje a mostrar
+    this.msg  = $(elem);                          // Elemento donde se va a mostrar el mensaje (generalmente un div)
+    this.defTipo = tipo? tipo:"info";             // Tipo que se toma por defecto, cuando no se especifique el tipo al mostrar un mensaje
+    this.tipo = "alert-" + this.defTipo;          // Tipo de mensaje a mostrar
 
     this.msg.addClass("alert");
-    this.msg.addClass("hidden");
     this.msg.addClass( this.tipo );
+
+    // Boton para ocultar el mensaje
+    this.btn = $("<div class='btn-"+ this.tipo +" close'>&times;</div>"); 
+    this.btn.on( 'click', () => this.Hide() );                                   
+    this.msg.append( this.btn );                  // Adiciona botón de cerrar al mensaje
+
+    // Zona donde se pone el mensaje
+    var msg = msgTag? msgTag : "msg"; 
+    this.body = $("<"+msg+"></"+msg+">"); 
+    this.msg.append( this.body );   
+
+    this.msg.hide();
     }
 
   // Muestra el mensaje del tipo dado, 'tipo' acepta los mismo tipo que booptrap (info, warning, danger, success)
-  Show( txt, tipo="info" )
+  Show( msg, tipo )
     {
+    this.ChangeTipo( tipo );
+
+    this.body.html( msg );
+
+    this.msg.show();
+    }
+
+  // Cambia el tipo de alerta que se muestra
+  ChangeTipo( tipo )
+    {
+    if( !tipo ) tipo = this.defTipo;
+
+    var newTipo = "alert-" + tipo;
+    if( this.tipo == newTipo ) return;
+
     this.msg.removeClass( this.tipo );
-    this.tipo = "alert-" + tipo;
-    this.msg.addClass( this.tipo );
+    this.btn.removeClass( "btn-"+ this.tipo );
 
-    this.msg.html( txt );
+    this.tipo = newTipo;
 
-    var bntClose = $("<div class='btn-"+ tipo +" btn-close-msg'>x</div>");    // Crea un botón para ocualtar el mensaje
-    bntClose.on( 'click', () => this.Hide() );                                      // Pone el evento para el ocultamiento
-
-    this.msg.append( bntClose );               // Adiciona botón de cerrar al mensaje
-
-    this.msg.removeClass("hidden");
+    this.msg.addClass( newTipo );
+    this.btn.addClass( "btn-"+ newTipo );
     }
 
   // Oculta el mensaje
   Hide()
     {
-    this.msg.addClass("hidden");
+    this.msg.hide();
     }
   }
 
@@ -436,15 +462,15 @@ class ServerConnection
       url: Url, data:this.data, method:this.metodo, 
       complete: (xhr) =>
         {
-        setTimeout( ()=>                        // Para emular una demora en la carga de los datos
-          {
+//        setTimeout( ()=>                        // Para emular una demora en la carga de los datos
+//          {
           if( cur ) cur.Hide();
 
           var json = this.checkReturn( xhr );
 
           if( json.Error == 0 ) funResult( json );
           else                  this.fError( json );
-          }, 5000 );
+//          }, 5000 );
         }
       } );
     }
@@ -696,16 +722,17 @@ function HidePopUp( e )
 var rz;
 
 // Muetra una ventana en el medio de la pantalla con la url dada
-function ShowWidget( url, fnReturn )
+function ShowWidget( url, fnReturn, ifrmClass )
   {
-  var html ='<div id="NewRec">'+
-              '<iframe src="'+ url +'"></iframe>'+
+  if( !ifrmClass ) ifrmClass = "ifrm-default";
+  var html ='<div id="Widget">'+
+              '<iframe src="'+ url +'" class="'+ ifrmClass + '"></iframe>'+
             '</div>';
 
   $("body").append(html);
 
-  $("#NewRec iframe").on( "load" , e=>{ InitWidget( e ); } );       // Pone función de notificaón del Widget
-  $("#NewRec"       ).on( "click", e=>{ Notify("close"); } );       // Cierra cuando click fuera del frame
+  $("#Widget iframe").on( "load" , e=>{ InitWidget( e ); } );       // Pone función de notificaón del Widget
+  $("#Widget"       ).on( "click", e=>{ Notify("close"); } );       // Cierra cuando click fuera del frame
 
 
   // Se llama después de cargarse la página en el Widget
@@ -717,15 +744,17 @@ function ShowWidget( url, fnReturn )
     }
 
   // Atiende las notificaciones recibidas desde el Widget
-  function Notify( event, data )
+  function Notify( event, data, noClose )
     { 
     if( event=="resize" )
       {
-      $("#NewRec iframe").height( data );
+      $("#Widget iframe").height( data );
       return;
       }
 
-    document.getElementById("NewRec").remove();
+    if( !noClose )
+      document.getElementById("Widget").remove();
+
     fnReturn( event, data );
     }
   }
@@ -1337,111 +1366,44 @@ function ErrorElem( errElem  )
   }
 
 // Maneja la interfaz para el carrito de compras y para las compras dentro de la pagina
-function Compras( btnBuyCar, boxBuy  )
+function Compras( btnBuyCar, boxBuy )
   {
-  var mnuBuy = new PopUp( btnBuyCar );                // Crea objeto para manejar el usuario
-      mnuBuy.SetBox(boxBuy);                          // Establece html que aparece en el cuadro deslizante
-   
-      mnuBuy.OnShowPopUp  = OnShowPopUp;              // Se llama cuando se abre el menú
-      mnuBuy.OnClosePopUp = OnClosePopUp;             // Se llama cuando se cierre el menú
-
   var $this = this;
+
   this.getUserId = ()=>{};                            // Funcion para obtener el identificador del usuario
-  this.UpdateUI  = ()=>{};                            // Funcion para notificar que se realicen cambios en la IU
+  this.SetUser   = ()=>{};                            // Pone el usuario en la interfase principal
+  this.SetNBuy   = ()=>{};                            // Pone el numero de items en el carrito de compras en la interfase principal
 
-  var err = new ErrorElem("#BuyList > .MsgError");    // Elementos donde se ponen los mensajes de errores
-  var lst = $("#PendItems");                          // Lista donde se ponen los items
-  var bnt = $("#BuyList > .btnCenter");               // Boton para ir pagar
-  var total = $(".buy-total span:first-child")        // Donde se pone el monto tatol de todos los productos
+  $(btnBuyCar).click( OnClickBnt );
 
-  bnt.click( ()=>location = "/ventas-pendientes" );   // Botón para ir a revisar al detalle las ventas pendientes
-
-  // Se llama cuando se va a mostrar la ventana flotante
-  function OnShowPopUp()
+  function OnClickBnt( e )
     {
-    var userId = $this.getUserId();
+    e.stopPropagation();
 
-    if( userId >0 ) GetItemsList( userId );
-    else            ShowPage( "#MsgLogin" );
+    var id = $this.getUserId();
+
+    if( id==0  )  ShowLogInMsg();
+    else          GetItemsList();
     }
 
   // Se llama cuando se va a cerrar la ventana flotante
-  function OnClosePopUp()
+  function ShowLogInMsg()
     {
-    }
-
-  // Muestra el panel con el identificador especificado
-  function ShowPage( showPg )
-    {
-    for( let pg of ["#MsgLogin","#BuyList", "#MsgNoBuy"]  )
-      if( pg==showPg ) $(pg).show();
-      else             $(pg).hide();
+    var mnuBuy = new PopUp( btnBuyCar, {NoClick:1} );       // Crea objeto para manejar el usuario
+        mnuBuy.SetBox(boxBuy);                              // Establece html que aparece en el cuadro deslizante
+        mnuBuy.Show();
     }
 
   // Obtiene la lista de articulos que el usuario tiene pendientes de pagar
-  function GetItemsList( userId )
+  function GetItemsList()
     {
-    InitBuyList();
+    ShowWidget("/pagos-pendientes/?Widget", (event, data )=>{          // Muestra un Widget con la pagina de modelos en modo add
 
-    var Conn = new ServerConnection( "GET", (r)=>{ BuyError(r); } );
-    
-    Conn.Send( "/api/carrito-datos/" + userId, (lstBuy) => 
-      { 
-      if( lstBuy.length == 0  ) ShowPage( "#MsgNoBuy" );
-      else                      FillBuyList( lstBuy );
-      }, "#BoxBuy"  );
+           if( event=="chgUser"  ) $this.SetUser( data );
+      else if( event=="chgNBuy"  ) $this.SetNBuy( data );
+      else if( event=="location" ) location = data;
+
+      }, "buy-car" );
+
     }
-
-  // Llena la lista de compras que estan pendientes y la muestra
-  function FillBuyList( list )
-    {
-    var suma = 0;
-
-    list.length
-
-    for( let prod of list )
-      {
-      var monto = prod.Cant * prod.Prec;
-      suma += monto;
-
-      var html = '<div class="buy-item">' +
-                    '<div>'+ prod.Item +'</div>' +
-                    '<div>'+ prod.Cant +'</div>' +
-                    '<div>'+ prod.Prec +'</div>' +
-                    '<div>'+ monto +'</div>' +
-                  '</div>';
-
-        lst.append( html );
-        }
-
-    bnt.show();
-    total.text( suma );
-
-    $this.UpdateUI( "nBuy", list.length );
-    }
-
-  // Llena la lista de compras que estan pendientes y la muestra
-  function BuyError( error )
-    {
-    total.text(0);
-
-    if( error.Error==2005 ) 
-      {
-      $this.UpdateUI( "LogOut" );
-      err.showMsg( "La seccion de usurio ha expirado." );
-      }
-    else
-      error.showMsg( err.sError );
-    }
-
-  // Inicializa la página que muestra la lista de compras
-  function InitBuyList()
-    {
-    lst.empty();
-    bnt.hide();
-    total.text(0);
-    err.Hide();
-    ShowPage( "#BuyList"  );
-    }
-
   }

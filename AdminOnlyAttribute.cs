@@ -15,9 +15,7 @@ namespace Piezas2
       var ssn = context.HttpContext.Session;
 
       if( ssn?.GetInt32( "Admin" ) != 1 )
-        {
         context.Result = new StatusCodeResult( StatusCodes.Status404NotFound );
-        }
       }
     }
   }
