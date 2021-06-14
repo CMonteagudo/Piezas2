@@ -1,7 +1,14 @@
 ﻿@model VentasModel
+@using Piezas2.Models
+@using Microsoft.Extensions.Options
+
+@inject IOptions<PaypalSetting> pSetting
+
 @{
   ViewData["Title"] = "Artículos pendientes de pago";
 }
+
+<script id="paypal_sdk" src="https://www.paypal.com/sdk/js?client-id=@pSetting.Value.ClientID"></script>
 
 <div class="main-frame">
 
@@ -29,21 +36,26 @@
     </div>
 
     <div id="ErrPago"></div>
-    <div id="bntPagar" class="btnCenter">Pagar</div>
+    <div id="bntPagar"  class="btnCenter">Pagar</div>
+    <div id="bntPaypal"></div>
 
     <button id="btnClose" type="button" class="right-top" title="Cierra la ventana." ><span aria-hidden="true">&times;</span></button>
   </div>
-
 
 </div>
 
 @section Scripts{
   <script type="text/javascript">
     var UserId =  @Model._UserId;
-    var Ventas = [];
+
+    var Ventas = [];                                            // Listado de ventas pedientes por pagar para el usuario actual
+    var FacturaDate;                                            // Fecha de emision de la factura
 
     var Msg = new MsgAlert( "#ErrPago", "danger", "strong" );
-    var bntPagar = $("#bntPagar");
+    var bntPagar  = $("#bntPagar");
+    var frmData   = $("#ventas-items");
+    var valTotal  = $(".buy-total span:first-child");
+
 
     var ModoWidget   = @Model._Widget;                          // Estable el modo Widget, que se usa para llamar la página dentro de otras páginas
     var WidgetNotify = null;                                    // Funcion para notificar al padre cuando esta en modo iFarme
@@ -80,8 +92,7 @@
       Conn.Send( "/api/delete-venta", (r) => 
         { 
         RefreshVentasList();
-        refreshBuyCount( r.Count );
-        }, "#ventas-items"  );
+        }, frmData  );
       }
 
     // Cambia el número de articulos a compar
@@ -97,23 +108,23 @@
     // Cuando se oprime el botón para ir a pagar
     function OnPagar( )
       {
-      if( Ventas.length == 0)
+      if( Ventas.length == 0)                                                                 // Cuando no hay ventas en el carrito no puede hacer nada
         {
         Msg.Show( "No hay ningún artículo para pagar, localice el articulo que desee y oprima comprar." );
         return;
         }
 
-      var frm = $("#ventas-items")[0];
-      if( !frm.reportValidity() )
+      var frm = frmData[0];
+      if( !frm.reportValidity() )                                                             // Verifica que todas la cantidades sen validas
         {
         Msg.Show( "Debe rellenar correctamente todos datos." );
         return;
         }
 
-      var changes = chckChanges();
-      if( changes.length==0 ) { GoToPayPage(); return; }
+      var changes = chckChanges();                                                            // Determina si hubo cambio en la cantidad de items
+      if( changes.length==0 ) { SetPaypalButtons(); return; }                                 // Si no cambiaron pone los botones de Paypal directamente
 
-      var Conn = new ServerConnection( "POST", (err)=>ShowError(err) );
+      var Conn = new ServerConnection( "POST", (err)=>ShowError(err) );                       // Guarda los cambios en el servidor
       Conn.data = 'jsonVentas='+ JSON.stringify(changes) + '&UserId=' + UserId;;
 
       Conn.Send( "/api/modify-ventas-counts", (r) => 
@@ -124,30 +135,29 @@
           return;
           }
 
-        GoToPayPage();
-        }, "#ventas-items"  );
+        SetPaypalButtons();                                                                   // Pone los botones de Paypal
+        }, frmData  );
       }
 
     // Recalcula en total a pagar cuando de cambia algún valor
     function CalculaTotal()
       {
-      var _lst   = $("#ventas-items .buy-item");
-      var _total = $(".buy-total span:first-child");
+      var _lst = frmData.find(".buy-item");                                                   // Obtiene todos los items de la lista
 
       var total = 0;
-      for( var i=0; i<_lst.length; i++ )
+      for( var i=0; i<_lst.length; i++ )                                                      // Recorre toda la líneas
         {
         var item = _lst.eq(i).children();
-        var num  = +item.eq(3).children().eq(0).val();
-        var prec = +item.eq(4).text();
+        var num  = +item.eq(3).children().eq(0).val();                                        // Obtiene la cantidad
+        var prec = +item.eq(4).text();                                                        // Obtiene el precio
 
         var monto = num * prec;
-        item.eq(5).text( monto.toFixed(2) );
+        item.eq(5).text( monto.toFixed(2) );                                                  // Pone el monto en la pantalla
 
-        total += monto;
+        total += monto;                                                                       // Va sumando todos los montos
         }
 
-      _total.text( total.toFixed(2) );
+      valTotal.text( total.toFixed(2) );                                                      // Pone el total a pagar
       }
 
     // Actualiza la lista de ventas con el contenido que hay en el servidor
@@ -155,30 +165,31 @@
       {
       var Conn = new ServerConnection( "GET", (err)=>ShowError(err) );
 
-      var lst = $("#ventas-items");
-      lst.empty();
+      frmData.empty();                                                                        // Borra todas la ventas que se estaban mostrando
 
-      Conn.Send( "/api/ventas/"+UserId+"/0", (datos) => 
+      Conn.Send( "/api/ventas/"+UserId+"/0", (datos) =>                                       // Busca en el servidor las ventas pendientes para el usuario
         {
         Msg.Hide();
 
-        Ventas = datos;
-        if( Ventas.length>0 ) FillPagosList(lst);
-        else                  ShowNoPagos(lst);
+        Ventas = datos;                                                                       // Listado de ventas retornados del servidor
+        refreshBuyCount( Ventas.length );                                                     // Actualiza en # de ventas que se muestra
 
-        }, "#ventas-items" );
+        if( Ventas.length>0 ) FillPagosList( frmData );                                       // Llena la lista con las ventas
+        else                  ShowNoPagos( frmData );                                         // Muestra al usuario que no hay ventas
+
+        }, frmData );
       }
 
     // Muestra un mensaje de error
     function ShowError( err )
       {
-      if( err.Error==2005 )
+      if( err.Error==2005 )                                                                   // Filtra se ya el usuario no esta activo
         {
         err.sError = "La seccion de usurio no se ha inicializado o ha expirado.";
-        setUserLogout();
+        setUserLogout();                                                                      // Muestra al usuario deslogueado
         }
 
-      ConnError( err, Msg );  // Lo muestra en la forma de error de conexion a traves de Msg
+      ConnError( err, Msg );                                                                  // Lo muestra en la forma de error de conexion a traves de Msg
       }
 
     // Llena la lista de pagos con los datos obtenisdos desde el servidor
@@ -187,14 +198,14 @@
       for( let venta of Ventas )
         AddVentaToList( lst, venta );
 
-      CalculaTotal();                                             // Calula el monto de cada venta y el total
+      CalculaTotal();                                                       // Calula el monto de cada venta y el total
 
-      $(".menu-desl div:first-child").click( viewItem );          // Pone manipuladores para el boton borrar
-      $(".menu-desl div:last-child" ).click( RemoveCompra );      // Pone manipuladores para el boton borrar
-      $(".buy-item-name"            ).click( ShowHideMenu );      // Muestra/Oculta el menú de opciones
+      $(".menu-desl div:first-child").click( viewItem );                    // Pone manipuladores para el boton ver del menú de opciones
+      $(".menu-desl div:last-child" ).click( RemoveCompra );                // Pone manipuladores para el boton borrar del menú de opciones
+      $(".buy-item-name"            ).click( ShowHideMenu );                // Pone manipuladores para Muestrar/Ocultar el menú de opciones
 
-      $(".buy-item-count > .buy-num" ).on( "input", ChangeCount );         // Pone manipuladores para cambiar número de items
-      $("body").click( ()=>ShowHideMenu() );                      // Oculta el menú de opciones
+      $(".buy-item-count > .buy-num" ).on( "input", ChangeCount );          // Pone manipuladores para cambiar número de items
+      $("body").click( ()=>ShowHideMenu() );                                // Pone manipulador para ocualtar el menú de opciones cuande se oprime afuera
 
       bntPagar.show();
       }
@@ -222,10 +233,10 @@
       lst.append( html );
       }
 
-    // Pone un cartel que no pagos que realizar en el medio de la lista
+    // Pone un cartel que no hay pagos que realizar en el medio de la lista
     function ShowNoPagos(lst)
       {
-      var html = '<div>No hay ningún artículo pendiente de pago para el usuario actual.</div>' +
+      var html = '<p>No hay ningún artículo pendiente de pago para el usuario actual.</p>' +
                  '<div id="GoFindItem" class="btnCenter">Ir a Comprar</div>';
 
       lst.append( html );
@@ -238,7 +249,7 @@
     function chckChanges()
       {
       var chngs = [];
-      var lst = $("#ventas-items > .buy-item .buy-num");
+      var lst = frmData.find (".buy-item .buy-num");
 
       for( var i=0; i<lst.length; i++ )
         {
@@ -293,6 +304,7 @@
         }
       }
 
+    // Actualiza el número de items en el carrito
     function refreshBuyCount( count )
       {
       if( WidgetNotify ) WidgetNotify( "chgNBuy", count, true );
@@ -321,10 +333,104 @@
       else location = url;
       }
 
-    // Muestra la pagina para la realizacion del pago
-    function GoToPayPage()
+    // Muestra los botones de Paypal para realizar el pago
+    function SetPaypalButtons()
       {
-      alert("Toca realizar el pago");
+      bntPagar.hide();                                                            // Oculta el botón de pagar
+
+      frmData.find ("input").each( (idx,elm)=> { elm.readOnly = true; } );        // Desabilita la modificación de la cantidad de items
+
+      if( typeof(paypal) == "undefined" )                                         // No se puedo cargar el sdk de Paypal
+        {
+        Msg.Show( "No hay acceso a Paypal, revise la conexión a Internet o intentelo en otro momento." );
+        return;
+        }
+
+//      paypal.Buttons().render('#bntPaypal');                                      // Despliega los botones de paypal
+//      paypal.Buttons({ style: { layout: 'horizontal' } }).render('#bntPaypal');
+
+      paypal.Buttons(
+        {
+        style: { layout: 'horizontal', height:'30px' },
+
+        createOrder: GetOrder,
+        onApprove: PagoCompletado,
+        onError: ErrorPaypal,
+        onCancel: CancelPaypal
+
+        }).render( '#bntPaypal' );
+      }
+
+    // Optiene la orden para el pago de Paypal
+    function GetOrder( data, actions )
+      {
+      var factura = GetFacturaId();
+      var ord = new PayOrden( factura, valTotal.text(), "usd" );
+      
+      for( let venta of Ventas )
+        {
+        var item = ord.AddItem( venta.Item.Nombre, venta.Cantidad, venta.Precio, "usd" ); 
+        ord.ItemSku( item, "Vent-" + fix( venta.Id, 4) );
+        }
+
+      return actions.order.create( ord.GetDatos() );
+      }
+
+    // Se llama cuando la venta es completada
+    function PagoCompletado( data, actions )
+      {
+      return actions.order.capture().then( function(details) 
+        {
+        var Conn = new ServerConnection( "POST", (err)=>ShowError(err) );
+        Conn.data = 'Fecha='+ FacturaDate.toISOString() + '&UserId=' + UserId;;
+
+        Conn.Send( "/api/ventas-pagadas", (datos) => 
+          {
+          Msg.Hide();
+
+          RefreshVentasList();
+          }, frmData );
+        });
+      }
+
+    // Se llama cuando se produce un error durante el pago
+    function ErrorPaypal( err )
+      {
+      Msg.Show( "Se produjo un error en el pago.<br/>" + JSON.stringify(err) );
+      }
+
+    // Se llama cuando el usuario cancela el pago
+    function CancelPaypal( data )
+      {
+      Msg.Show( "Se cancelo el pago.<br/>" + JSON.stringify(data) );
+      }
+
+    // Crea un identificador para la factura
+    function GetFacturaId( )
+      {
+      var txt = fix( UserId, 4 ) + "-";
+
+      var fc = new Date();
+
+      txt += fc.getYear()-100;
+      txt += fix( fc.getMonth()  , 2 ); 
+      txt += fix( fc.getDate()+1 , 2 );
+      txt += fix( fc.getHours()  , 2 );
+      txt += fix( fc.getMinutes(), 2 );
+      txt += fix( fc.getSeconds(), 2 );
+
+      FacturaDate = fc;
+      return txt;
+      }
+
+    // Rellena una cadena hasta la cantidad de caracteres indicados
+    function fix( str, nChars )
+      {
+      var s = str.toString();
+      for( var i=s.length; i<nChars; i++ )
+        s = "0" + s;
+
+      return s;
       }
     
   </script>

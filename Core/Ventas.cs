@@ -37,33 +37,33 @@ namespace Piezas2.Core
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Obtiene un lista de todas las ventas, donde se obtienen todos los datos para cada venta 
-    ///           Estado => 0- En el carrito, 1- En proceso de pago, 100- Pagado</summary>
+    ///           Estado => 0- En el carrito, 1- Pagado</summary>
     public List<Ventum> ListVentas( int userId, int Estado )
       {
       var Admin = (Session.GetInt32( "Admin" ) == 1);
 
-      if( userId < 0 && Estado < 0 )                                  // Obtiene el listado de todas las ventas
+      if( userId < 0 && Estado < 0 )                                // Obtiene el listado de todas las ventas
         {
         if( Admin )
-          return DbCtx.Ventas.Include( v => v.Item ).ToList();    // Es posible si el usuario es un administrador
+          return DbCtx.Ventas.Include( v => v.Item ).ToList();      // Es posible si el usuario es un administrador
 
         throw new Exception( "AdminAccess" );                       // Si no es administrador emite una excepción
         }
 
-      if( !Admin ) checkUser( userId );                          // Solo administrador o el usuario logueado
+      if( !Admin ) checkUser( userId );                             // Solo administrador o el usuario logueado
 
       if( Estado < 0 ) return DbCtx.Ventas.Where( v => v.UsuarioId == userId ).Include( v => v.Item ).ToList();             // Todas la ventas para un usuario
 
-      return DbCtx.Ventas.Where( v => v.UsuarioId == userId && v.Estado == Estado ).Include( v => v.Item ).ToList();       // Todas la ventas para un usuario en un estado especifico
+      return DbCtx.Ventas.Where( v => v.UsuarioId == userId && v.Estado == Estado ).Include( v => v.Item ).ToList();        // Todas la ventas para un usuario en un estado especifico
       }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Obtiene la cantidad de productos que hay en el carrito </summary>
     internal int CarritoCount( int userId )
       {
-      if( !checkUser( userId, false ) ) return 0;             // Si no es el usuario loguedo retorna 0
+      if( !checkUser( userId, false ) ) return 0;                   // Si no es el usuario loguedo retorna 0
 
-      return DbCtx.Ventas.Where( v => v.UsuarioId == userId ).Count();
+      return DbCtx.Ventas.Where( v => v.UsuarioId == userId && v.Estado==0 ).Count();
       }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
@@ -140,6 +140,22 @@ namespace Piezas2.Core
       }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary> Pone todas la ventas que hay en el carrito como pagadas </summary>
+    public int SetPagadas( int userId, DateTime fecha )
+      {
+      var lst = DbCtx.Ventas.Where( v => v.UsuarioId == userId && v.Estado == 0 ).ToList();                                 // Todas la ventas que estan en el carrito
+      foreach( var venta in lst )
+        {
+        venta.Estado = 1;
+        venta.FechaPago = fecha;
+
+        DbCtx.SaveChanges();
+        }
+
+      return lst.Count();
+      }
+
+    //---------------------------------------------------------------------------------------------------------------------------------------
     /// <summary> Borra la venta indicada </summary>
     internal bool Delete( int ventaId, int userId )
       {
@@ -178,7 +194,7 @@ namespace Piezas2.Core
     }
 
   //---------------------------------------------------------------------------------------------------------------------------------------
-  /// <summary> Mantiene los datos que se muestran en el carrito
+  /// <summary> Mantiene los datos que se muestran en el carrito </summary>
   internal class carDatos
     {
     public int Id { get; set; }

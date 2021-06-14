@@ -64,40 +64,18 @@
         <button type="button" class="btn dropdown-toggle show-popup" data-toggle="" aria-expanded="false" style="background-color:transparent">
            Coches: <span class="caret"></span>
         </button>
-        <div class="dropdown-menu filters-popup" role="menu">
+        <div class="dropdown-menu filters-popup" role="menu" style="left:-10px; width:300px; ">
           <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 
           <div class="flex-grid">
-            <div class="btn-group item" id="comboMarca">
-              <button type="button" class="btn combo-txt no-close">&emsp;</button>
-              <button type="button" class="btn dropdown-toggle btn-primary no-close" data-toggle="dropdown" aria-expanded="false">
-                <span class="caret"></span><span class="sr-only">Toggle Dropdown</span>
-              </button>
-              <ul class="dropdown-menu no-close" role="menu"></ul>
+            <div class="form-group item" id="FindForName">
+              <input type="text" id="FindTxtCoche" name="FindTxtCoche" placeholder="Texto que se desea buscar"/>
             </div>
-
-            <div class="btn-group item" id="comboModelo">
-              <button type="button" class="btn combo-txt">&emsp;</button>
-              <button type="button" class="btn dropdown-toggle btn-primary" data-toggle="dropdown" aria-expanded="false">
-                <span class="caret"></span><span class="sr-only">Toggle Dropdown</span>
-              </button>
-              <ul class="dropdown-menu" role="menu"></ul>
+            <div class="form-group item">
+              <input type="checkbox" id="selAll" name="selAll"/><label for="selAll" style="margin-left:6px;">Seleccionar todos los coches</label>
             </div>
-
-            <div class="btn-group item" id="comboMotor">
-              <button type="button" class="btn combo-txt">&emsp;</button>
-              <button type="button" class="btn dropdown-toggle btn-primary" data-toggle="dropdown" aria-expanded="false">
-                <span class="caret"></span><span class="sr-only">Toggle Dropdown</span>
-              </button>
-              <ul class="dropdown-menu" role="menu"></ul>
-            </div>
-
-          <div class="btn-group" id="FindCoche">
-            <button type="button" class="btn btn-primary">Buscar</button>
           </div>
-
         </div>
-      </div>
     </div>
 
       <div style="position:relative;">
@@ -115,11 +93,11 @@
     </div>
 
     <div class="column" id="list-coches">
-      <div id="ErrorMsgCoches" ></div>
       <div id="CochesHeard" >
         <h4 id="ItemName"></h4>
         <button id="Update" type="button" class="btn btn-primary">Actualizar</button>
       </div>
+      <div id="ErrorMsgCoches" ></div>
       <div id="CochesBody">
         <table class="table table-bordered table-striped" id="CochesList">
           <tbody></tbody>
@@ -151,20 +129,6 @@
                 Fabric : "#comboFabricante"
                 };
 
-    // Datos para todos los combos de seleccion de recamios
-    var CochesDatos = {
-                      Marcas : @Model.MarcasToJson(),
-                      Modelos: @Model.ModelosToJson(),
-                      Motores: @Model.MotoresToJson(),
-                      };
-
-    // Identificadores de los combos para la seleccion de recambios
-    var CochesCbIDs = {
-                      Marca : "#comboMarca",
-                      Modelo: "#comboModelo",
-                      Motor : "#comboMotor"
-                      };
-
     // Lista de todos los items que hay en la base de datos
     var Items = @Model.ItemsToJson();     
 
@@ -175,14 +139,13 @@
     var cbDats;         // Maneja la entrada de datos mediante combos
     var cbCoches;       // Maneja la entrada de datos mediante combos
 
-    var Msg;            // Maneja recuadro para mostrar errores
-    var Conn;           // Objeto que maneja la conexion con el servidor
+    var Msg1;           // Maneja recuadro para mostrar errores en el lado de los recambios
+    var Msg2;           // Maneja recuadro para mostrar errores en el lado de los coches
 
     // Inicia manipuladores y variables, después de cargarse la página
     $( function()
       {
       cbDats   = new UIFilters( Datos, CbIDs );
-      cbCoches = new UIFilters( CochesDatos, CochesCbIDs );
 
       // Actualiza ultimo valor de la busqueda por nombre
       $("#findName").val( localStorage["lastFindName"] || "" );
@@ -206,8 +169,8 @@
 
       $("#Update").on( 'click', OnUpdateItemUso );  
 
-      Msg = new MsgAlert( "#ErrorMsgItems" );
-      Conn = new ServerConnection( "GET", (s)=>ConnError(s,Msg) );
+      Msg1 = new MsgAlert( "#ErrorMsgItems" );
+      Msg2 = new MsgAlert( "#ErrorMsgCoches" );
 
       FillItemsList();
       FillCochesList();
@@ -266,27 +229,29 @@
       else             tabla.removeClass("hidden"); 
 
       // Cartel con información
-      if( count == 0 ) Msg.Show( "No se encontro ningún recambio que cumpla las condiciones dadas", "info" );
-      else             Msg.Hide();
+      if( count == 0 ) Msg1.Show( "No se encontro ningún recambio que cumpla las condiciones dadas", "info" );
+      else             Msg1.Hide();
       }
 
     // Busca los coches donde se usa el item dado por 'id'
     function FillCochesList()
       {
+      Msg2.Hide();
+
       $("#CochesList").children().eq(0).empty();          // Borra todos los carros de la lista
       $(".filters-btn").removeClass("open")               // Cierra el popup de filtrado
 
-      var mar = cbCoches.GetSelMarcaName(); 
-      var mod = cbCoches.GetSelModeloName();   
-      var mot = cbCoches.GetSelMotorName();
+      //var mar = cbCoches.GetSelMarcaName(); 
+      //var mod = cbCoches.GetSelModeloName();   
+      //var mot = cbCoches.GetSelMotorName();
 
       for( var i = 0; i < Coches.length; i++ )
         {
         let coche = Coches[i];
 
-        if( mar.length>0 && mar != coche.Marca  ) continue;
-        if( mod.length>0 && mod != coche.Modelo ) continue;
-        if( mot.length>0 && mot != coche.Motor  ) continue;
+        //if( mar.length>0 && mar != coche.Marca  ) continue;
+        //if( mod.length>0 && mod != coche.Modelo ) continue;
+        //if( mot.length>0 && mot != coche.Motor  ) continue;
 
         var name = "<strong> "+ coche.Marca +" </strong><span> "+ coche.Modelo +"<strong> con motor </strong>"+ coche.Motor + "</span>";
 
@@ -324,6 +289,7 @@
     // Busca los coches donde se usa el item dado por 'id'
     function FindCochesForItem( id )
       {
+      var Conn = new ServerConnection( "GET", (s)=>ConnError(s,Msg2) );
       Conn.Send( "/api/coches-con-recambio/" + id , (datos) => 
         {
         ItemId = id;
@@ -355,6 +321,12 @@
 
     function OnUpdateItemUso()
       {
+      if( ItemId<=0 )
+        {
+        Msg2.Show( "Debe seleccionar un recambio para asociar a los coches", "info" );
+        return;
+        }
+
       var lstDel = [];
       var lstAdd = [];
 
@@ -371,22 +343,26 @@
 
     function UpdateBase( lstAdd, lstDel )
       {
+      var Conn = new ServerConnection( "GET", (s)=>ConnError(s,Msg2) );
+
       if( lstAdd.length >0 )
         Conn.Send( "/api/add-recambio-usos/"+ItemId+"/"+lstAdd.join(" "), (datos) => 
           {
           if( datos.Count != lstAdd.length )
-            alert( "Ocurrio un error al insertar los coches"  );
+            Msg2.Show( "Ocurrio un error se insertaron " + datos.Count + " coches de " + lstAdd.length  );
+          else if( lstDel.length==0 ) 
+            FindCochesForItem( ItemId );
 
-          if( lstDel.length==0 ) FindCochesForItem( ItemId );
           }, "#list-coches" );
 
       if( lstDel.length >0 )
         Conn.Send( "/api/del-recambio-usos/"+ItemId+"/"+lstDel.join(" "), (datos) => 
           {
           if( datos.Count != lstDel.length )
-            alert( "Ocurrio un error al borrar los coches"  );
+            Msg2.Show( "Ocurrio un error se quitaron " + datos.Count + " coches de " + lstAdd.length  );
+          else
+            FindCochesForItem( ItemId );
 
-          FindCochesForItem( ItemId );
           }, "#list-coches" );
       }
 
@@ -395,6 +371,7 @@
       {
       $(".filters-btn").removeClass("open")       // Cierra el popup de filtrado
 
+      var Conn = new ServerConnection( "GET", (s)=>ConnError(s,Msg1) );
       Conn.Send( "/api/recambios-no-usados", (datos) => 
         {
         var Ids = new Set();
@@ -409,6 +386,7 @@
       {
       $(".filters-btn").removeClass("open")       // Cierra el popup de filtrado
 
+      var Conn = new ServerConnection( "GET", (s)=>ConnError(s,Msg1) );
       Conn.Send( "/api/recambios-usados", (datos) => 
         {
         var Ids = new Set();

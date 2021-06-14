@@ -5,12 +5,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Piezas2.Models;
 
 namespace Piezas2.Controllers
   {
   //=======================================================================================================================================
   // Controlador que sirve como punto de entrada a todas las páginas del sitio
+  [ApiExplorerSettings(IgnoreApi = true)]
   public class SiteController : Controller
     {
     //private readonly ILogger<SiteController> _logger;
@@ -24,7 +26,7 @@ namespace Piezas2.Controllers
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     ///<summary> Página principal del sitio </summary>
-    [Route( "/recambios" )]
+    [HttpGet( "/recambios" )]
     [HttpGet( "/" )]
     public IActionResult Index()
       {
@@ -34,7 +36,7 @@ namespace Piezas2.Controllers
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     ///<summary> Página para mostrar los datos de un recambio, Nota: el nombre se ignora </summary>
-    [Route( "/recambio/{id:int}/{name?}" )]
+    [HttpGet( "/recambio/{id:int}/{name?}" )]
     public IActionResult Recambio( int id )
       {
       var model = new RecambioModel( id, HttpContext );
@@ -43,7 +45,7 @@ namespace Piezas2.Controllers
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     ///<summary> Página para mostrar los datos de un recambio </summary>
-    [Route( "/buscar-recambio/{tipo?}" )]
+    [HttpGet( "/buscar-recambio/{tipo?}" )]
     public IActionResult Busqueda( string tipo="" )
       {
       ViewData["FindType"] = tipo;
@@ -55,7 +57,7 @@ namespace Piezas2.Controllers
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     ///<summary> Página para mostrar los datos de un recambio </summary>
-    [Route( "/modelos-de-coches/{marca?}" )]
+    [HttpGet( "/modelos-de-coches/{marca?}" )]
     public IActionResult Modelos( string marca = "" )
       {
       var model = new ModelosModel( marca, HttpContext );
@@ -65,7 +67,7 @@ namespace Piezas2.Controllers
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     ///<summary> Página para mostrar la lista de recambios para un fabricante dado </summary>
-    [Route( "/fabricantes-de-recambios/{maker?}" )]
+    [HttpGet( "/fabricantes-de-recambios/{maker?}" )]
     public IActionResult RecambiosFabricantes( string maker = "" )
       {
       var model = new RecambiosFabricantesModel( maker, HttpContext );
@@ -75,7 +77,7 @@ namespace Piezas2.Controllers
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     ///<summary> Página para mostrar los datos de un recambio </summary>
-    [Route( "/recambios-del-coche/{cocheId}/{nombre?}" )]
+    [HttpGet( "/recambios-del-coche/{cocheId}/{nombre?}" )]
     public IActionResult RecambiosCoche( int cocheId )
       {
       var model = new RecambiosCocheModel( cocheId, HttpContext );
@@ -85,16 +87,15 @@ namespace Piezas2.Controllers
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     ///<summary> Página página para manejar las compras pendientes (carrito) </summary>
-    [Route( "/pagos-pendientes" )]
-    public IActionResult VentasPendientes( )
+    [HttpGet( "/pagos-pendientes" )]
+    public IActionResult VentasPendientes()
       {
       return View( new VentasModel( HttpContext ) );
       }
 
-
     //---------------------------------------------------------------------------------------------------------------------------------------
     ///<summary> Página para mostrar el mapa del sitio </summary>
-    [Route( "/mapa-del-sitio" )]
+    [HttpGet( "/mapa-del-sitio" )]
     public IActionResult MapaDelSitio( )
       {
       return View( new BaseModel(HttpContext) );
@@ -102,7 +103,7 @@ namespace Piezas2.Controllers
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     ///<summary> Página para mostrar la información de contacto </summary>
-    [Route( "/informacion-de-contacto" )]
+    [HttpGet( "/informacion-de-contacto" )]
     public IActionResult ContactInfo( )
       {
       return View( new BaseModel( HttpContext ) );
@@ -110,7 +111,7 @@ namespace Piezas2.Controllers
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     ///<summary> Página para saber a cerca del sitio </summary>
-    [Route( "/acerca-de" )]
+    [HttpGet( "/acerca-de" )]
     public IActionResult About( )
       {
       return View( new BaseModel( HttpContext ) );

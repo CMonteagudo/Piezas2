@@ -543,6 +543,24 @@ namespace Piezas2
       catch( Exception e ) { return retJson.NoDelVenta( ventaId, e ); }
       }
 
+    //-----------------------------------------------------------------------------------------------------------------------------------------
+    /// <summary> Pone todas la ventas pendientes (en el carrito) para el usuario dado como pagadas y la pone la fecha de pago dada </summary>
+    /// <param name="UserId">Identificador del usuario que va a pagar las muestras pendientes</param>
+    /// <param name="Fecha">Fecha que se pondra como fecha de pago a cada venta</param>
+    /// <returns></returns>
+    [HttpPost( "/api/ventas-pagadas" )]
+    public JsonResult SetVentasPagadas( [FromForm] int UserId, [FromForm] DateTime Fecha )
+      {
+      try
+        {
+        var count = new Ventas( HttpContext ).SetPagadas( UserId, Fecha );
+
+        new Usuarios(HttpContext).RefreshBuysCount( UserId );
+        return retJson.OkCount( count );
+        }
+      catch( Exception e ) { return retJson.NoPagadas( UserId, e ); }
+      }
+
     #endregion
 
     #region ===================================    CREACION DE OBJETOS A PARTIR DE LOS DATOS ENVIADOS    ======================================

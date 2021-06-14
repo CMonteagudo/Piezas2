@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Piezas2.Core.Model;
 using Piezas2.Core.Servicios;
+using Piezas2.Models;
 
 namespace Piezas2
   {
@@ -43,6 +44,10 @@ namespace Piezas2
       services.AddDistributedMemoryCache();                                                   // Para habilitar el uso se sessiones
       services.AddSession();
 
+      var ppConf = Configuration.GetSection( PaypalSetting.SecName ).Get<PaypalSetting>();
+
+      services.Configure<PaypalSetting>( Configuration.GetSection( PaypalSetting.SecName ) );
+
       services.Configure<MailSettings>( Configuration.GetSection( "MailSettings" ) );         // Servico para enviar correos
       services.AddTransient<IMailService, MailService>();
 
@@ -51,6 +56,7 @@ namespace Piezas2
       services.AddEntityFrameworkSqlServer().AddDbContext<DbPiezasContext>(                   // Para usar Entity Framework con SQL
         ( serviceProvider, options ) => options.UseSqlServer( conneStr ).UseInternalServiceProvider( serviceProvider ) );
 
+      services.AddSwagger();
       }
 
     //---------------------------------------------------------------------------------------------------------------------------------------
@@ -77,6 +83,7 @@ namespace Piezas2
       app.UseRouting();
 
       app.UseAuthorization();
+      app.UseCustomSwagger();
 
       app.UseSession();
       app.UseEndpoints( endpoints =>

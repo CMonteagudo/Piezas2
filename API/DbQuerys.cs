@@ -30,7 +30,12 @@ namespace Piezas2
 
     #region ======================================================    RECAMBIOS      ==========================================================
     //-----------------------------------------------------------------------------------------------------------------------------------------
-    /// <summary> Obtiene todos los datos del recambo solicitado, 'cocheInfo' indica si se obtiene la lista de coches que lo usan o no </summary>
+    /// <summary>
+    /// Obtiene todos los datos del recambo solicitado, 'cocheInfo' indica si se obtiene la lista de coches que lo usan o no 
+    /// </summary>
+    /// <param name="Id">Identificador del recambio que se quiren obtener los datos</param>
+    /// <param name="coheInfo">1- Obtiene los coches donde se usa, 0- No se retorna los coches donde se usa</param>
+    /// <returns>Datos de coche buscado, si el Id==0 no se encontro un coche con el Id dado</returns>
     [HttpGet( "/api/recambio/{Id:int}/{coheInfo:int?}" )]
     public ActionResult<Recambio> GetRecambio( int Id, int coheInfo = 1 )
       {

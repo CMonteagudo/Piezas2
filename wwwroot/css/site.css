@@ -565,7 +565,18 @@ header #btnLog .icon {
 	margin-bottom: 10px;
 }
 
+#bntPaypal {
+  width: 300px;
+  margin-left:auto;
+  margin-right:auto;
 
+}
+
+.my-alert {
+	padding: 15px;
+	border: 1px solid transparent;
+	border-radius: 4px;
+}
 
 
 
@@ -857,7 +868,7 @@ header #btnLog .icon {
 }
 
 #FindForName > input {
-  width: 185px;
+  width: 245px;
   padding-left: 5px;
   height: 32px;
 }

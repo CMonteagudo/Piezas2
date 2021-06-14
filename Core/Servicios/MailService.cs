@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 //using MimeKit;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
@@ -79,8 +80,10 @@ namespace Piezas2.Core.Servicios
           }
         else
           {
+          var dir = Path.Combine( Directory.GetCurrentDirectory(), _mailSettings.PickupDirectory);
+
           smtp.DeliveryMethod          = SmtpDeliveryMethod.SpecifiedPickupDirectory;
-          smtp.PickupDirectoryLocation = _mailSettings.PickupDirectory;
+          smtp.PickupDirectoryLocation = dir;
           };
 
         smtp.Send( mailMsg );

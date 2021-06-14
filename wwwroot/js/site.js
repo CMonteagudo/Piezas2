@@ -393,8 +393,8 @@ class MsgAlert
     this.defTipo = tipo? tipo:"info";             // Tipo que se toma por defecto, cuando no se especifique el tipo al mostrar un mensaje
     this.tipo = "alert-" + this.defTipo;          // Tipo de mensaje a mostrar
 
-    this.msg.addClass("alert");
-    this.msg.addClass( this.tipo );
+    this.msg.addClass( "my-alert" );
+    this.msg.addClass( this.tipo  );
 
     // Boton para ocultar el mensaje
     this.btn = $("<div class='btn-"+ this.tipo +" close'>&times;</div>"); 

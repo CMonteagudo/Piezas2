@@ -130,6 +130,14 @@ namespace Piezas2
       return ErrorJson( 1011, sErr, e );
       }
 
+    //---------------------------------------------------------------------------------------------------------------------------------------
+    ///<summary> Retorna una cadena JSON con cuando se esta pridiendo el listado de ventas  </summary>
+    internal static JsonResult NoPagadas( int userId, Exception e )
+      {
+      var sErr = $"No se puedo poner como pagadas las ventas al usuario '{userId}'";
+      return ErrorJson( 1012, sErr, e );
+      }
+
     //=======================================================================================================================================
     ///<summary> Retorna un error al tratar de obtener las ventas perndientes del usuario  </summary>
     public static JsonResult ErrorJson( int Err, string sErr, Exception e=null )

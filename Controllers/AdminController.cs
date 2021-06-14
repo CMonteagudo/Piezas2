@@ -15,6 +15,7 @@ namespace Piezas2.Controllers
   {
   //=======================================================================================================================================
   // Controlador que sirve como punto de entrada a todas las páginas de administración del sitio
+  [ApiExplorerSettings( IgnoreApi = true )]
   public class AdminController : Controller
     {
     public AdminController()
@@ -23,8 +24,8 @@ namespace Piezas2.Controllers
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     ///<summary> Página principal para la parte de administración </summary>
-    [Route( "/admin/opciones" )]
-    [Route( "/admin/index" )]
+    [HttpGet( "/admin/opciones" )]
+    [HttpGet( "/admin/index" )]
     [HttpGet( "/admin/" ), AdminOnly]
     public IActionResult Index()
       {
@@ -33,7 +34,7 @@ namespace Piezas2.Controllers
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     ///<summary> Página principal para la parte de administración </summary>
-    [Route( "/admin/api-doc" ), AdminOnly]
+    [HttpGet( "/admin/api-doc" ), AdminOnly]
     public IActionResult ApiDoc()
       {
       return View( new BaseModel( HttpContext ) );
@@ -41,8 +42,8 @@ namespace Piezas2.Controllers
 
     //---------------------------------------------------------------------------------------------------------------------------------------
     ///<summary> Página para vincular/desvincualar los recambios a los coches que lo usan </summary>
-    [Route( "/admin/recambio-coche/{id:int}/{name?}" )]
-    [Route( "/admin/recambio-coche/{id:int?}" ), AdminOnly]
+    [HttpGet( "/admin/recambio-coche/{id:int}/{name?}" )]
+    [HttpGet( "/admin/recambio-coche/{id:int?}" ), AdminOnly]
     public IActionResult RecambioUso( int id )
       {
       var model = new RecambiosDatosModel( id, HttpContext, DataInfo.All );

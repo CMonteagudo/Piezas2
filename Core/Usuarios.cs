@@ -214,6 +214,8 @@ namespace Piezas2.Core
     /// <summary> Actualiza la cantidad de ventas que tiene el usuario dado </summary>
     public int RefreshBuysCount( int idUser )
       {
+      if( Session.GetInt32("UserId") != idUser ) return 0;                // El usuario no esta logueado, hay nada que refrescar
+
       var user = DbCtx.Usuarios.Find( idUser );
       if( user == null ) return 0;
 
